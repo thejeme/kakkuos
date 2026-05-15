@@ -52,7 +52,7 @@ depends=(
   'ttf-jetbrains-mono-nerd'
   'obs-studio'
   'kdenlive'
-  'pinta'
+  'pinta-git'
   'speedcrunch'
   'libreoffice-fresh'
   'docker'

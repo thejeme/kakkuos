@@ -2,6 +2,5 @@ mpv
 ffmpegthumbnailer
 obs-studio
 kdenlive
-pinta
 speedcrunch
 libreoffice-fresh

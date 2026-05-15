@@ -1,3 +1,4 @@
 visual-studio-code-bin
 localsend-bin
 hyprqt6engine
+pinta-git
