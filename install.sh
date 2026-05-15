@@ -3,6 +3,52 @@ set -euo pipefail
 
 REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
+# Non-interactive installs are the default. Set `KAKKU_NONINTERACTIVE=0` to
+# run interactively. When non-interactive, add `--noconfirm` to pacman/AUR
+# helper flags so the script doesn't pause for user confirmation.
+KAKKU_NONINTERACTIVE="${KAKKU_NONINTERACTIVE:-1}"
+
+# Simple CLI parsing: `--interactive` or `-i` will force interactive mode
+# (script will prompt for pacman/AUR confirmations). Default is non-interactive.
+print_usage() {
+  cat <<EOF
+Usage: $0 [OPTIONS]
+
+Options:
+  -i, --interactive   Run interactively (ask for confirmations)
+  -h, --help          Show this help
+EOF
+}
+
+while [[ "$#" -gt 0 ]]; do
+  case "$1" in
+    -i|--interactive)
+      KAKKU_NONINTERACTIVE=0
+      shift
+      ;;
+    -h|--help)
+      print_usage
+      exit 0
+      ;;
+    --)
+      shift
+      break
+      ;;
+    *)
+      echo "Unknown option: $1" >&2
+      print_usage
+      exit 1
+      ;;
+  esac
+done
+
+pacman_flags=("-Syu" "--needed")
+aur_helper_flags=("-S" "--needed")
+if [[ "$KAKKU_NONINTERACTIVE" == "1" ]]; then
+  pacman_flags+=("--noconfirm")
+  aur_helper_flags+=("--noconfirm")
+fi
+
 read_package_list() {
   local file="$1"
 
@@ -97,24 +143,39 @@ mapfile -t pacman_packages < <(
     fi
   } | awk '!seen[$0]++'
 )
+install_pacman_packages() {
+  if (( ${#pacman_packages[@]} > 0 )); then
+    sudo pacman "${pacman_flags[@]}" "${pacman_packages[@]}"
+  fi
+}
 
-if (( ${#pacman_packages[@]} > 0 )); then
-  sudo pacman -Syu --needed "${pacman_packages[@]}"
-fi
+install_pacman_packages
 
-mapfile -t aur_packages < <(read_package_list "$REPO_DIR/packages/aur.txt")
+install_aur_packages() {
+  mapfile -t aur_packages < <(read_package_list "$REPO_DIR/packages/aur.txt")
+  if (( ${#aur_packages[@]} == 0 )); then
+    return
+  fi
 
-if (( ${#aur_packages[@]} > 0 )); then
-  if command -v paru >/dev/null 2>&1; then
-    paru -S --needed "${aur_packages[@]}"
-  elif command -v yay >/dev/null 2>&1; then
-    yay -S --needed "${aur_packages[@]}"
+  # prefer paru, fall back to yay if available
+  local aur_cmd=""
+  for helper in paru yay; do
+    if command -v "$helper" >/dev/null 2>&1; then
+      aur_cmd="$helper"
+      break
+    fi
+  done
+
+  if [[ -n "$aur_cmd" ]]; then
+    "$aur_cmd" "${aur_helper_flags[@]}" "${aur_packages[@]}"
   else
     echo "AUR packages are listed, but neither paru nor yay is installed." >&2
     echo "Install one AUR helper, then run the AUR install manually:" >&2
     echo "  paru -S --needed - < packages/aur.txt" >&2
   fi
-fi
+}
+
+install_aur_packages
 
 mkdir -p "$HOME/.config"
 

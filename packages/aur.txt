@@ -3,3 +3,5 @@ google-chrome
 localsend-bin
 hyprqt6engine
 pinta-git
+adw-gtk3
+bibata-cursor-theme
