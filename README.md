@@ -71,8 +71,8 @@ kakku/
 Install CachyOS Hyprland first, then run:
 
 ```bash
-git clone <repo-url> kakku
-cd kakku
+git clone https://github.com/TheJeme/kakkuos
+cd kakkuos
 chmod +x install.sh
 ./install.sh
 ```
