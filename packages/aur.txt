@@ -1,2 +1,2 @@
 visual-studio-code-bin
-
+localsend-bin

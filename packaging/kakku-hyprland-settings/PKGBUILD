@@ -8,10 +8,23 @@ license=('MIT')
 depends=(
   'hyprland'
   'hyprpaper'
+  'hypridle'
+  'hyprlock'
   'waybar'
   'rofi-wayland'
   'kitty'
   'fastfetch'
+  'mako'
+  'hyprpolkitagent'
+  'grim'
+  'slurp'
+  'swappy'
+  'pamixer'
+  'playerctl'
+  'brightnessctl'
+  'qt6ct'
+  'fontconfig'
+  'ttf-jetbrains-mono-nerd'
   'zsh'
   'starship'
 )
@@ -27,6 +40,7 @@ package() {
   cp -r "$repo_root/dotfiles/rofi" "$pkgdir/etc/skel/.config/rofi"
   cp -r "$repo_root/dotfiles/kitty" "$pkgdir/etc/skel/.config/kitty"
   cp -r "$repo_root/dotfiles/fastfetch" "$pkgdir/etc/skel/.config/fastfetch"
+  cp -r "$repo_root/dotfiles/mako" "$pkgdir/etc/skel/.config/mako"
 
   install -Dm644 "$repo_root/dotfiles/zsh/.zshrc" "$pkgdir/etc/skel/.zshrc"
 
@@ -37,6 +51,7 @@ package() {
   cp -r "$repo_root/themes/." "$pkgdir/usr/share/kakku/themes/"
 
   install -Dm755 "$repo_root/bin/kakku-theme" "$pkgdir/usr/bin/kakku-theme"
+  install -Dm755 "$repo_root/bin/kakku-screenshot" "$pkgdir/usr/bin/kakku-screenshot"
 
   install -Dm644 "$repo_root/system/environment.d/kakku.conf" "$pkgdir/etc/environment.d/kakku.conf"
 

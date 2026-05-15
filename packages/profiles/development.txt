@@ -1,0 +1,5 @@
+github-cli
+neovim
+lazygit
+lazydocker
+

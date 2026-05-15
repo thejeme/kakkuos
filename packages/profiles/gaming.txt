@@ -1,0 +1,6 @@
+mangohud
+gamescope
+steam
+heroic-games-launcher
+protonup-qt
+

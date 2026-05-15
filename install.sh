@@ -85,7 +85,18 @@ require_command() {
 require_command sudo
 require_command pacman
 
-mapfile -t pacman_packages < <(read_package_list "$REPO_DIR/packages/pacman.txt")
+mapfile -t pacman_packages < <(
+  {
+    read_package_list "$REPO_DIR/packages/pacman.txt"
+
+    if [[ -d "$REPO_DIR/packages/profiles" ]]; then
+      for package_file in "$REPO_DIR"/packages/profiles/*.txt; do
+        [[ -f "$package_file" ]] || continue
+        read_package_list "$package_file"
+      done
+    fi
+  } | awk '!seen[$0]++'
+)
 
 if (( ${#pacman_packages[@]} > 0 )); then
   sudo pacman -Syu --needed "${pacman_packages[@]}"
@@ -112,6 +123,13 @@ copy_config_dir waybar
 copy_config_dir rofi
 copy_config_dir kitty
 copy_config_dir fastfetch
+copy_config_dir mako
+
+if command -v xdg-user-dirs-update >/dev/null 2>&1; then
+  xdg-user-dirs-update || true
+fi
+
+mkdir -p "$HOME/Pictures/Screenshots"
 
 if [[ -d "$REPO_DIR/branding" ]]; then
   sudo install -dm755 /usr/share/backgrounds/kakku
@@ -127,6 +145,10 @@ if [[ -f "$REPO_DIR/bin/kakku-theme" ]]; then
   sudo install -Dm755 "$REPO_DIR/bin/kakku-theme" /usr/bin/kakku-theme
 fi
 
+if [[ -f "$REPO_DIR/bin/kakku-screenshot" ]]; then
+  sudo install -Dm755 "$REPO_DIR/bin/kakku-screenshot" /usr/bin/kakku-screenshot
+fi
+
 if [[ -f "$REPO_DIR/system/environment.d/kakku.conf" ]]; then
   sudo install -Dm644 "$REPO_DIR/system/environment.d/kakku.conf" /etc/environment.d/kakku.conf
 fi
@@ -140,6 +162,7 @@ fi
 sudo systemctl enable NetworkManager || true
 sudo systemctl enable bluetooth || true
 sudo systemctl enable docker || true
+sudo systemctl enable tailscaled || true
 sudo usermod -aG docker "$USER" || true
 
 echo "Kakku setup complete. Reboot recommended."

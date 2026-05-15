@@ -1,0 +1,7 @@
+mpv
+obs-studio
+kdenlive
+pinta
+speedcrunch
+libreoffice-fresh
+

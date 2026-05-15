@@ -1,0 +1,10 @@
+base-devel
+git
+networkmanager
+bluez
+bluez-utils
+tailscale
+proton-vpn-gtk-app
+docker
+docker-compose
+

@@ -1,33 +1,4 @@
-base-devel
-git
-hyprland
-hyprpaper
-xdg-desktop-portal-hyprland
-waybar
-rofi-wayland
-kitty
-dolphin
-firefox
-zsh
-starship
-zoxide
-eza
-bat
-ripgrep
-fd
-fzf
-fastfetch
-btop
-pipewire
-pipewire-pulse
-wireplumber
-networkmanager
-bluez
-bluez-utils
-mangohud
-gamescope
-steam
-heroic-games-launcher
-protonup-qt
-docker
-docker-compose
+# Optional extra pacman packages.
+#
+# The default Kakku package set is split by purpose under packages/profiles/.
+# Add one-off local/default extras here if they do not fit a profile yet.
