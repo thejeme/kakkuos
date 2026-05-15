@@ -47,6 +47,8 @@ package() {
   cp -r "$repo_root/dotfiles/lazygit" "$pkgdir/etc/skel/.config/lazygit"
   cp -r "$repo_root/dotfiles/yazi" "$pkgdir/etc/skel/.config/yazi"
   cp -r "$repo_root/dotfiles/btop" "$pkgdir/etc/skel/.config/btop"
+  cp -r "$repo_root/dotfiles/gtk-3.0" "$pkgdir/etc/skel/.config/gtk-3.0"
+  cp -r "$repo_root/dotfiles/gtk-4.0" "$pkgdir/etc/skel/.config/gtk-4.0"
 
   install -Dm644 "$repo_root/dotfiles/zsh/.zshrc" "$pkgdir/etc/skel/.zshrc"
 

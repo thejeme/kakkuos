@@ -29,7 +29,7 @@ _apply_configs() {
     id "$username" &>/dev/null || continue
 
     # Copy .config directories
-    for dir in hypr waybar rofi alacritty fastfetch mako lazygit yazi btop; do
+    for dir in hypr waybar rofi alacritty fastfetch mako lazygit yazi btop gtk-3.0 gtk-4.0; do
       if [ -d "$skel/.config/$dir" ]; then
         mkdir -p "$user_home/.config/$dir"
         cp -r "$skel/.config/$dir/." "$user_home/.config/$dir/"

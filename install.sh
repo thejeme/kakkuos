@@ -127,6 +127,8 @@ copy_config_dir mako
 copy_config_dir lazygit
 copy_config_dir yazi
 copy_config_dir btop
+copy_config_dir gtk-3.0
+copy_config_dir gtk-4.0
 
 if command -v xdg-user-dirs-update >/dev/null 2>&1; then
   xdg-user-dirs-update || true
@@ -184,11 +186,9 @@ sudo systemctl enable tailscaled || true
 sudo usermod -aG docker "$USER" || true
 
 # Set up greetd as login manager
-if command -v tuigreet >/dev/null 2>&1; then
-  sudo install -Dm644 "$REPO_DIR/system/greetd/config.toml" /etc/greetd/config.toml
-  sudo systemctl disable sddm.service 2>/dev/null || true
-  sudo systemctl enable greetd.service || true
-fi
+sudo install -Dm644 "$REPO_DIR/system/greetd/config.toml" /etc/greetd/config.toml
+sudo systemctl disable sddm.service 2>/dev/null || true
+sudo systemctl enable greetd.service || true
 
 # Override os-release with KakkuOS branding
 if [[ -f "$REPO_DIR/system/os-release" ]]; then
