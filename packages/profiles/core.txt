@@ -1,5 +1,6 @@
 base-devel
 git
+paru
 pacman-contrib
 networkmanager
 bluez

@@ -87,7 +87,7 @@ cd kakkuos
 ./install.sh
 ```
 
-The script installs the package list, copies dotfiles into the current user's home directory, sets `zsh` as the login shell when available, and enables common services.
+The script installs the package list, copies dotfiles into the current user's home directory, disables the default CachyOS Plymouth boot splash, sets `zsh` as the login shell when available, and enables common services.
 
 The installer is safe to run more than once. Unchanged config files are skipped, changed local config paths are backed up with a timestamp, and package installs use `--needed`.
 
@@ -175,6 +175,7 @@ These packages make the system useful for source builds, package builds, and day
 |---|---|
 | `base-devel` | Standard Arch build tool group required for `makepkg` and many source builds. |
 | `git` | Version control for projects, dotfiles, package sources, and AUR workflows. |
+| `paru` | AUR helper available in CachyOS repositories, used by the installer for AUR packages. |
 | `pacman-contrib` | Arch maintenance helpers such as `paccache` for package cache cleanup. |
 
 ### Hyprland Desktop
@@ -461,13 +462,13 @@ Recommended choices:
 
 For KakkuOS, the practical default recommendation is **Limine on Btrfs snapshot installs** and **systemd-boot for simple UEFI installs**.
 
-CachyOS ISOs enable Plymouth by default for the graphical boot splash. KakkuOS disables that splash with:
+CachyOS ISOs enable Plymouth by default for the graphical boot splash. The KakkuOS installer disables that splash automatically. The same step can be rerun manually with:
 
 ```bash
 kakku disable-plymouth
 ```
 
-The helper removes the Plymouth hook from `/etc/mkinitcpio.conf` when present, removes common `splash`/`quiet` boot parameters from supported bootloader config files, rebuilds initramfs with `mkinitcpio -P`, and leaves `.kakku.bak` backups for edited files. Bootloader changes should still be reviewed carefully because they affect early boot behavior.
+The helper removes the Plymouth hook from `/etc/mkinitcpio.conf` when present, removes common `splash`/`quiet` boot parameters from supported bootloader config files, rebuilds initramfs with `mkinitcpio -P` only when a boot-related file changed, and leaves `.kakku.bak` backups for edited files. Bootloader changes should still be reviewed carefully because they affect early boot behavior.
 
 ## Phase 2: Package The Defaults
 

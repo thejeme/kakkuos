@@ -59,6 +59,7 @@ depends=(
   'docker-compose'
   'git'
   'base-devel'
+  'paru'
   'pacman-contrib'
   'zsh'
   'starship'

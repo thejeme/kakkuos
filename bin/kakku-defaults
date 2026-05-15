@@ -1,6 +1,13 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+desktop_file_exists() {
+  local desktop_file="$1"
+  if [[ ! -f "/usr/share/applications/$desktop_file" && ! -f "${XDG_DATA_HOME:-$HOME/.local/share}/applications/$desktop_file" ]]; then
+    return 1
+  fi
+}
+
 set_default() {
   local desktop_file="$1"
   shift
@@ -9,9 +16,29 @@ set_default() {
     return 0
   fi
 
+  if ! desktop_file_exists "$desktop_file"; then
+    echo "Skipping missing desktop file: $desktop_file" >&2
+    return 0
+  fi
+
   for mimetype in "$@"; do
     xdg-mime default "$desktop_file" "$mimetype" || true
   done
+}
+
+set_default_from_candidates() {
+  local candidates="$1"
+  shift
+  local desktop_file
+
+  for desktop_file in $candidates; do
+    if desktop_file_exists "$desktop_file"; then
+      set_default "$desktop_file" "$@"
+      return 0
+    fi
+  done
+
+  echo "Skipping missing desktop files: $candidates" >&2
 }
 
 set_default firefox.desktop \
@@ -30,25 +57,24 @@ set_default mpv.desktop \
   audio/flac \
   audio/ogg
 
-set_default org.pinta_project.Pinta.desktop \
+set_default_from_candidates "com.github.PintaProject.Pinta.desktop org.pinta_project.Pinta.desktop pinta.desktop" \
   image/png \
   image/jpeg \
   image/webp
 
-set_default writer.desktop \
+set_default libreoffice-writer.desktop \
   application/vnd.oasis.opendocument.text \
   application/msword \
   application/vnd.openxmlformats-officedocument.wordprocessingml.document
 
-set_default calc.desktop \
+set_default libreoffice-calc.desktop \
   application/vnd.oasis.opendocument.spreadsheet \
   application/vnd.ms-excel \
   application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
 
-set_default impress.desktop \
+set_default libreoffice-impress.desktop \
   application/vnd.oasis.opendocument.presentation \
   application/vnd.ms-powerpoint \
   application/vnd.openxmlformats-officedocument.presentationml.presentation
 
 echo "KakkuOS default applications configured."
-

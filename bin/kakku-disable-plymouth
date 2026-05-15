@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+changed=0
+
 require_root() {
   if [[ "${EUID:-$(id -u)}" -ne 0 ]]; then
     echo "Run as root: sudo kakku-disable-plymouth" >&2
@@ -20,22 +22,55 @@ backup_file() {
 remove_words() {
   local file="$1"
   shift
+  local tmp
 
   [[ -f "$file" ]] || return 0
-  backup_file "$file"
+  tmp="$(mktemp)"
+  cp "$file" "$tmp"
 
   for word in "$@"; do
-    sed -i -E "s/(^|[[:space:]])${word}([[:space:]]|$)/ /g; s/[[:space:]]+/ /g" "$file"
+    sed -i -E "s/\\<${word}\\>//g; s/[[:space:]]+/ /g; s/=\" /=\"/g; s/ \"/\"/g; s/[[:space:]]+$//" "$tmp"
   done
+
+  if ! cmp -s "$file" "$tmp"; then
+    backup_file "$file"
+    cp "$tmp" "$file"
+    changed=1
+    echo "Removed splash boot parameters from $file."
+  fi
+
+  rm -f "$tmp"
+}
+
+remove_mkinitcpio_plymouth() {
+  local file="/etc/mkinitcpio.conf"
+  local tmp
+
+  [[ -f "$file" ]] || return 0
+  tmp="$(mktemp)"
+
+  sed -E '
+    /^[[:space:]]*HOOKS=/ {
+      s/[[:space:]]*plymouth([[:space:]]|\))/\1/g
+      s/[[:space:]]+/ /g
+      s/\( /(/g
+      s/ \)/)/g
+    }
+  ' "$file" > "$tmp"
+
+  if ! cmp -s "$file" "$tmp"; then
+    backup_file "$file"
+    cp "$tmp" "$file"
+    changed=1
+    echo "Removed plymouth hook from $file."
+  fi
+
+  rm -f "$tmp"
 }
 
 require_root
 
-if [[ -f /etc/mkinitcpio.conf ]]; then
-  backup_file /etc/mkinitcpio.conf
-  sed -i -E 's/[[:space:]]*plymouth[[:space:]]*/ /g; s/HOOKS=\((.*)\)/HOOKS=(\1)/' /etc/mkinitcpio.conf
-  echo "Removed plymouth hook from /etc/mkinitcpio.conf when present."
-fi
+remove_mkinitcpio_plymouth
 
 remove_words /etc/default/grub splash quiet
 remove_words /etc/default/limine splash quiet
@@ -47,8 +82,10 @@ if [[ -d /boot/loader/entries ]]; then
   done
 fi
 
-if command -v mkinitcpio >/dev/null 2>&1; then
+if (( changed )) && command -v mkinitcpio >/dev/null 2>&1; then
   mkinitcpio -P
+elif (( ! changed )); then
+  echo "Plymouth boot splash already disabled."
 fi
 
 if command -v grub-mkconfig >/dev/null 2>&1 && [[ -f /etc/default/grub ]]; then
@@ -57,4 +94,3 @@ if command -v grub-mkconfig >/dev/null 2>&1 && [[ -f /etc/default/grub ]]; then
 fi
 
 echo "Plymouth boot splash disable step completed. Reboot to verify."
-

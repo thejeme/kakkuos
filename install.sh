@@ -151,6 +151,10 @@ if [[ -d "$REPO_DIR/bin" ]]; then
   done
 fi
 
+if command -v kakku-disable-plymouth >/dev/null 2>&1; then
+  sudo kakku-disable-plymouth
+fi
+
 if command -v xdg-mime >/dev/null 2>&1 && command -v kakku-defaults >/dev/null 2>&1; then
   kakku-defaults || true
 fi
