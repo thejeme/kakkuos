@@ -1,4 +1,7 @@
 github-cli
+nodejs
+npm
+pnpm
 neovim
 lazygit
 lazydocker

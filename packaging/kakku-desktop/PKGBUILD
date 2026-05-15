@@ -46,14 +46,18 @@ depends=(
   'playerctl'
   'mako'
   'hyprpolkitagent'
+  'greetd'
+  'greetd-tuigreet'
   'fontconfig'
   'noto-fonts'
   'noto-fonts-cjk'
   'noto-fonts-emoji'
   'ttf-jetbrains-mono-nerd'
+  'adw-gtk3'
+  'papirus-icon-theme'
+  'bibata-cursor-theme'
   'obs-studio'
   'kdenlive'
-  'pinta-git'
   'speedcrunch'
   'libreoffice-fresh'
   'docker'
@@ -93,6 +97,9 @@ depends=(
   'resvg'
   'wl-clipboard'
   'github-cli'
+  'nodejs'
+  'npm'
+  'pnpm'
   'neovim'
   'lazygit'
   'lazydocker'
@@ -102,8 +109,10 @@ depends=(
 )
 optdepends=(
   'visual-studio-code-bin: Microsoft Visual Studio Code from the AUR or a Kakku package repo'
+  'google-chrome: Google Chrome browser from the AUR or a Kakku package repo'
   'localsend-bin: LocalSend file sharing from the AUR or a Kakku package repo'
   'hyprqt6engine: Hyprland Qt 6 theme engine from the AUR or a Kakku package repo'
+  'pinta-git: Pinta image editor from the AUR or a Kakku package repo'
 )
 
 package() {

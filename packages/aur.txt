@@ -1,4 +1,5 @@
 visual-studio-code-bin
+google-chrome
 localsend-bin
 hyprqt6engine
 pinta-git

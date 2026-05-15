@@ -198,6 +198,7 @@ These packages provide the Wayland desktop session and its core user interface.
 | `kitty` | GPU-accelerated terminal emulator. |
 | `dolphin` | Graphical file manager. |
 | `firefox` | Default web browser. |
+| `google-chrome` | Google Chrome from the AUR, installed by the default AUR package list. |
 | `discord` | Voice and chat client for communities, gaming, and development groups. |
 | `mako` | Notification daemon for Wayland desktops. |
 | `hyprpolkitagent` | Hyprland-native graphical authentication prompts for admin actions. |
@@ -340,6 +341,9 @@ These packages make the default install useful for media playback, screen record
 | `docker` | Container runtime. |
 | `docker-compose` | Compose workflow for multi-container development stacks. |
 | `github-cli` | GitHub command-line tool, installed as `gh`. |
+| `nodejs` | JavaScript runtime for web tooling and server-side development. |
+| `npm` | Node package manager and package registry CLI. |
+| `pnpm` | Fast, disk-efficient package manager for JavaScript and TypeScript projects. |
 | `neovim` | Modern Vim-based terminal editor for coding and config editing. |
 | `lazygit` | Terminal UI for Git repositories. |
 | `lazydocker` | Terminal UI for Docker containers, images, volumes, and logs. |
