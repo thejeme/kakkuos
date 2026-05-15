@@ -62,8 +62,7 @@ package() {
 
   install -Dm644 "$repo_root/system/environment.d/kakku.conf" "$pkgdir/etc/environment.d/kakku.conf"
 
-  install -Dm644 "$repo_root/system/os-release" "$pkgdir/usr/share/kakku/os-release"
-
   install -dm755 "$pkgdir/usr/share/kakku"
+  install -Dm644 "$repo_root/system/os-release" "$pkgdir/usr/share/kakku/os-release"
   install -Dm644 "$repo_root/README.md" "$pkgdir/usr/share/kakku/README.md"
 }
