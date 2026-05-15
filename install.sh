@@ -159,6 +159,14 @@ if command -v xdg-mime >/dev/null 2>&1 && command -v kakku-defaults >/dev/null 2
   kakku-defaults || true
 fi
 
+# Disable CachyOS welcome app autostart
+if [[ -f /etc/xdg/autostart/cachyos-hello.desktop ]]; then
+  sudo rm -f /etc/xdg/autostart/cachyos-hello.desktop
+fi
+if [[ -f "$HOME/.config/autostart/cachyos-hello.desktop" ]]; then
+  rm -f "$HOME/.config/autostart/cachyos-hello.desktop"
+fi
+
 if [[ -f "$REPO_DIR/system/environment.d/kakku.conf" ]]; then
   sudo install -Dm644 "$REPO_DIR/system/environment.d/kakku.conf" /etc/environment.d/kakku.conf
 fi

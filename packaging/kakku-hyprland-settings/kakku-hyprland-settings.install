@@ -9,6 +9,9 @@ post_install() {
   systemctl disable ly.service 2>/dev/null || true
   systemctl enable greetd.service 2>/dev/null || true
 
+  # Remove CachyOS welcome app autostart
+  rm -f /etc/xdg/autostart/cachyos-hello.desktop
+
   # Apply configs to existing users
   _apply_configs
 }
