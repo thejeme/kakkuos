@@ -1,0 +1,45 @@
+pkgname=kakku-hyprland-settings
+pkgver=0.1.0
+pkgrel=1
+pkgdesc="Kakku OS Hyprland settings and desktop defaults"
+arch=('any')
+url="https://example.org/kakku"
+license=('GPL-3.0-or-later')
+depends=(
+  'hyprland'
+  'hyprpaper'
+  'waybar'
+  'rofi-wayland'
+  'kitty'
+  'fastfetch'
+  'zsh'
+  'starship'
+)
+source=()
+sha256sums=()
+
+package() {
+  local repo_root="$startdir/../.."
+
+  install -dm755 "$pkgdir/etc/skel/.config"
+  cp -r "$repo_root/dotfiles/hypr" "$pkgdir/etc/skel/.config/hypr"
+  cp -r "$repo_root/dotfiles/waybar" "$pkgdir/etc/skel/.config/waybar"
+  cp -r "$repo_root/dotfiles/rofi" "$pkgdir/etc/skel/.config/rofi"
+  cp -r "$repo_root/dotfiles/kitty" "$pkgdir/etc/skel/.config/kitty"
+  cp -r "$repo_root/dotfiles/fastfetch" "$pkgdir/etc/skel/.config/fastfetch"
+
+  install -Dm644 "$repo_root/dotfiles/zsh/.zshrc" "$pkgdir/etc/skel/.zshrc"
+
+  install -dm755 "$pkgdir/usr/share/backgrounds/kakku"
+  cp -r "$repo_root/branding/." "$pkgdir/usr/share/backgrounds/kakku/"
+
+  install -dm755 "$pkgdir/usr/share/kakku/themes"
+  cp -r "$repo_root/themes/." "$pkgdir/usr/share/kakku/themes/"
+
+  install -Dm755 "$repo_root/bin/kakku-theme" "$pkgdir/usr/bin/kakku-theme"
+
+  install -Dm644 "$repo_root/system/environment.d/kakku.conf" "$pkgdir/etc/environment.d/kakku.conf"
+
+  install -dm755 "$pkgdir/usr/share/kakku"
+  install -Dm644 "$repo_root/README.md" "$pkgdir/usr/share/kakku/README.md"
+}

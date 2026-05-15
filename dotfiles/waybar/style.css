@@ -1,0 +1,40 @@
+@import "theme.css";
+
+* {
+  border: none;
+  border-radius: 0;
+  font-family: Inter, "Noto Sans", sans-serif;
+  font-size: 13px;
+  min-height: 0;
+}
+
+window#waybar {
+  background: @background;
+  color: @foreground;
+}
+
+#workspaces button {
+  color: @muted;
+  padding: 0 10px;
+}
+
+#workspaces button.active {
+  color: @background;
+  background: @accent;
+}
+
+#clock,
+#tray,
+#pulseaudio,
+#network,
+#battery {
+  padding: 0 10px;
+}
+
+#battery.warning {
+  color: @warning;
+}
+
+#battery.critical {
+  color: @urgent;
+}

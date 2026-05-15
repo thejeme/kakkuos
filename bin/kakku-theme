@@ -1,0 +1,81 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+THEMES_DIR="${KAKKU_THEMES_DIR:-/usr/share/kakku/themes}"
+CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
+
+usage() {
+  cat <<'EOF'
+Usage:
+  kakku-theme list
+  kakku-theme set <theme>
+
+Themes:
+  matcha
+  blueberry
+  strawberry
+  tiramisu
+  funfetti
+EOF
+}
+
+copy_theme_file() {
+  local source="$1"
+  local target="$2"
+
+  if [[ -f "$source" ]]; then
+    mkdir -p "$(dirname "$target")"
+    cp "$source" "$target"
+  fi
+}
+
+list_themes() {
+  local theme
+
+  for theme in "$THEMES_DIR"/*; do
+    [[ -d "$theme" ]] || continue
+    basename "$theme"
+  done
+}
+
+set_theme() {
+  local theme="$1"
+  local theme_dir="$THEMES_DIR/$theme"
+
+  if [[ ! -d "$theme_dir" ]]; then
+    echo "Unknown Kakku theme: $theme" >&2
+    echo >&2
+    usage >&2
+    exit 1
+  fi
+
+  copy_theme_file "$theme_dir/waybar.css" "$CONFIG_HOME/waybar/theme.css"
+  copy_theme_file "$theme_dir/rofi.rasi" "$CONFIG_HOME/rofi/theme.rasi"
+  copy_theme_file "$theme_dir/kitty.conf" "$CONFIG_HOME/kitty/theme.conf"
+  copy_theme_file "$theme_dir/hyprland.conf" "$CONFIG_HOME/hypr/theme.conf"
+
+  echo "$theme" > "$CONFIG_HOME/kakku-theme"
+  echo "Kakku theme set to $theme."
+  echo "Restart Waybar, Rofi, Kitty, and Hyprland session components to fully apply it."
+}
+
+case "${1:-}" in
+  list)
+    list_themes
+    ;;
+  set)
+    if [[ -z "${2:-}" ]]; then
+      usage >&2
+      exit 1
+    fi
+    set_theme "$2"
+    ;;
+  -h|--help|help|"")
+    usage
+    ;;
+  *)
+    usage >&2
+    exit 1
+    ;;
+esac
+

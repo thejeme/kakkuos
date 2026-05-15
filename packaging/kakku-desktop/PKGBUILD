@@ -1,0 +1,46 @@
+pkgname=kakku-desktop
+pkgver=0.1.0
+pkgrel=1
+pkgdesc="Kakku OS default desktop package set"
+arch=('any')
+url="https://example.org/kakku"
+license=('MIT')
+depends=(
+  'kakku-hyprland-settings'
+  'hyprland'
+  'hyprpaper'
+  'xdg-desktop-portal-hyprland'
+  'waybar'
+  'rofi-wayland'
+  'kitty'
+  'dolphin'
+  'firefox'
+  'pipewire'
+  'pipewire-pulse'
+  'wireplumber'
+  'networkmanager'
+  'bluez'
+  'bluez-utils'
+  'steam'
+  'mangohud'
+  'gamescope'
+  'docker'
+  'docker-compose'
+  'git'
+  'base-devel'
+  'zsh'
+  'starship'
+  'zoxide'
+  'eza'
+  'bat'
+  'ripgrep'
+  'fd'
+  'fzf'
+  'fastfetch'
+  'btop'
+)
+
+package() {
+  true
+}
+

@@ -1,0 +1,37 @@
+@import "theme.rasi"
+
+window {
+  width: 42em;
+  border: 2px;
+  border-color: @selected;
+  border-radius: 8px;
+  background-color: @background;
+}
+
+mainbox {
+  padding: 12px;
+}
+
+inputbar {
+  padding: 8px;
+  background-color: @surface;
+}
+
+entry {
+  text-color: @foreground;
+}
+
+listview {
+  lines: 8;
+  fixed-height: true;
+  margin: 8px 0 0 0;
+}
+
+element {
+  padding: 8px;
+}
+
+element selected {
+  background-color: @selected;
+  text-color: @selected-foreground;
+}

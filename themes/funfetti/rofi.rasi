@@ -1,0 +1,10 @@
+* {
+  background: #f8fafc;
+  surface: #eef2f7;
+  foreground: #182033;
+  muted: #64748b;
+  selected: #f97316;
+  selected-foreground: #f8fafc;
+  urgent: #e11d48;
+}
+

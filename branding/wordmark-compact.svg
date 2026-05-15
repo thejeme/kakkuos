@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 620 160" role="img" aria-label="Kakku OS compact wordmark">
+  <rect width="620" height="160" rx="24" fill="#11111b"/>
+  <g transform="translate(24 24) scale(0.4375)">
+    <rect width="256" height="256" rx="48" fill="#181825"/>
+    <path d="M58 190V66h30v50l46-50h38l-52 57 56 67h-39l-49-59v59H58z" fill="#9ece6a"/>
+    <path d="M178 190l-38-47 18-20 58 67h-38z" fill="#7aa2f7"/>
+  </g>
+  <text x="160" y="102"
+        fill="#cdd6f4"
+        font-family="Inter, Noto Sans, Arial, sans-serif"
+        font-size="72"
+        font-weight="800"
+        letter-spacing="0">Kakku</text>
+  <text x="420" y="102"
+        fill="#9ece6a"
+        font-family="Inter, Noto Sans, Arial, sans-serif"
+        font-size="72"
+        font-weight="800"
+        letter-spacing="0">OS</text>
+</svg>
