@@ -77,7 +77,7 @@ set_theme() {
 
   copy_theme_file "$theme_dir/waybar.css" "$CONFIG_HOME/waybar/theme.css"
   copy_theme_file "$theme_dir/rofi.rasi" "$CONFIG_HOME/rofi/theme.rasi"
-  copy_theme_file "$theme_dir/kitty.conf" "$CONFIG_HOME/kitty/theme.conf"
+  copy_theme_file "$theme_dir/alacritty.toml" "$CONFIG_HOME/alacritty/theme.toml"
   copy_theme_file "$theme_dir/hyprland.conf" "$CONFIG_HOME/hypr/theme.conf"
   copy_theme_file "$theme_dir/mako" "$CONFIG_HOME/mako/config"
   copy_theme_file "$theme_dir/hyprlock.conf" "$CONFIG_HOME/hypr/hyprlock.conf"
@@ -87,7 +87,7 @@ set_theme() {
   echo "$theme" > "$CONFIG_HOME/kakku-theme"
   reload_session
   echo "Kakku theme set to $theme."
-  echo "Restart open Kitty, Rofi, and Qt applications to fully apply it."
+  echo "Restart open Alacritty, Rofi, and Qt applications to fully apply it."
 }
 
 case "${1:-}" in

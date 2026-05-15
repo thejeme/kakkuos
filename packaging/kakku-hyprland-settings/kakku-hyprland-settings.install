@@ -4,6 +4,11 @@ post_install() {
     cp /usr/share/kakku/os-release /usr/lib/os-release
   fi
 
+  # Enable greetd as login manager (disable others)
+  systemctl disable sddm.service 2>/dev/null || true
+  systemctl disable ly.service 2>/dev/null || true
+  systemctl enable greetd.service 2>/dev/null || true
+
   # Apply configs to existing users
   _apply_configs
 }
@@ -21,7 +26,7 @@ _apply_configs() {
     id "$username" &>/dev/null || continue
 
     # Copy .config directories
-    for dir in hypr waybar rofi kitty fastfetch mako lazygit yazi btop; do
+    for dir in hypr waybar rofi alacritty fastfetch mako lazygit yazi btop; do
       if [ -d "$skel/.config/$dir" ]; then
         mkdir -p "$user_home/.config/$dir"
         cp -r "$skel/.config/$dir/." "$user_home/.config/$dir/"

@@ -1,0 +1,14 @@
+[colors.primary]
+background = "#111814"
+foreground = "#dce8d8"
+
+[colors.selection]
+background = "#213026"
+text = "#dce8d8"
+
+[colors.cursor]
+cursor = "#9ece6a"
+text = "#111814"
+
+[colors.hints]
+start = { foreground = "#111814", background = "#7aa2f7" }

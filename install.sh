@@ -121,7 +121,7 @@ mkdir -p "$HOME/.config"
 copy_config_dir hypr
 copy_config_dir waybar
 copy_config_dir rofi
-copy_config_dir kitty
+copy_config_dir alacritty
 copy_config_dir fastfetch
 copy_config_dir mako
 copy_config_dir lazygit

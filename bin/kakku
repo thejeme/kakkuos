@@ -142,7 +142,7 @@ Kakku paths:
   Hyprland config:    $CONFIG_HOME/hypr
   Waybar config:      $CONFIG_HOME/waybar
   Rofi config:        $CONFIG_HOME/rofi
-  Kitty config:       $CONFIG_HOME/kitty
+  Alacritty config:  $CONFIG_HOME/alacritty
   Mako config:        $CONFIG_HOME/mako
   Current theme file: $CONFIG_HOME/kakku-theme
   Themes:             $KAKKU_THEMES_DIR
@@ -168,14 +168,14 @@ show_packages() {
 run_doctor() {
   local failed=0
 
-  for command_name in hyprland waybar rofi kitty mako hyprlock hypridle hyprpaper hyprsunset hyprpolkitagent grim slurp swappy pamixer playerctl brightnessctl kakku yazi wiremix bluetui btop; do
+  for command_name in hyprland waybar rofi alacritty mako hyprlock hypridle hyprpaper hyprsunset hyprpolkitagent grim slurp swappy pamixer playerctl brightnessctl kakku yazi wiremix bluetui btop; do
     check_command "$command_name" || failed=1
   done
 
   check_path "$CONFIG_HOME/hypr/hyprland.conf" || failed=1
   check_path "$CONFIG_HOME/waybar/config.jsonc" || failed=1
   check_path "$CONFIG_HOME/rofi/config.rasi" || failed=1
-  check_path "$CONFIG_HOME/kitty/kitty.conf" || failed=1
+  check_path "$CONFIG_HOME/alacritty/alacritty.toml" || failed=1
   check_path "$CONFIG_HOME/mako/config" || failed=1
   check_path "$KAKKU_THEMES_DIR" || failed=1
   check_path "$CONFIG_HOME/hypr/wallpaper.png" || failed=1

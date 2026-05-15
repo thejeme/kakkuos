@@ -14,7 +14,7 @@ depends=(
   'hyprsunset'
   'waybar'
   'rofi-wayland'
-  'kitty'
+  'alacritty'
   'fastfetch'
   'mako'
   'hyprpolkitagent'
@@ -28,6 +28,8 @@ depends=(
   'ttf-jetbrains-mono-nerd'
   'zsh'
   'starship'
+  'greetd'
+  'greetd-tuigreet'
 )
 source=()
 sha256sums=()
@@ -39,7 +41,7 @@ package() {
   cp -r "$repo_root/dotfiles/hypr" "$pkgdir/etc/skel/.config/hypr"
   cp -r "$repo_root/dotfiles/waybar" "$pkgdir/etc/skel/.config/waybar"
   cp -r "$repo_root/dotfiles/rofi" "$pkgdir/etc/skel/.config/rofi"
-  cp -r "$repo_root/dotfiles/kitty" "$pkgdir/etc/skel/.config/kitty"
+  cp -r "$repo_root/dotfiles/alacritty" "$pkgdir/etc/skel/.config/alacritty"
   cp -r "$repo_root/dotfiles/fastfetch" "$pkgdir/etc/skel/.config/fastfetch"
   cp -r "$repo_root/dotfiles/mako" "$pkgdir/etc/skel/.config/mako"
   cp -r "$repo_root/dotfiles/lazygit" "$pkgdir/etc/skel/.config/lazygit"
@@ -61,6 +63,8 @@ package() {
   install -m755 "$repo_root"/bin/kakku* "$pkgdir/usr/bin/"
 
   install -Dm644 "$repo_root/system/environment.d/kakku.conf" "$pkgdir/etc/environment.d/kakku.conf"
+
+  install -Dm644 "$repo_root/system/greetd/config.toml" "$pkgdir/etc/greetd/config.toml"
 
   install -dm755 "$pkgdir/usr/share/kakku"
   install -Dm644 "$repo_root/system/os-release" "$pkgdir/usr/share/kakku/os-release"

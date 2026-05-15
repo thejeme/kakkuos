@@ -1,0 +1,17 @@
+import = ["~/.config/alacritty/theme.toml"]
+
+[font]
+normal = { family = "JetBrainsMono Nerd Font", style = "Regular" }
+size = 11.0
+
+[window]
+padding = { x = 8, y = 8 }
+
+[scrolling]
+history = 10000
+
+[bell]
+duration = 0
+
+[cursor]
+style = { shape = "Block" }

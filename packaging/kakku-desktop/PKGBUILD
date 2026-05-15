@@ -19,7 +19,7 @@ depends=(
   'xdg-user-dirs'
   'waybar'
   'rofi-wayland'
-  'kitty'
+  'alacritty'
   'dolphin'
   'firefox'
   'discord'
