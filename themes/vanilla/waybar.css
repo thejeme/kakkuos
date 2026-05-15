@@ -1,0 +1,8 @@
+@define-color background rgba(251, 244, 223, 0.95);
+@define-color surface #f0e4c6;
+@define-color foreground #2f2618;
+@define-color muted #756449;
+@define-color accent #b8892f;
+@define-color urgent #b42345;
+@define-color warning #a16207;
+

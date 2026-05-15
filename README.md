@@ -36,8 +36,12 @@ kakku/
     matcha/
     blueberry/
     strawberry/
-    tiramisu/
     funfetti/
+    velvet/
+    caramel/
+    mocha/
+    tiramisu/
+    vanilla/
   bin/
     kakku-theme
   branding/
@@ -68,13 +72,19 @@ The installer is safe to run more than once. Unchanged config files are skipped,
 
 ## Themes
 
-Kakku includes five cake-style themes:
+Kakku includes these cake-style themes:
 
 - `matcha`
 - `blueberry`
 - `strawberry`
 - `tiramisu`
 - `funfetti`
+- `velvet`
+- `caramel`
+- `mocha`
+- `vanilla`
+
+The default theme is `matcha`.
 
 List installed themes:
 
@@ -113,3 +123,7 @@ After the packages are published in a repository, a full desktop install becomes
 ```bash
 sudo pacman -S kakku-desktop
 ```
+
+## License
+
+Kakku OS repository assets and scripts are licensed under the MIT License.
