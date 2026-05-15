@@ -20,7 +20,10 @@
   ],
   "hyprland/workspaces": {
     "disable-scroll": true,
-    "all-outputs": true
+    "all-outputs": true,
+    "persistent-workspaces": {
+      "*": 3
+    }
   },
   "hyprland/window": {
     "format": "{}",
@@ -32,45 +35,51 @@
     "tooltip-format": "{:%A, %d %B %Y}"
   },
   "custom/theme": {
-    "exec": "kakku-waybar-theme",
+    "exec": "kakku waybar theme",
     "interval": 5,
-    "on-click": "kakku-theme-menu"
+    "on-click": "kakku theme menu"
   },
   "custom/updates": {
-    "exec": "kakku-waybar-updates",
+    "exec": "kakku waybar updates",
     "interval": 1800,
     "on-click": "kitty -e sudo pacman -Syu"
   },
   "cpu": {
     "format": "cpu {usage}%",
-    "interval": 5
+    "interval": 5,
+    "on-click": "kitty -e btop"
   },
   "memory": {
     "format": "mem {percentage}%",
-    "interval": 5
+    "interval": 5,
+    "on-click": "kitty -e btop"
   },
   "disk": {
     "format": "disk {percentage_used}%",
     "path": "/",
-    "interval": 60
+    "interval": 60,
+    "on-click": "kitty -e yazi /"
   },
   "bluetooth": {
     "format": "bt {status}",
     "format-disabled": "bt off",
     "format-connected": "bt {device_alias}",
-    "tooltip-format": "{controller_alias}"
+    "tooltip-format": "{controller_alias}",
+    "on-click": "kitty -e bluetui"
   },
   "network": {
     "format-wifi": "{essid}",
     "format-ethernet": "wired",
     "format-disconnected": "offline",
-    "tooltip-format": "{ifname}: {ipaddr}"
+    "tooltip-format": "{ifname}: {ipaddr}",
+    "on-click": "kitty -e nmtui"
   },
   "pulseaudio": {
     "format": "{volume}%",
     "format-muted": "muted",
     "scroll-step": 5,
-    "on-click": "pamixer -t"
+    "on-click": "pamixer -t",
+    "on-click-right": "kitty -e wiremix"
   },
   "battery": {
     "format": "{capacity}%",
@@ -78,7 +87,7 @@
   },
   "custom/power": {
     "format": "power",
-    "on-click": "kakku-power-menu",
+    "on-click": "kakku power",
     "tooltip": false
   }
 }

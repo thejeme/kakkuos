@@ -124,6 +124,9 @@ copy_config_dir rofi
 copy_config_dir kitty
 copy_config_dir fastfetch
 copy_config_dir mako
+copy_config_dir lazygit
+copy_config_dir yazi
+copy_config_dir btop
 
 if command -v xdg-user-dirs-update >/dev/null 2>&1; then
   xdg-user-dirs-update || true
@@ -141,16 +144,15 @@ if [[ -d "$REPO_DIR/themes" ]]; then
   sudo cp -r "$REPO_DIR/themes/." /usr/share/kakku/themes/
 fi
 
-if [[ -f "$REPO_DIR/bin/kakku-theme" ]]; then
-  sudo install -Dm755 "$REPO_DIR/bin/kakku-theme" /usr/bin/kakku-theme
+if [[ -d "$REPO_DIR/bin" ]]; then
+  for script in "$REPO_DIR"/bin/kakku*; do
+    [[ -f "$script" ]] || continue
+    sudo install -Dm755 "$script" "/usr/bin/$(basename "$script")"
+  done
 fi
 
-if [[ -f "$REPO_DIR/bin/kakku" ]]; then
-  sudo install -Dm755 "$REPO_DIR/bin/kakku" /usr/bin/kakku
-fi
-
-if [[ -f "$REPO_DIR/bin/kakku-screenshot" ]]; then
-  sudo install -Dm755 "$REPO_DIR/bin/kakku-screenshot" /usr/bin/kakku-screenshot
+if command -v xdg-mime >/dev/null 2>&1 && command -v kakku-defaults >/dev/null 2>&1; then
+  kakku-defaults || true
 fi
 
 if [[ -f "$REPO_DIR/system/environment.d/kakku.conf" ]]; then

@@ -41,6 +41,9 @@ package() {
   cp -r "$repo_root/dotfiles/kitty" "$pkgdir/etc/skel/.config/kitty"
   cp -r "$repo_root/dotfiles/fastfetch" "$pkgdir/etc/skel/.config/fastfetch"
   cp -r "$repo_root/dotfiles/mako" "$pkgdir/etc/skel/.config/mako"
+  cp -r "$repo_root/dotfiles/lazygit" "$pkgdir/etc/skel/.config/lazygit"
+  cp -r "$repo_root/dotfiles/yazi" "$pkgdir/etc/skel/.config/yazi"
+  cp -r "$repo_root/dotfiles/btop" "$pkgdir/etc/skel/.config/btop"
 
   install -Dm644 "$repo_root/dotfiles/zsh/.zshrc" "$pkgdir/etc/skel/.zshrc"
 
@@ -53,9 +56,8 @@ package() {
   install -dm755 "$pkgdir/usr/share/kakku/packages"
   cp -r "$repo_root/packages/." "$pkgdir/usr/share/kakku/packages/"
 
-  install -Dm755 "$repo_root/bin/kakku" "$pkgdir/usr/bin/kakku"
-  install -Dm755 "$repo_root/bin/kakku-theme" "$pkgdir/usr/bin/kakku-theme"
-  install -Dm755 "$repo_root/bin/kakku-screenshot" "$pkgdir/usr/bin/kakku-screenshot"
+  install -dm755 "$pkgdir/usr/bin"
+  install -m755 "$repo_root"/bin/kakku* "$pkgdir/usr/bin/"
 
   install -Dm644 "$repo_root/system/environment.d/kakku.conf" "$pkgdir/etc/environment.d/kakku.conf"
 

@@ -1,10 +1,14 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+current="$(kakku-theme current 2>/dev/null || echo matcha)"
 theme="$(
   kakku-theme list |
+    sed "s/^$current$/$current  current/" |
     rofi -dmenu -i -p "Theme"
 )"
+
+theme="${theme%%  current}"
 
 if [[ -n "$theme" ]]; then
   kakku-theme set "$theme"

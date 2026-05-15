@@ -20,4 +20,12 @@ inxi
 fastfetch
 btop
 tmux
-
+yazi
+wiremix
+bluetui
+7zip
+chafa
+imagemagick
+poppler
+resvg
+wl-clipboard

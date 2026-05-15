@@ -1,8 +1,8 @@
 font=Inter 10
-background-color=#fff8dfee
-text-color=#2f2613ff
-border-color=#d99a21ff
-progress-color=over #d99a21ff
+background-color=#1b120bee
+text-color=#f3dfc8ff
+border-color=#f07f24ff
+progress-color=over #f07f24ff
 border-size=2
 border-radius=6
 padding=10
@@ -15,6 +15,6 @@ icons=1
 max-icon-size=48
 
 [urgency=high]
-border-color=#b42345ff
+border-color=#e14d5aff
 default-timeout=0
 

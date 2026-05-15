@@ -57,6 +57,27 @@ if command -v procs >/dev/null 2>&1; then
   alias ps='procs'
 fi
 
+if command -v yazi >/dev/null 2>&1; then
+  alias y='yazi'
+  alias fm='yazi'
+
+  yy() {
+    local tmp
+    tmp="$(mktemp -t yazi-cwd.XXXXXX)"
+    yazi "$@" --cwd-file="$tmp"
+
+    if [[ -f "$tmp" ]]; then
+      local cwd
+      cwd="$(cat "$tmp")"
+      rm -f "$tmp"
+
+      if [[ -n "$cwd" && "$cwd" != "$PWD" ]]; then
+        cd "$cwd"
+      fi
+    fi
+  }
+fi
+
 if command -v tldr >/dev/null 2>&1; then
   alias helpme='tldr'
 fi

@@ -34,6 +34,8 @@ kakku/
     rofi/
     kitty/
     mako/
+    yazi/
+    lazygit/
     fastfetch/
     zsh/
   system/
@@ -50,10 +52,10 @@ kakku/
     mocha/
     tiramisu/
     vanilla/
+    carrot/
   bin/
     kakku
-    kakku-theme
-    kakku-screenshot
+    kakku-*
   branding/
     wallpaper.svg
     wallpaper.png
@@ -66,14 +68,22 @@ kakku/
     kakku-desktop/
 ```
 
-## Phase 1: Apply On Top Of CachyOS Hyprland
+## Install
 
-Install CachyOS Hyprland first, then run:
+Install KakkuOS on a CachyOS base.
+
+Start with CachyOS Hyprland and run the hosted installer. It clones the KakkuOS repository, runs the project installer, installs packages with `--needed`, copies dotfiles, backs up changed local configs, and enables common services when available.
+
+```bash
+curl -fsSL https://kakkuos.jeme.app/install.sh \
+  | bash
+```
+
+Manual local install:
 
 ```bash
 git clone https://github.com/TheJeme/kakkuos
 cd kakkuos
-chmod +x install.sh
 ./install.sh
 ```
 
@@ -122,10 +132,15 @@ Available commands:
 | `kakku keybinds` | Print KakkuOS default keyboard shortcuts. |
 | `kakku paths` | Show important Kakku config and system paths. |
 | `kakku packages` | Show installed package profile information. |
+| `kakku screenshot region` | Take a region screenshot and open annotation. |
+| `kakku screenshot full` | Save a full screenshot. |
+| `kakku power` | Open the power menu. |
 | `kakku theme list` | List available themes. |
 | `kakku theme current` | Show the current theme. |
 | `kakku theme set <theme>` | Apply a theme. |
+| `kakku theme menu` | Open the theme picker menu. |
 | `kakku update` | Run a normal interactive system update with `pacman`, then AUR updates with `paru` or `yay` if available. |
+| `kakku defaults` | Configure default applications with `xdg-mime`. |
 | `kakku version` | Show the Kakku version string. |
 
 ## Relationship To CachyOS
@@ -202,6 +217,8 @@ These packages cover common laptop and desktop hardware needs.
 | `networkmanager` | Network connection management. |
 | `bluez` | Bluetooth protocol stack. |
 | `bluez-utils` | Bluetooth command-line tools and service helpers. |
+| `bluetui` | Terminal UI for managing Bluetooth devices. |
+| `wiremix` | Terminal UI audio mixer for PipeWire. |
 | `brightnessctl` | Brightness control for laptops and monitor backlights. |
 | `tailscale` | WireGuard-based private mesh VPN for connecting personal machines and servers. |
 | `proton-vpn-gtk-app` | Proton VPN graphical client. |
@@ -236,6 +253,12 @@ Kakku includes modern replacements for common Unix commands while keeping behavi
 | `procs` | `ps` | More readable process listing. |
 | `tealdeer` | `tldr` client | Fast practical command examples. |
 | `unzip` | ZIP archives | Basic ZIP archive extraction. |
+| `7zip` | 7z and archive handling | Archive support used by tools such as Yazi. |
+| `chafa` | Terminal image preview | Fallback image preview support for terminal tools. |
+| `imagemagick` | Image processing | Image/font preview support and general image conversion tools. |
+| `poppler` | PDF tools | PDF preview support for terminal file workflows. |
+| `resvg` | SVG rendering | SVG preview/rendering support. |
+| `wl-clipboard` | Wayland clipboard | Clipboard support for terminal tools. |
 | `less` | Pager | Default pager for manuals and command output. |
 | `man-db` | Manual pages | Manpage database and `man` command support. |
 | `man-pages` | Manual page content | Common Linux and POSIX documentation. |
@@ -252,6 +275,8 @@ Configured shell behavior:
 - `ps` uses `procs`
 - `helpme` uses `tldr`
 - `fzf` uses `fd` for file and directory discovery
+- `y` and `fm` open `yazi`
+- `yy` opens `yazi` and changes the shell to the selected directory on exit
 
 ### System Monitoring And Identity
 
@@ -301,6 +326,7 @@ These packages make the default install useful for media playback, screen record
 | Package | Purpose |
 |---|---|
 | `mpv` | Lightweight, high-quality media player. |
+| `ffmpegthumbnailer` | Video thumbnail generation for file previews. |
 | `obs-studio` | Screen recording and streaming. |
 | `kdenlive` | Non-linear video editor. |
 | `pinta` | Simple image editor for quick edits and annotations. |
@@ -316,7 +342,9 @@ These packages make the default install useful for media playback, screen record
 | `neovim` | Modern Vim-based terminal editor for coding and config editing. |
 | `lazygit` | Terminal UI for Git repositories. |
 | `lazydocker` | Terminal UI for Docker containers, images, volumes, and logs. |
+| `git-delta` | Better Git diff viewer used by the Lazygit config. |
 | `tmux` | Terminal multiplexer for persistent shell sessions, panes, and remote work. |
+| `yazi` | Fast terminal file manager. Kakku keeps Dolphin as the graphical file manager and uses Yazi for terminal workflows. |
 | `visual-studio-code-bin` | Visual Studio Code from the AUR. Kept in `packages/aur.txt` because it is not a normal repo package. |
 | `localsend-bin` | LocalSend from the AUR for local network file sharing between devices. |
 
@@ -329,14 +357,57 @@ These packages make the default install useful for media playback, screen record
 | `swappy` | Annotates screenshots after capture. |
 | `playerctl` | Controls media playback from keybindings or scripts. |
 
-Default Hyprland keybindings include:
+## Keybindings
 
-- `Print` for region screenshot and annotation via `kakku-screenshot region`
-- `Shift+Print` for full-screen screenshot saved under `~/Pictures/Screenshots` via `kakku-screenshot full`
-- media keys through `playerctl`
-- volume keys through `pamixer`
-- brightness keys through `brightnessctl`
-- `Super+L` to lock with `hyprlock`
+| Keybinding | Action |
+|---|---|
+| `Super+Enter` | Open Kitty terminal. |
+| `Super+D` | Open Rofi app launcher. |
+| `Super+E` | Open Dolphin. |
+| `Super+Shift+E` | Open Yazi in Kitty. |
+| `Super+Q` | Close active window. |
+| `Super+M` | Exit Hyprland. |
+| `Super+V` | Toggle floating. |
+| `Super+P` | Toggle pseudotile. |
+| `Super+J` | Toggle split. |
+| `Super+L` | Lock with Hyprlock. |
+| `Super+Shift+M` | Open KakkuOS power menu. |
+| `Super+Shift+T` | Open KakkuOS theme menu. |
+| `Print` | Region screenshot and annotation via `kakku screenshot region`. |
+| `Shift+Print` | Full screenshot saved under `~/Pictures/Screenshots` via `kakku screenshot full`. |
+| `Super+Left/Right/Up/Down` | Move focus. |
+| `Super+Shift+Left/Right/Up/Down` | Move active window. |
+| `Super+1..3` | Switch workspace. |
+| `Super+Shift+1..3` | Move window to workspace. |
+| `Super+Mouse1` | Move floating window. |
+| `Super+Mouse2` | Resize floating window. |
+| `Volume keys` | Adjust or mute audio through `pamixer`. |
+| `Media keys` | Play/pause/next/previous through `playerctl`. |
+| `Brightness keys` | Adjust display brightness through `brightnessctl`. |
+
+## Waybar Actions
+
+| Module | Click Action |
+|---|---|
+| Theme | Open `kakku theme menu`. |
+| Updates | Open a terminal system update. |
+| CPU / Memory | Open `btop`. |
+| Disk | Open `yazi /`. |
+| Bluetooth | Open `bluetui`. |
+| Network | Open `nmtui`. |
+| Audio left click | Toggle mute through `pamixer`. |
+| Audio right click | Open `wiremix`. |
+| Power | Open `kakku power`. |
+
+## Default Applications
+
+KakkuOS configures common default applications with:
+
+```bash
+kakku defaults
+```
+
+Defaults include Firefox for web links, Dolphin for directories, mpv for audio/video, Pinta for images, and LibreOffice applications for office documents.
 
 ## Themes
 
@@ -351,29 +422,52 @@ Kakku includes these cake-style themes:
 - `caramel`
 - `mocha`
 - `vanilla`
-- `honey`
+- `carrot`
 
 The default theme is `matcha`.
 
 List installed themes:
 
 ```bash
-kakku-theme list
+kakku theme list
 ```
 
 Show the current theme:
 
 ```bash
-kakku-theme current
+kakku theme current
 ```
 
 Apply a theme:
 
 ```bash
-kakku-theme set blueberry
+kakku theme set blueberry
 ```
 
-The theme switcher updates the current user's Hyprland, Hyprlock, Hyprqt6engine, Waybar, Rofi, Kitty, and Mako theme fragments. It also tries to reload Hyprland and Mako. Open terminal, launcher, and Qt application windows may need to be restarted to pick up the new theme.
+Each theme includes its own placeholder `wallpaper.png`. These are dummy wallpapers that can be replaced later while keeping the theme structure stable.
+
+The theme switcher updates the current user's Hyprland, Hyprlock, Hyprqt6engine, Waybar, Rofi, Kitty, Mako, and wallpaper fragments. It also tries to reload Hyprland and Mako. Open terminal, launcher, and Qt application windows may need to be restarted to pick up the new theme.
+
+## Bootloader And Boot Splash
+
+For a normal CachyOS install, use the bootloader that fits the machine rather than inventing a KakkuOS boot path immediately.
+
+Recommended choices:
+
+- `systemd-boot` for simple UEFI-only systems.
+- `Limine` if you want modern CachyOS-supported booting with Btrfs snapshot integration.
+- `GRUB` for older BIOS systems or complex compatibility needs.
+- `rEFInd` for users who prefer automatic multi-boot discovery.
+
+For KakkuOS, the practical default recommendation is **Limine on Btrfs snapshot installs** and **systemd-boot for simple UEFI installs**.
+
+CachyOS ISOs enable Plymouth by default for the graphical boot splash. KakkuOS disables that splash with:
+
+```bash
+kakku disable-plymouth
+```
+
+The helper removes the Plymouth hook from `/etc/mkinitcpio.conf` when present, removes common `splash`/`quiet` boot parameters from supported bootloader config files, rebuilds initramfs with `mkinitcpio -P`, and leaves `.kakku.bak` backups for edited files. Bootloader changes should still be reviewed carefully because they affect early boot behavior.
 
 ## Phase 2: Package The Defaults
 

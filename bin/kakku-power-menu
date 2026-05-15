@@ -1,8 +1,20 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+confirm() {
+  local action="$1"
+  local answer
+
+  answer="$(
+    printf '%s\n' "No" "Yes" |
+      rofi -dmenu -i -p "$action?"
+  )"
+
+  [[ "$answer" == "Yes" ]]
+}
+
 chosen="$(
-  printf '%s\n' Lock Logout Suspend Reboot Shutdown |
+  printf '%s\n' Lock Suspend Logout Reboot Shutdown |
     rofi -dmenu -i -p "Power"
 )"
 
@@ -10,17 +22,23 @@ case "$chosen" in
   Lock)
     hyprlock
     ;;
-  Logout)
-    hyprctl dispatch exit
-    ;;
   Suspend)
     systemctl suspend
     ;;
+  Logout)
+    if confirm "Logout"; then
+      hyprctl dispatch exit
+    fi
+    ;;
   Reboot)
-    systemctl reboot
+    if confirm "Reboot"; then
+      systemctl reboot
+    fi
     ;;
   Shutdown)
-    systemctl poweroff
+    if confirm "Shutdown"; then
+      systemctl poweroff
+    fi
     ;;
 esac
 

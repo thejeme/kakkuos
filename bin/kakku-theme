@@ -21,7 +21,7 @@ Themes:
   caramel
   mocha
   vanilla
-  honey
+  carrot
 EOF
 }
 
@@ -82,6 +82,7 @@ set_theme() {
   copy_theme_file "$theme_dir/mako" "$CONFIG_HOME/mako/config"
   copy_theme_file "$theme_dir/hyprlock.conf" "$CONFIG_HOME/hypr/hyprlock.conf"
   copy_theme_file "$theme_dir/hyprqt6engine.conf" "$CONFIG_HOME/hypr/hyprqt6engine.conf"
+  copy_theme_file "$theme_dir/wallpaper.png" "$CONFIG_HOME/hypr/wallpaper.png"
 
   echo "$theme" > "$CONFIG_HOME/kakku-theme"
   reload_session

@@ -1,0 +1,9 @@
+[manager]
+cwd = { fg = "#9ece6a" }
+hovered = { fg = "#111814", bg = "#9ece6a" }
+preview_hovered = { fg = "#111814", bg = "#9ece6a" }
+
+[status]
+separator_open = ""
+separator_close = ""
+

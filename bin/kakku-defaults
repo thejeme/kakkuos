@@ -1,0 +1,54 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+set_default() {
+  local desktop_file="$1"
+  shift
+
+  if ! command -v xdg-mime >/dev/null 2>&1; then
+    return 0
+  fi
+
+  for mimetype in "$@"; do
+    xdg-mime default "$desktop_file" "$mimetype" || true
+  done
+}
+
+set_default firefox.desktop \
+  text/html \
+  x-scheme-handler/http \
+  x-scheme-handler/https
+
+set_default org.kde.dolphin.desktop \
+  inode/directory
+
+set_default mpv.desktop \
+  video/mp4 \
+  video/x-matroska \
+  video/webm \
+  audio/mpeg \
+  audio/flac \
+  audio/ogg
+
+set_default org.pinta_project.Pinta.desktop \
+  image/png \
+  image/jpeg \
+  image/webp
+
+set_default writer.desktop \
+  application/vnd.oasis.opendocument.text \
+  application/msword \
+  application/vnd.openxmlformats-officedocument.wordprocessingml.document
+
+set_default calc.desktop \
+  application/vnd.oasis.opendocument.spreadsheet \
+  application/vnd.ms-excel \
+  application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
+
+set_default impress.desktop \
+  application/vnd.oasis.opendocument.presentation \
+  application/vnd.ms-powerpoint \
+  application/vnd.openxmlformats-officedocument.presentationml.presentation
+
+echo "KakkuOS default applications configured."
+
