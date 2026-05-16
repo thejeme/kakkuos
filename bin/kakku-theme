@@ -84,6 +84,7 @@ set_theme() {
   copy_theme_file "$theme_dir/hyprqt6engine.conf" "$CONFIG_HOME/hypr/hyprqt6engine.conf"
   copy_theme_file "$theme_dir/wallpaper.png" "$CONFIG_HOME/hypr/wallpaper.png"
   copy_theme_file "$theme_dir/cava" "$CONFIG_HOME/cava/config"
+  copy_theme_file "$theme_dir/musikcube.json" "$CONFIG_HOME/musikcube/themes/kakku.json"
 
   echo "$theme" > "$CONFIG_HOME/kakku-theme"
   reload_session

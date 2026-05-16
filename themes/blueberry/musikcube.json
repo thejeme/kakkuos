@@ -1,0 +1,90 @@
+{
+    "schemaVersion": 1,
+    "name": "Kakku",
+    "colors": [
+        {
+            "name": "text_normal",
+            "hex": "#dbe7ff"
+        },
+        {
+            "name": "text_active",
+            "hex": "#7aa2f7"
+        },
+        {
+            "name": "text_disabled",
+            "hex": "#9fb0d0"
+        },
+        {
+            "name": "text_hidden",
+            "hex": "#9fb0d0"
+        },
+        {
+            "name": "text_warning",
+            "hex": "#f9e2af"
+        },
+        {
+            "name": "text_error",
+            "hex": "#f38ba8"
+        },
+        {
+            "name": "background",
+            "hex": "#101522"
+        },
+        {
+            "name": "background_active",
+            "hex": "#25314a"
+        },
+        {
+            "name": "list_header_background",
+            "hex": "#172033"
+        },
+        {
+            "name": "border_normal",
+            "hex": "#25314a"
+        },
+        {
+            "name": "border_active",
+            "hex": "#7aa2f7"
+        },
+        {
+            "name": "border_focused",
+            "hex": "#7aa2f7"
+        },
+        {
+            "name": "selection_background",
+            "hex": "#25314a"
+        },
+        {
+            "name": "selection_text",
+            "hex": "#dbe7ff"
+        },
+        {
+            "name": "shortcut_background",
+            "hex": "#172033"
+        },
+        {
+            "name": "shortcut_text",
+            "hex": "#b4befe"
+        },
+        {
+            "name": "focused_shortcut_background",
+            "hex": "#25314a"
+        },
+        {
+            "name": "focused_shortcut_text",
+            "hex": "#7aa2f7"
+        },
+        {
+            "name": "play_bg",
+            "hex": "#101522"
+        },
+        {
+            "name": "play_fg",
+            "hex": "#7aa2f7"
+        },
+        {
+            "name": "focused_background",
+            "hex": "#25314a"
+        }
+    ]
+}
