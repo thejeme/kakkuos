@@ -344,6 +344,7 @@ These packages make the default install useful for media playback, screen record
 | `kdenlive` | Non-linear video editor. |
 | `pinta` | Simple image editor for quick edits and annotations. |
 | `libreoffice-fresh` | Office suite for documents, spreadsheets, and presentations. |
+| `cider` | Apple Music client. A highly customizable, modern, open-source player. |
 
 ### Development And Containers
 
