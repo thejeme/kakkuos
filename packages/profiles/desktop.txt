@@ -31,4 +31,5 @@ noto-fonts-emoji
 ttf-jetbrains-mono-nerd
 greetd
 greetd-tuigreet
+adw-gtk-theme
 papirus-icon-theme

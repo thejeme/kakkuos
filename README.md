@@ -264,6 +264,13 @@ Kakku includes modern replacements for common Unix commands while keeping behavi
 | `less` | Pager | Default pager for manuals and command output. |
 | `man-db` | Manual pages | Manpage database and `man` command support. |
 | `man-pages` | Manual page content | Common Linux and POSIX documentation. |
+| `cmatrix` | Visuals/Screensaver | Classic trailing "Matrix" code animation in your terminal. |
+| `cbonsai` | Visuals/Fun | Grows an ASCII bonsai tree in your terminal. |
+| `cowsay` | Fun | Classic CLI tool for generating ASCII art text bubbles. |
+| `sl` | `ls` typo | Steam locomotive animation for when you accidentally type `sl` instead of `ls`. |
+| `tty-clock` | Widget | A clean digital clock for the terminal. |
+| `cava` | Audio Visualizer | A highly-customizable audio visualizer for your terminal. |
+| `musikcube` | Media Player | Modern and sleek terminal-based music player for local files. |
 
 Configured shell behavior:
 
