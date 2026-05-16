@@ -28,11 +28,6 @@ mods = "Control"
 chars = "\u001bf"
 
 [[keyboard.bindings]]
-key = "C"
-mods = "Control"
-action = "Copy"
-
-[[keyboard.bindings]]
 key = "V"
 mods = "Control"
 action = "Paste"
