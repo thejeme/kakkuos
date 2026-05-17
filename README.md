@@ -362,6 +362,7 @@ These packages make the default install useful for media playback, screen record
 |---|---|
 | `mpv` | Lightweight, high-quality media player. |
 | `imv` | Keyboard-driven image viewer for Wayland. |
+| `loupe` | Friendly graphical image viewer. Installed as a fallback while `imv` remains the MIME default. |
 | `zathura` | Keyboard-driven document viewer used as the default PDF app. |
 | `zathura-pdf-mupdf` | PDF backend for Zathura. |
 | `ffmpegthumbnailer` | Video thumbnail generation for file previews. |
@@ -444,7 +445,7 @@ KakkuOS configures common default applications with:
 kakku defaults
 ```
 
-Defaults include Zen Browser for web links, Dolphin for directories, mpv for audio/video, Pinta for images, Zathura for PDFs, and LibreOffice applications for office documents. Firefox remains a web-link fallback if Zen is unavailable.
+Defaults include Zen Browser for web links, Dolphin for directories, mpv for audio/video, imv for images, Zathura for PDFs, and LibreOffice applications for office documents. Firefox remains a web-link fallback if Zen is unavailable.
 
 Zen Browser is configured with a policy file that force-installs uBlock Origin, Dark Reader, and SponsorBlock from Mozilla Add-ons.
 

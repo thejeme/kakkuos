@@ -43,6 +43,7 @@ depends=(
   'protonup-qt'
   'mpv'
   'imv'
+  'loupe'
   'zathura'
   'zathura-pdf-mupdf'
   'playerctl'

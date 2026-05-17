@@ -1,5 +1,6 @@
 mpv
 imv
+loupe
 zathura
 zathura-pdf-mupdf
 ffmpegthumbnailer
