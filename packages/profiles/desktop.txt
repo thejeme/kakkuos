@@ -16,7 +16,7 @@ ghostty
 dolphin
 zen-browser-bin
 firefox
-discord
+vesktop
 pipewire
 pipewire-pulse
 wireplumber

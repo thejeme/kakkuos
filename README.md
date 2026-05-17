@@ -8,6 +8,23 @@ The current installer builds KakkuOS from an installed CachyOS system. The targe
 
 KakkuOS is built from:
 
+- **Base**: CachyOS (Arch-based)
+- **Kernel**: CachyOS kernel
+- **Display Server**: Wayland
+- **Window Manager**: niri
+- **Desktop Shell**: DankMaterialShell (DMS)
+- **Terminal**: Ghostty
+- **Shell**: fish (default), zsh, bash
+- **Prompt**: Starship
+- **Browser**: Zen Browser & Firefox
+- **File Manager**: Dolphin & yazi
+- **Editor**: VS Code & Neovim
+- **Theme/Colors**: KakkuOS branding & matugen
+- **Audio**: PipeWire
+- **CLI**: kakku
+
+KakkuOS uses the following components:
+
 - CachyOS system base
 - CachyOS repositories
 - KakkuOS niri and DankMaterialShell desktop
@@ -199,7 +216,7 @@ These packages provide the Wayland desktop session and its core user interface.
 | `zen-browser-bin` | Default Firefox-based web browser. |
 | `firefox` | Firefox browser, kept as a fallback for web links if Zen is unavailable. |
 | `google-chrome` | Google Chrome from the AUR, installed by the default AUR package list. |
-| `discord` | Voice and chat client for communities, gaming, and development groups. |
+| `vesktop` | Custom Discord client for communities, gaming, and development groups. |
 
 Kakku installs DMS through the repository package `dms-shell-niri`. That split package pulls in the base `dms-shell` package and provides the niri compositor integration. Kakku configures greetd to launch `niri-session`; niri starts `xwayland-satellite` and starts the DMS user service from `~/.config/niri/config.kdl`. The install script also tries to add `dms.service` to `niri.service` for the current user when a user systemd manager is available.
 
@@ -326,7 +343,7 @@ Kakku includes a gaming-ready baseline while still relying on CachyOS for optimi
 | `mangohud` | Performance overlay for Vulkan/OpenGL games. |
 | `gamescope` | Nested game compositor useful for scaling, HDR workflows, and Steam-style sessions. |
 | `gamemode` | Lets games request temporary performance-oriented system tuning. |
-| `discord` | Common voice/chat companion for gaming sessions and communities. |
+| `vesktop` | Common voice/chat companion for gaming sessions and communities. |
 
 Useful launch options:
 
