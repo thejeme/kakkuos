@@ -95,7 +95,7 @@ cd kakkuos
 ./install.sh
 ```
 
-The script installs the package list, copies dotfiles into the current user's home directory, configures greetd to start `niri-session`, disables the default CachyOS Plymouth boot splash, sets `zsh` as the login shell when available, and enables common services.
+The script installs the package list, copies dotfiles into the current user's home directory, configures greetd to start `niri-session`, disables the default CachyOS Plymouth boot splash, sets `fish` as the login shell when available, and enables common services.
 
 The installer is safe to run more than once. Unchanged config files are skipped, changed local config paths are backed up with a timestamp, and package installs use `--needed`.
 
@@ -174,7 +174,7 @@ KakkuOS relies on CachyOS for:
 KakkuOS owns:
 
 - default package selection
-- niri, DankMaterialShell, Ghostty, Fastfetch, and Zsh defaults
+- niri, DankMaterialShell, Ghostty, Fastfetch, and shell defaults
 - KakkuOS branding
 - user-facing desktop defaults
 - Kakku packaging and a future ISO image
@@ -251,17 +251,18 @@ The installer enables `NetworkManager`, `bluetooth`, `docker`, `tailscaled`, and
 
 ### Shell And Prompt
 
-Kakku uses `zsh` with a modern prompt and navigation defaults.
+Kakku uses `fish` as the default login shell, while keeping zsh and bash defaults available for users who prefer them.
 
 | Package | Purpose |
 |---|---|
-| `zsh` | Default interactive shell. |
+| `fish` | Default interactive shell. |
+| `zsh` | Alternative interactive shell with matching prompt and navigation defaults. |
 | `starship` | Fast cross-shell prompt. |
 | `zoxide` | Smarter directory jumping. Kakku initializes it as `cd`, so frequent directories become faster to reach. |
 
 ### Modern CLI Tools
 
-Kakku includes modern replacements for common Unix commands while keeping behavior guarded in `.zshrc`, so aliases are only created when the tool exists.
+Kakku includes modern replacements for common Unix commands while keeping behavior guarded in fish, zsh, and bash config, so aliases are only created when the tool exists.
 
 | Package | Replaces/Supports | Purpose |
 |---|---|---|

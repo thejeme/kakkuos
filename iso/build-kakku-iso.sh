@@ -493,7 +493,7 @@ install_cli_installer_config() {
   "locale": "en_US",
   "xkbmap": "us",
   "timezone": "UTC",
-  "user_shell": "/bin/zsh",
+  "user_shell": "/usr/bin/fish",
   "kernel": "linux-cachyos",
   "desktop": "niri",
   "bootloader": "limine",

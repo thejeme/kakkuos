@@ -48,6 +48,16 @@ check_path() {
   fi
 }
 
+check_optional_path() {
+  local path="$1"
+
+  if [[ -e "$path" ]]; then
+    echo "ok   optional path: $path"
+  else
+    echo "warn optional path missing: $path"
+  fi
+}
+
 check_service_enabled() {
   local service="$1"
 
@@ -56,6 +66,157 @@ check_service_enabled() {
   else
     echo "warn service not enabled: $service"
   fi
+}
+
+check_user_service_available() {
+  local service="$1"
+
+  if ! has_command systemctl; then
+    echo "warn user service unchecked: $service"
+    return 0
+  fi
+
+  if systemctl --user list-unit-files "$service" --no-legend 2>/dev/null | grep -q "^$service"; then
+    echo "ok   user service available: $service"
+  else
+    echo "warn user service not found: $service"
+  fi
+}
+
+check_login_shell() {
+  local shell_path=""
+
+  if has_command getent; then
+    shell_path="$(getent passwd "$USER" 2>/dev/null | awk -F: '{print $7}')"
+  fi
+
+  case "$shell_path" in
+    /usr/bin/fish|/bin/fish)
+      echo "ok   login shell: $shell_path"
+      ;;
+    "")
+      echo "warn login shell unchecked"
+      ;;
+    *)
+      echo "warn login shell is $shell_path, expected fish"
+      ;;
+  esac
+}
+
+check_niri_config() {
+  local config="$CONFIG_HOME/niri/config.kdl"
+
+  check_path "$config" || return 1
+
+  if ! has_command niri; then
+    return 1
+  fi
+
+  if niri validate -c "$config" >/dev/null 2>&1; then
+    echo "ok   niri config validates"
+  else
+    echo "warn niri config validation failed or unsupported"
+  fi
+}
+
+check_xdg_default() {
+  local mime_type="$1"
+  shift
+  local expected=("$@")
+  local current=""
+  local candidate
+
+  if ! has_command xdg-mime; then
+    echo "warn xdg default unchecked: $mime_type"
+    return 0
+  fi
+
+  current="$(xdg-mime query default "$mime_type" 2>/dev/null || true)"
+  for candidate in "${expected[@]}"; do
+    if [[ "$current" == "$candidate" ]]; then
+      echo "ok   xdg default: $mime_type -> $current"
+      return 0
+    fi
+  done
+
+  echo "miss xdg default: $mime_type -> ${current:-unset}"
+  return 1
+}
+
+check_browser_policies() {
+  local failed=0
+  local target
+  local targets=(
+    /opt/zen-browser-bin/distribution/policies.json
+    /usr/lib/zen-browser/distribution/policies.json
+    /usr/lib/zen-browser-bin/distribution/policies.json
+    /usr/lib/firefox/distribution/policies.json
+  )
+
+  check_path "$KAKKU_SHARE/browser/policies.json" || failed=1
+  check_path /usr/share/libalpm/hooks/kakku-browser-policies.hook || failed=1
+
+  for target in "${targets[@]}"; do
+    if [[ -f "$target" ]]; then
+      echo "ok   browser policy installed: $target"
+      return "$failed"
+    fi
+  done
+
+  echo "warn browser policy not installed into a browser distribution directory"
+  return "$failed"
+}
+
+check_dms_plugin() {
+  local plugin_dir="$1"
+  local plugin_id="$2"
+  local plugin_path="$CONFIG_HOME/DankMaterialShell/plugins/$plugin_dir/plugin.json"
+  local settings_file="$CONFIG_HOME/DankMaterialShell/plugin_settings.json"
+
+  check_path "$plugin_path" || return 1
+
+  if [[ -f "$settings_file" ]] && has_command jq; then
+    if jq -e --arg id "$plugin_id" '.[$id].enabled == true' "$settings_file" >/dev/null 2>&1; then
+      echo "ok   DMS plugin enabled: $plugin_id"
+    else
+      echo "warn DMS plugin not enabled in settings: $plugin_id"
+    fi
+  fi
+}
+
+check_dms_ipc_bindings() {
+  local config="$CONFIG_HOME/niri/config.kdl"
+  local failed=0
+  local binding
+  local bindings=(
+    'dms" "ipc" "call" "spotlight" "toggle'
+    'dms" "ipc" "call" "clipboard" "toggle'
+    'dms" "ipc" "call" "notifications" "toggle'
+    'dms" "ipc" "call" "settings" "focusOrToggle'
+    'dms" "ipc" "call" "dankdash" "wallpaper'
+    'dms" "ipc" "call" "plugins" "toggle" "aiAssistant'
+    'dms" "ipc" "call" "spotlight" "openQuery" "="'
+    'dms" "ipc" "call" "lock" "lock'
+    'dms" "ipc" "call" "audio" "increment'
+    'dms" "ipc" "call" "brightness" "increment'
+  )
+
+  if [[ ! -f "$config" ]]; then
+    return 1
+  fi
+
+  for binding in "${bindings[@]}"; do
+    if ! grep -q "$binding" "$config"; then
+      echo "miss DMS keybind command: $binding"
+      failed=1
+    fi
+  done
+
+  if (( failed == 0 )); then
+    echo "ok   DMS IPC keybind commands"
+  fi
+
+  return "$failed"
 }
 
 show_service_status() {
@@ -158,18 +319,36 @@ show_packages() {
 run_doctor() {
   local failed=0
 
-  for command_name in niri dms xwayland-satellite ghostty playerctl kakku yazi btop; do
+  for command_name in niri dms xwayland-satellite ghostty playerctl kakku kakku-defaults kakku-browser-policies kakku-dms-plugins yazi btop fish zathura; do
     check_command "$command_name" || failed=1
   done
 
-  check_path "$CONFIG_HOME/niri/config.kdl" || failed=1
+  check_niri_config || failed=1
   check_path "/usr/share/backgrounds/kakku/wallpaper.png" || failed=1
+  check_path "$CONFIG_HOME/fish/config.fish" || failed=1
+  check_optional_path "$HOME/.zshrc"
+  check_path "$CONFIG_HOME/DankMaterialShell/plugins" || failed=1
+
+  check_dms_plugin AIAssistant aiAssistant || failed=1
+  check_dms_plugin Calculator calculator || failed=1
+  check_dms_ipc_bindings || failed=1
+
+  check_xdg_default application/pdf org.pwmt.zathura.desktop zathura.desktop || failed=1
+  check_xdg_default image/png imv.desktop || failed=1
+  check_xdg_default text/html zen-browser.desktop zen.desktop zen-browser-bin.desktop firefox.desktop || failed=1
+  check_xdg_default x-scheme-handler/http zen-browser.desktop zen.desktop zen-browser-bin.desktop firefox.desktop || failed=1
+  check_xdg_default x-scheme-handler/https zen-browser.desktop zen.desktop zen-browser-bin.desktop firefox.desktop || failed=1
+
+  check_browser_policies || failed=1
+  check_login_shell
 
   check_service_enabled NetworkManager
   check_service_enabled bluetooth
+  check_service_enabled greetd
   check_service_enabled docker
   check_service_enabled tailscaled
   check_service_enabled power-profiles-daemon
+  check_user_service_available dms.service
 
   if (( failed )); then
     echo

@@ -67,6 +67,25 @@ If `packaging/repo` has already been built, use:
 iso/build-kakku-iso.sh --prepare-only --use-existing-local-repo
 ```
 
+## Smoke Check
+
+After a prepare-only run, validate the staged tree before attempting a full ISO
+build:
+
+```bash
+scripts/iso-smoke-check.sh
+```
+
+For quick checks where the local package repo was intentionally skipped, use:
+
+```bash
+scripts/iso-smoke-check.sh --allow-missing-local-repo
+```
+
+The smoke check verifies the CLI installer entrypoints, KakkuOS package
+injection, GUI installer package removal, live OS identity, boot-to-CLI target,
+installer defaults, and user-facing boot branding.
+
 ## Build
 
 ```bash

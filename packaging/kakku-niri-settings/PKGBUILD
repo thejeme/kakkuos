@@ -26,6 +26,7 @@ depends=(
   'playerctl'
   'fontconfig'
   'ttf-jetbrains-mono-nerd'
+  'fish'
   'zsh'
   'starship'
   'greetd'
@@ -43,7 +44,9 @@ package() {
   cp -r "$repo_root/dotfiles/lazygit" "$pkgdir/etc/skel/.config/lazygit"
   cp -r "$repo_root/dotfiles/yazi" "$pkgdir/etc/skel/.config/yazi"
   cp -r "$repo_root/dotfiles/btop" "$pkgdir/etc/skel/.config/btop"
+  cp -r "$repo_root/dotfiles/fish" "$pkgdir/etc/skel/.config/fish"
 
+  install -Dm644 "$repo_root/dotfiles/bash/.bashrc" "$pkgdir/etc/skel/.bashrc"
   install -Dm644 "$repo_root/dotfiles/zsh/.zshrc" "$pkgdir/etc/skel/.zshrc"
 
   install -dm755 "$pkgdir/usr/share/backgrounds/kakku"

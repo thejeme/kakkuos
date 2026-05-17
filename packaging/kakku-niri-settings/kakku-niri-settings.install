@@ -31,7 +31,7 @@ _apply_configs() {
     id "$username" &>/dev/null || continue
 
     # Copy .config directories
-    for dir in niri fastfetch lazygit yazi btop; do
+    for dir in niri fastfetch lazygit yazi btop fish; do
       if [ -d "$skel/.config/$dir" ]; then
         mkdir -p "$user_home/.config/$dir"
         cp -r "$skel/.config/$dir/." "$user_home/.config/$dir/"
@@ -39,7 +39,12 @@ _apply_configs() {
       fi
     done
 
-    # Copy .zshrc
+    # Copy shell rc files
+    if [ -f "$skel/.bashrc" ]; then
+      cp "$skel/.bashrc" "$user_home/.bashrc"
+      chown "$username:$username" "$user_home/.bashrc"
+    fi
+
     if [ -f "$skel/.zshrc" ]; then
       cp "$skel/.zshrc" "$user_home/.zshrc"
       chown "$username:$username" "$user_home/.zshrc"
