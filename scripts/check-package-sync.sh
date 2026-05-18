@@ -55,6 +55,7 @@ trap 'rm -rf "$tmpdir"' EXIT
 profiles="$tmpdir/profiles"
 depends="$tmpdir/depends"
 aur="$tmpdir/aur"
+acceptable_depends="$tmpdir/acceptable-depends"
 missing_from_depends="$tmpdir/missing-from-depends"
 extra_in_depends="$tmpdir/extra-in-depends"
 aur_in_profiles="$tmpdir/aur-in-profiles"
@@ -62,9 +63,10 @@ aur_in_profiles="$tmpdir/aur-in-profiles"
 read_profile_packages | sort_unique > "$profiles"
 read_pkgbuild_depends | grep -v '^kakku-niri-settings$' | sort_unique > "$depends"
 read_package_file "$AUR_FILE" | sort_unique > "$aur"
+cat "$profiles" "$aur" | sort_unique > "$acceptable_depends"
 
 comm_missing_left "$profiles" "$depends" > "$missing_from_depends"
-comm_missing_left "$depends" "$profiles" > "$extra_in_depends"
+comm_missing_left "$depends" "$acceptable_depends" > "$extra_in_depends"
 comm -12 "$profiles" "$aur" > "$aur_in_profiles"
 
 failed=0

@@ -334,7 +334,12 @@ if [[ "$KAKKU_SYSTEM_CONFIG" == "1" ]]; then
   sudo systemctl enable power-profiles-daemon || true
   sudo usermod -aG docker "$USER" || true
 
-  # Set up greetd as login manager
+  # Set up DMS greeter as login manager UI.
+  if has_command dms; then
+    dms greeter install --yes || true
+    dms greeter enable --yes || true
+    dms greeter sync --yes || true
+  fi
   sudo install -Dm644 "$REPO_DIR/system/greetd/config.toml" /etc/greetd/config.toml
   sudo systemctl disable sddm.service 2>/dev/null || true
   sudo systemctl enable greetd.service || true

@@ -29,7 +29,7 @@ depends=(
   'zsh'
   'starship'
   'greetd'
-  'greetd-tuigreet'
+  'greetd-dms-greeter-git'
 )
 source=()
 sha256sums=()
@@ -69,7 +69,13 @@ package() {
   cp -r "$repo_root/system/screensaver/." "$pkgdir/usr/share/kakku/screensaver/"
 
   install -dm755 "$pkgdir/usr/bin"
-  install -m755 "$repo_root"/bin/kakku* "$pkgdir/usr/bin/"
+  install -m755 "$repo_root"/bin/kakku "$pkgdir/usr/bin/"
+  install -m755 "$repo_root"/bin/kakku-browser-policies "$pkgdir/usr/bin/"
+  install -m755 "$repo_root"/bin/kakku-defaults "$pkgdir/usr/bin/"
+  install -m755 "$repo_root"/bin/kakku-disable-plymouth "$pkgdir/usr/bin/"
+  install -m755 "$repo_root"/bin/kakku-dms-plugins "$pkgdir/usr/bin/"
+  install -m755 "$repo_root"/bin/kakku-idle "$pkgdir/usr/bin/"
+  install -m755 "$repo_root"/bin/kakku-screensaver "$pkgdir/usr/bin/"
 
   install -Dm644 "$repo_root/system/systemd/user/kakku-idle.service" "$pkgdir/usr/lib/systemd/user/kakku-idle.service"
 

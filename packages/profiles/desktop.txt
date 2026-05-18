@@ -26,4 +26,3 @@ noto-fonts-cjk
 noto-fonts-emoji
 ttf-jetbrains-mono-nerd
 greetd
-greetd-tuigreet

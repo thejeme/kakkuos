@@ -1,5 +1,5 @@
 post_install() {
-  # Enable greetd as login manager (disable others)
+  # Enable DMS greeter as login manager UI (disable others)
   systemctl disable sddm.service 2>/dev/null || true
   systemctl disable ly.service 2>/dev/null || true
   systemctl enable greetd.service 2>/dev/null || true

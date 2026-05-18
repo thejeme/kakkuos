@@ -98,11 +98,11 @@ cd kakkuos
 ./install.sh
 ```
 
-The script installs the package list, copies dotfiles into the current user's home directory, configures greetd to start `niri-session`, disables the default CachyOS Plymouth boot splash, sets `fish` as the login shell when available, and enables common services.
+The script installs the package list, copies dotfiles into the current user's home directory, installs and configures the DMS greeter for login, disables the default CachyOS Plymouth boot splash, sets `fish` as the login shell when available, and enables common services.
 
 The installer is safe to run more than once. Unchanged config files are skipped, changed local config paths are backed up with a timestamp, and package installs use `--needed`.
 
-On an existing CachyOS install, `install.sh` should be treated as a conversion script. It keeps DMS' generated config files user-owned, but it still installs Kakku packages and defaults, backs up replaced Kakku-owned user config directories, switches the login manager to greetd, applies userspace KakkuOS branding, and updates service defaults. Use the default mode only when the intent is to make that install behave like KakkuOS.
+On an existing CachyOS install, `install.sh` should be treated as a conversion script. It keeps DMS' generated config files user-owned, but it still installs Kakku packages and defaults, backs up replaced Kakku-owned user config directories, switches the login screen to DMS greeter, applies userspace KakkuOS branding, and updates service defaults. Use the default mode only when the intent is to make that install behave like KakkuOS.
 
 For an existing CachyOS + DMS install where you only want the Kakku user-layer defaults and DMS plugins without changing the login manager, service defaults, or OS branding, run:
 
@@ -223,8 +223,9 @@ These packages provide the Wayland desktop session and its core user interface.
 | `firefox` | Firefox browser, kept as a fallback for web links if Zen is unavailable. |
 | `google-chrome` | Google Chrome from the AUR, installed by the default AUR package list. |
 | `vesktop` | Custom Discord client for communities, gaming, and development groups. |
+| `greetd-dms-greeter-git` | DMS login greeter for greetd, replacing the previous text-based tuigreet login screen. |
 
-Kakku installs DMS through the repository package `dms-shell-niri`. That split package pulls in the base `dms-shell` package and provides the niri compositor integration. Kakku configures greetd to launch `niri-session` and ships a niri default config in `~/.config/niri` with Kakku-owned DMS keybindings, Kakku screenshot paths, and DMS-friendly window and layer rules. DMS-generated files under `~/.config/niri/dms` are left to DMS and are not required for niri to start.
+Kakku installs DMS through the repository package `dms-shell-niri`. That split package pulls in the base `dms-shell` package and provides the niri compositor integration. Kakku configures greetd to launch the packaged DMS greeter with `/usr/bin/dms-greeter --command niri -p /usr/share/quickshell/dms`, so the login screen uses the DMS greeter UI instead of Kakku's old tuigreet wrapper. Kakku also ships a niri default config in `~/.config/niri` with Kakku-owned DMS keybindings, Kakku screenshot paths, and DMS-friendly window and layer rules. DMS-generated files under `~/.config/niri/dms` are left to DMS and are not required for niri to start.
 
 The install script also runs `kakku-dms-plugins --no-restart`, which installs or updates these DMS plugins under `~/.config/DankMaterialShell/plugins/`:
 

@@ -47,7 +47,7 @@ depends=(
   'zathura'
   'zathura-pdf-mupdf'
   'greetd'
-  'greetd-tuigreet'
+  'greetd-dms-greeter-git'
   'fontconfig'
   'noto-fonts'
   'noto-fonts-cjk'
