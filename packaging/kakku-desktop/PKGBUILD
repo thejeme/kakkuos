@@ -48,6 +48,7 @@ depends=(
   'zathura-pdf-mupdf'
   'greetd'
   'greetd-dms-greeter-git'
+  'dsearch-bin'
   'fontconfig'
   'noto-fonts'
   'noto-fonts-cjk'

@@ -325,6 +325,7 @@ if [[ "$KAKKU_SYSTEM_CONFIG" == "1" ]]; then
     sudo systemctl --global enable kakku-idle.service || true
     systemctl --user daemon-reload 2>/dev/null || true
     systemctl --user enable --now kakku-idle.service 2>/dev/null || true
+    systemctl --user enable --now dsearch.service 2>/dev/null || true
   fi
 
   sudo systemctl enable NetworkManager || true
@@ -336,9 +337,9 @@ if [[ "$KAKKU_SYSTEM_CONFIG" == "1" ]]; then
 
   # Set up DMS greeter as login manager UI.
   if has_command dms; then
-    dms greeter install --yes || true
-    dms greeter enable --yes || true
-    dms greeter sync --yes || true
+    DMS_PRIVESC="${DMS_PRIVESC:-sudo}" dms greeter install --yes || true
+    DMS_PRIVESC="${DMS_PRIVESC:-sudo}" dms greeter enable --yes || true
+    DMS_PRIVESC="${DMS_PRIVESC:-sudo}" dms greeter sync --yes || true
   fi
   sudo install -Dm644 "$REPO_DIR/system/greetd/config.toml" /etc/greetd/config.toml
   sudo systemctl disable sddm.service 2>/dev/null || true

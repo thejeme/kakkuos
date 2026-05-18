@@ -320,6 +320,7 @@ fix_user_services() {
 
   systemctl --user daemon-reload 2>/dev/null || true
   systemctl --user enable --now kakku-idle.service 2>/dev/null || true
+  systemctl --user enable --now dsearch.service 2>/dev/null || true
 }
 
 show_service_status() {
@@ -432,7 +433,7 @@ run_doctor_fix() {
   run_fix_step "install or update DMS plugins" fix_dms_plugins
   run_fix_step "set fish as login shell" fix_login_shell
   run_fix_step "enable core services" fix_core_services
-  run_fix_step "enable user idle service" fix_user_services
+  run_fix_step "enable user services" fix_user_services
 
   echo
   echo "Repair pass completed. Rechecking..."
@@ -442,7 +443,7 @@ run_doctor_fix() {
 run_doctor_checks() {
   local failed=0
 
-  for command_name in niri dms xwayland-satellite ghostty swayidle kakku kakku-defaults kakku-browser-policies kakku-dms-plugins kakku-screensaver kakku-idle yazi btop fish zathura nvim codex; do
+  for command_name in niri dms dsearch xwayland-satellite ghostty swayidle kakku kakku-defaults kakku-browser-policies kakku-dms-plugins kakku-screensaver kakku-idle yazi btop fish zathura nvim codex; do
     check_command "$command_name" || failed=1
   done
 
@@ -478,6 +479,7 @@ run_doctor_checks() {
   check_service_enabled tailscaled
   check_service_enabled power-profiles-daemon
   check_user_service_available dms.service
+  check_user_service_available dsearch.service
   check_user_service_available kakku-idle.service
 
   if (( failed )); then
