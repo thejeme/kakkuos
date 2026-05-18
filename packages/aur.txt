@@ -3,6 +3,6 @@ google-chrome
 localsend-bin
 pinta-git
 cbonsai
-musikcube
+musikcube-bin
 pacseek
 cider
