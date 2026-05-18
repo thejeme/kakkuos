@@ -18,7 +18,7 @@ Usage: $SCRIPT_NAME [OPTIONS]
 
 Options:
   -i, --interactive   Run interactively (ask for confirmations)
-  --no-system-config  Skip login manager, service, bootloader, and OS branding changes
+  --no-system-config  Skip login manager, service, and OS branding changes
   -h, --help          Show this help
 EOF
 }
@@ -241,7 +241,9 @@ if [[ -x "$REPO_DIR/bin/kakku-browser-policies" ]]; then
 fi
 
 if [[ "${KAKKU_INSTALL_DMS_PLUGINS:-1}" == "1" && -x "$REPO_DIR/bin/kakku-dms-plugins" ]]; then
-  KAKKU_DMS_PLUGIN_DEFAULTS="$REPO_DIR/system/dms/plugin_settings.defaults.json" "$REPO_DIR/bin/kakku-dms-plugins" --no-restart || true
+  KAKKU_DMS_PLUGIN_DEFAULTS="$REPO_DIR/system/dms/plugin_settings.defaults.json" \
+    KAKKU_DMS_SETTINGS_DEFAULTS="$REPO_DIR/system/dms/settings.defaults.json" \
+    "$REPO_DIR/bin/kakku-dms-plugins" --no-restart || true
 fi
 
 if has_command xdg-mime && has_command kakku-defaults; then

@@ -183,7 +183,7 @@ KakkuOS owns:
 - user-facing desktop defaults
 - Kakku packaging and a future ISO image
 
-The practical rule is: KakkuOS should define the user-facing operating system while avoiding unnecessary changes to CachyOS kernel, driver, bootloader, repository, and hardware behavior.
+The practical rule is: KakkuOS should define the user-facing operating system while avoiding unnecessary changes to CachyOS kernel, driver, repository, and hardware behavior.
 
 ### Base And Build Tools
 
@@ -234,7 +234,7 @@ The install script also runs `kakku-dms-plugins --no-restart`, which installs or
 
 Run `kakku dms-plugins` later to update both plugin checkouts and restart DMS.
 
-Kakku does not replace DMS' generated `settings.json`, `plugin_settings.json`, cache, or session state. It only merges missing defaults from `/usr/share/kakku/dms/plugin_settings.defaults.json` into `plugin_settings.json`, so first boot gets the Kakku plugin defaults while user changes and DMS-written values remain authoritative after that.
+Kakku does not replace DMS' generated `settings.json`, `plugin_settings.json`, cache, or session state. It merges missing defaults from `/usr/share/kakku/dms/plugin_settings.defaults.json` and `/usr/share/kakku/dms/settings.defaults.json`, so first boot gets the Kakku theme, bar layout, plugin defaults, and shell behavior while user changes and DMS-written values remain authoritative after that.
 
 ### Audio, Network, And Devices
 
@@ -424,22 +424,9 @@ Defaults include Zen Browser for web links, Dolphin for directories, mpv for aud
 
 Zen Browser is configured with a policy file that force-installs uBlock Origin, Dark Reader, and SponsorBlock from Mozilla Add-ons.
 
-## Bootloader And Boot Splash
+## Boot Splash
 
-For a normal CachyOS install, use the bootloader that fits the machine rather than inventing a KakkuOS boot path immediately.
-
-Recommended choices:
-
-- `systemd-boot` for simple UEFI-only systems.
-- `Limine` if you want modern CachyOS-supported booting with Btrfs snapshot integration.
-- `GRUB` for older BIOS systems or complex compatibility needs.
-- `rEFInd` for users who prefer automatic multi-boot discovery.
-
-For KakkuOS, the practical default recommendation is **Limine on Btrfs snapshot installs** and **systemd-boot for simple UEFI installs**.
-
-CachyOS ISOs enable Plymouth by default for the graphical boot splash. KakkuOS disables that splash during installation. The internal helper removes the Plymouth hook from `/etc/mkinitcpio.conf` when present, removes common `splash`/`quiet` boot parameters from supported bootloader config files, rebuilds initramfs with `mkinitcpio -P` only when a boot-related file changed, and leaves `.kakku.bak` backups for edited files.
-
-KakkuOS does not automatically rename bootloader entries during installation. CachyOS bootloader tooling, especially Limine with Btrfs snapshot integration, should remain managed by CachyOS until KakkuOS has a dedicated install flow.
+CachyOS ISOs enable Plymouth by default for the graphical boot splash. KakkuOS disables that splash during installation. The internal helper removes the Plymouth hook from `/etc/mkinitcpio.conf` when present, rebuilds initramfs with `mkinitcpio -P` only when that file changed, and leaves a `.kakku.bak` backup for the edited file.
 
 ## Phase 2: Package The Defaults
 

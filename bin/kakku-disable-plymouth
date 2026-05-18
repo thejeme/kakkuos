@@ -19,29 +19,6 @@ backup_file() {
   fi
 }
 
-remove_words() {
-  local file="$1"
-  shift
-  local tmp
-
-  [[ -f "$file" ]] || return 0
-  tmp="$(mktemp)"
-  cp "$file" "$tmp"
-
-  for word in "$@"; do
-    sed -i -E "s/\\<${word}\\>//g; s/[[:space:]]+/ /g; s/=\" /=\"/g; s/ \"/\"/g; s/[[:space:]]+$//" "$tmp"
-  done
-
-  if ! cmp -s "$file" "$tmp"; then
-    backup_file "$file"
-    cp "$tmp" "$file"
-    changed=1
-    echo "Removed splash boot parameters from $file."
-  fi
-
-  rm -f "$tmp"
-}
-
 remove_mkinitcpio_plymouth() {
   local file="/etc/mkinitcpio.conf"
   local tmp
@@ -72,25 +49,10 @@ require_root
 
 remove_mkinitcpio_plymouth
 
-remove_words /etc/default/grub splash quiet
-remove_words /etc/default/limine splash quiet
-
-if [[ -d /boot/loader/entries ]]; then
-  for entry in /boot/loader/entries/*.conf; do
-    [[ -f "$entry" ]] || continue
-    remove_words "$entry" splash quiet
-  done
-fi
-
 if (( changed )) && command -v mkinitcpio >/dev/null 2>&1; then
   mkinitcpio -P
 elif (( ! changed )); then
   echo "Plymouth boot splash already disabled."
-fi
-
-if command -v grub-mkconfig >/dev/null 2>&1 && [[ -f /etc/default/grub ]]; then
-  echo "GRUB users should regenerate grub.cfg if needed, for example:"
-  echo "  sudo grub-mkconfig -o /boot/grub/grub.cfg"
 fi
 
 echo "Plymouth boot splash disable step completed. Reboot to verify."

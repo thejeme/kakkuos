@@ -429,6 +429,9 @@ run_doctor_checks() {
   done
 
   check_path "/usr/share/backgrounds/kakku/wallpaper.png" || failed=1
+  check_path "$KAKKU_SHARE/dms/settings.defaults.json" || failed=1
+  check_path "$KAKKU_SHARE/dms/plugin_settings.defaults.json" || failed=1
+  check_path "$KAKKU_SHARE/dms/themes/kakku/theme.json" || failed=1
   check_path "$CONFIG_HOME/fish/config.fish" || failed=1
   check_path "$CONFIG_HOME/nvim/init.lua" || failed=1
   check_optional_path "$HOME/.zshrc"
