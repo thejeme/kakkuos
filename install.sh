@@ -194,11 +194,9 @@ install_aur_packages
 
 mkdir -p "$HOME/.config"
 
-copy_config_dir niri
 copy_config_dir fastfetch
 copy_config_dir lazygit
 copy_config_dir yazi
-copy_config_dir btop
 copy_config_dir nvim
 
 if has_command xdg-user-dirs-update; then

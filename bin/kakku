@@ -114,22 +114,6 @@ check_login_shell() {
   esac
 }
 
-check_niri_config() {
-  local config="$CONFIG_HOME/niri/config.kdl"
-
-  check_path "$config" || return 1
-
-  if ! has_command niri; then
-    return 1
-  fi
-
-  if niri validate -c "$config" >/dev/null 2>&1; then
-    echo "ok   niri config validates"
-  else
-    echo "warn niri config validation failed or unsupported"
-  fi
-}
-
 check_xdg_default() {
   local mime_type="$1"
   shift
@@ -195,41 +179,6 @@ check_dms_plugin() {
   fi
 }
 
-check_dms_ipc_bindings() {
-  local config="$CONFIG_HOME/niri/config.kdl"
-  local failed=0
-  local binding
-  local bindings=(
-    'dms" "ipc" "call" "spotlight" "toggle'
-    'dms" "ipc" "call" "clipboard" "toggle'
-    'dms" "ipc" "call" "notifications" "toggle'
-    'dms" "ipc" "call" "settings" "focusOrToggle'
-    'dms" "ipc" "call" "dankdash" "wallpaper'
-    'dms" "ipc" "call" "plugins" "toggle" "aiAssistant'
-    'dms" "ipc" "call" "spotlight" "openQuery" "="'
-    'dms" "ipc" "call" "lock" "lock'
-    'dms" "ipc" "call" "audio" "increment'
-    'dms" "ipc" "call" "brightness" "increment'
-  )
-
-  if [[ ! -f "$config" ]]; then
-    return 1
-  fi
-
-  for binding in "${bindings[@]}"; do
-    if ! grep -q "$binding" "$config"; then
-      echo "miss DMS keybind command: $binding"
-      failed=1
-    fi
-  done
-
-  if (( failed == 0 )); then
-    echo "ok   DMS IPC keybind commands"
-  fi
-
-  return "$failed"
-}
-
 copy_missing_path() {
   local source="$1"
   local target="$2"
@@ -271,7 +220,6 @@ fix_user_dirs() {
 }
 
 fix_missing_user_configs() {
-  copy_missing_path /etc/skel/.config/niri "$CONFIG_HOME/niri"
   copy_missing_path /etc/skel/.config/fish "$CONFIG_HOME/fish"
   copy_missing_path /etc/skel/.config/nvim "$CONFIG_HOME/nvim"
   copy_missing_path /etc/skel/.zshrc "$HOME/.zshrc"
@@ -436,7 +384,6 @@ show_paths() {
   cat <<EOF
 Kakku paths:
   Config home:        $CONFIG_HOME
-  niri config:        $CONFIG_HOME/niri
   DMS config:         $CONFIG_HOME/DankMaterialShell
   Shared files:       $KAKKU_SHARE
   Backgrounds:        /usr/share/backgrounds/kakku
@@ -477,11 +424,10 @@ run_doctor_fix() {
 run_doctor_checks() {
   local failed=0
 
-  for command_name in niri dms xwayland-satellite ghostty playerctl kakku kakku-defaults kakku-browser-policies kakku-dms-plugins yazi btop fish zathura nvim codex; do
+  for command_name in niri dms xwayland-satellite ghostty kakku kakku-defaults kakku-browser-policies kakku-dms-plugins yazi btop fish zathura nvim codex; do
     check_command "$command_name" || failed=1
   done
 
-  check_niri_config || failed=1
   check_path "/usr/share/backgrounds/kakku/wallpaper.png" || failed=1
   check_path "$CONFIG_HOME/fish/config.fish" || failed=1
   check_path "$CONFIG_HOME/nvim/init.lua" || failed=1
@@ -490,7 +436,6 @@ run_doctor_checks() {
 
   check_dms_plugin AIAssistant aiAssistant || failed=1
   check_dms_plugin Calculator calculator || failed=1
-  check_dms_ipc_bindings || failed=1
 
   check_xdg_default application/pdf org.pwmt.zathura.desktop zathura.desktop || failed=1
   check_xdg_default image/png imv.desktop || failed=1

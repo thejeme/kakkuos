@@ -20,10 +20,8 @@ depends=(
   'i2c-tools'
   'curl'
   'wl-clipboard'
-  'libqalculate'
   'ghostty'
   'fastfetch'
-  'playerctl'
   'fontconfig'
   'ttf-jetbrains-mono-nerd'
   'fish'
@@ -39,11 +37,9 @@ package() {
   local repo_root="$startdir/../.."
 
   install -dm755 "$pkgdir/etc/skel/.config"
-  cp -r "$repo_root/dotfiles/niri" "$pkgdir/etc/skel/.config/niri"
   cp -r "$repo_root/dotfiles/fastfetch" "$pkgdir/etc/skel/.config/fastfetch"
   cp -r "$repo_root/dotfiles/lazygit" "$pkgdir/etc/skel/.config/lazygit"
   cp -r "$repo_root/dotfiles/yazi" "$pkgdir/etc/skel/.config/yazi"
-  cp -r "$repo_root/dotfiles/btop" "$pkgdir/etc/skel/.config/btop"
   cp -r "$repo_root/dotfiles/fish" "$pkgdir/etc/skel/.config/fish"
   cp -r "$repo_root/dotfiles/nvim" "$pkgdir/etc/skel/.config/nvim"
 

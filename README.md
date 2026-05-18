@@ -50,7 +50,6 @@ kakku/
       gaming.txt
       media.txt
   dotfiles/
-    niri/
     yazi/
     lazygit/
     fastfetch/
@@ -214,7 +213,6 @@ These packages provide the Wayland desktop session and its core user interface.
 | `wtype` | Wayland typing helper used by DMS clipboard and plugin paste actions. |
 | `power-profiles-daemon` | Power profile backend used by DMS settings and quick controls. |
 | `i2c-tools` | External display brightness support used by DMS brightness controls. |
-| `libqalculate` | `qalc` engine for the DMS Calculator plugin. |
 | `ghostty` | GPU-accelerated terminal emulator. |
 | `dolphin` | Graphical file manager. |
 | `zen-browser-bin` | Default Firefox-based web browser. |
@@ -222,7 +220,7 @@ These packages provide the Wayland desktop session and its core user interface.
 | `google-chrome` | Google Chrome from the AUR, installed by the default AUR package list. |
 | `vesktop` | Custom Discord client for communities, gaming, and development groups. |
 
-Kakku installs DMS through the repository package `dms-shell-niri`. That split package pulls in the base `dms-shell` package and provides the niri compositor integration. Kakku configures greetd to launch `niri-session`; niri starts `xwayland-satellite` and starts the DMS user service from `~/.config/niri/config.kdl`.
+Kakku installs DMS through the repository package `dms-shell-niri`. That split package pulls in the base `dms-shell` package and provides the niri compositor integration. Kakku configures greetd to launch `niri-session`; the user niri config remains owned by the local install for now.
 
 The install script also runs `kakku-dms-plugins --no-restart`, which installs or updates these DMS plugins under `~/.config/DankMaterialShell/plugins/`:
 
@@ -396,40 +394,9 @@ These packages make the default install useful for media playback, screen record
 | `visual-studio-code-bin` | Visual Studio Code from the AUR. Kept in `packages/aur.txt` because it is not a normal repo package. |
 | `localsend-bin` | LocalSend from the AUR for local network file sharing between devices. |
 
-### Wayland Session Controls
-
-| Package | Purpose |
-|---|---|
-| `playerctl` | Controls media playback from keybindings or scripts. |
-
 ## Keybindings
 
-| Keybinding | Action |
-|---|---|
-| `Super+Enter` / `Super+T` | Open Ghostty terminal. |
-| `Super+Space` / `Super+D` | Open DMS Spotlight launcher. |
-| `Super+E` | Open Dolphin. |
-| `Super+Shift+E` | Open Yazi in Ghostty. |
-| `Super+A` | Toggle DMS AI Assistant. |
-| `Super+Shift+C` | Open DMS Spotlight with Calculator prefix. |
-| `Super+Q` | Close active window. |
-| `Super+Shift+Q` | Exit niri. |
-| `Super+Shift+T` | Toggle floating. |
-| `Super+W` | Toggle tabbed column display. |
-| `Super+Alt+L` | Lock with DMS. |
-| `Super+Comma` | Open DMS settings. |
-| `Super+V` | Open DMS clipboard. |
-| `Super+N` | Open DMS notifications. |
-| `Print` | niri screenshot picker. |
-| `Ctrl+Print` | Screen screenshot saved under `~/Pictures/Screenshots`. |
-| `Alt+Print` | Window screenshot saved under `~/Pictures/Screenshots`. |
-| `Super+Left/Right/Up/Down` | Move focus. |
-| `Super+Shift+Left/Right/Up/Down` | Move active column or window. |
-| `Super+1..9` | Switch workspace. |
-| `Super+Shift+1..9` | Move column to workspace. |
-| `Volume keys` | Adjust or mute audio through DMS. |
-| `Media keys` | Play/pause/next/previous through `playerctl`. |
-| `Brightness keys` | Adjust display brightness through DMS. |
+Kakku does not ship a niri keybinding config for now. Keep the local niri configuration from the installed system, or bind the DMS actions below in your own compositor config.
 
 ## DankMaterialShell Actions
 
