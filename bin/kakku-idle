@@ -5,7 +5,7 @@ SCREENSAVER_TIMEOUT="${KAKKU_SCREENSAVER_TIMEOUT:-300}"
 LOCK_TIMEOUT="${KAKKU_LOCK_TIMEOUT:-900}"
 LOCK_CMD="${KAKKU_LOCK_CMD:-dms ipc call lock lock || loginctl lock-session}"
 SCREENSAVER_CMD="${KAKKU_SCREENSAVER_CMD:-kakku-screensaver --idle}"
-SCREENSAVER_STOP_CMD="${KAKKU_SCREENSAVER_STOP_CMD:-kakku-screensaver --stop}"
+SCREENSAVER_STOP_CMD="pkill -f 'kakku-screensaver --render' >/dev/null 2>&1 || true"
 
 usage() {
   cat <<'EOF'

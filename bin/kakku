@@ -323,18 +323,18 @@ show_keybinds() {
 KakkuOS keybindings:
   Help and overview
     Super+§                       Show keybindings help
-    Super+Tab                     Toggle overview
+    Super+Tab                     Toggle workspace overview
     Super+Alt+S                   Start Kakku screensaver
     Super+Escape                  Toggle shortcut inhibition
 
-  DMS and applications
+  Shell and applications
     Super+T                       Open Ghostty terminal
     Super+E                       Open Dolphin files
     Super+B                       Open Zen browser
     Super+Shift+B                 Open Chrome fallback browser
     Super+D                       Open Discord/Vesktop
     Super+S                       Open Steam
-    Super+Space                   Open DMS launcher
+    Super+Space                   Open app launcher
     Super+V                       Open clipboard
     Super+M / Ctrl+Alt+Delete     Open task manager
     Super+X                       Open power menu

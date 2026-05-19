@@ -13,7 +13,6 @@ Usage:
   kakku-screensaver
   kakku-screensaver --idle
   kakku-screensaver --render
-  kakku-screensaver --stop
 
 Starts the KakkuOS visual screensaver. It is not a lock screen; DMS remains
 responsible for secure locking.
@@ -22,10 +21,6 @@ EOF
 
 is_running() {
   pgrep -f "$RENDER_PATTERN" >/dev/null 2>&1
-}
-
-stop_screensaver() {
-  pkill -f "$RENDER_PATTERN" >/dev/null 2>&1 || true
 }
 
 load_logo() {
@@ -184,9 +179,6 @@ case "${1:-start}" in
     ;;
   --render)
     render_loop
-    ;;
-  --stop)
-    stop_screensaver
     ;;
   -h|--help|help)
     usage
