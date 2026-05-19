@@ -50,11 +50,12 @@ package() {
   install -Dm644 "$repo_root/dotfiles/bash/.bashrc" "$pkgdir/etc/skel/.bashrc"
   install -Dm644 "$repo_root/dotfiles/zsh/.zshrc" "$pkgdir/etc/skel/.zshrc"
 
-  install -dm755 "$pkgdir/usr/share/backgrounds/kakku"
-  cp -r "$repo_root/branding/." "$pkgdir/usr/share/backgrounds/kakku/"
-  if [[ -d "$repo_root/themes" ]]; then
-    install -dm755 "$pkgdir/usr/share/backgrounds/kakku/themes"
-    cp -r "$repo_root/themes/." "$pkgdir/usr/share/backgrounds/kakku/themes/"
+  install -dm755 "$pkgdir/usr/share/kakku/branding"
+  cp -r "$repo_root/branding/." "$pkgdir/usr/share/kakku/branding/"
+  install -Dm644 "$repo_root/branding/wallpaper.png" "$pkgdir/usr/share/backgrounds/kakku/wallpaper.png"
+  if [[ -d "$repo_root/backgrounds" ]]; then
+    install -dm755 "$pkgdir/usr/share/backgrounds/kakku"
+    cp -r "$repo_root/backgrounds/." "$pkgdir/usr/share/backgrounds/kakku/"
   fi
 
   install -dm755 "$pkgdir/usr/share/kakku/packages"

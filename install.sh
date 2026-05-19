@@ -246,13 +246,17 @@ fi
 mkdir -p "$HOME/Pictures/Screenshots"
 
 if [[ -d "$REPO_DIR/branding" ]]; then
-  sudo install -dm755 /usr/share/backgrounds/kakku
-  sudo cp -r "$REPO_DIR/branding/." /usr/share/backgrounds/kakku/
+  sudo install -dm755 /usr/share/kakku/branding
+  sudo cp -r "$REPO_DIR/branding/." /usr/share/kakku/branding/
 fi
 
-if [[ -d "$REPO_DIR/themes" ]]; then
-  sudo install -dm755 /usr/share/backgrounds/kakku/themes
-  sudo cp -r "$REPO_DIR/themes/." /usr/share/backgrounds/kakku/themes/
+if [[ -f "$REPO_DIR/branding/wallpaper.png" ]]; then
+  sudo install -Dm644 "$REPO_DIR/branding/wallpaper.png" /usr/share/backgrounds/kakku/wallpaper.png
+fi
+
+if [[ -d "$REPO_DIR/backgrounds" ]]; then
+  sudo install -dm755 /usr/share/backgrounds/kakku
+  sudo cp -r "$REPO_DIR/backgrounds/." /usr/share/backgrounds/kakku/
 fi
 
 if [[ -d "$REPO_DIR/system/browser" ]]; then

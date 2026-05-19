@@ -601,12 +601,14 @@ stage_kakkuos() {
     --exclude 'iso/out' \
     "$KAKKU_ROOT/" "$staged_source/"
 
-  install -Dm644 "$KAKKU_ROOT/branding/wallpaper.png" "$airootfs/usr/share/backgrounds/kakku/wallpaper.png"
+  install -dm755 "$airootfs/usr/share/kakku/branding"
+  rsync -a --delete "$KAKKU_ROOT/branding/" "$airootfs/usr/share/kakku/branding/"
   install -Dm644 "$KAKKU_ROOT/branding/logo.png" "$airootfs/usr/share/pixmaps/kakku-logo.png"
-  if [[ -d "$KAKKU_ROOT/themes" ]]; then
-    install -dm755 "$airootfs/usr/share/backgrounds/kakku/themes"
-    rsync -a --delete "$KAKKU_ROOT/themes/" "$airootfs/usr/share/backgrounds/kakku/themes/"
+  if [[ -d "$KAKKU_ROOT/backgrounds" ]]; then
+    install -dm755 "$airootfs/usr/share/backgrounds/kakku"
+    rsync -a --delete "$KAKKU_ROOT/backgrounds/" "$airootfs/usr/share/backgrounds/kakku/"
   fi
+  install -Dm644 "$KAKKU_ROOT/branding/wallpaper.png" "$airootfs/usr/share/backgrounds/kakku/wallpaper.png"
   install -dm755 "$airootfs/usr/share/kakku"
 
   apply_iso_branding "$archiso_dir" "$airootfs"

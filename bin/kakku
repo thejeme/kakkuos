@@ -213,7 +213,7 @@ run_fix_step() {
 }
 
 fix_user_dirs() {
-  mkdir -p "$CONFIG_HOME" "$HOME/Pictures/Screenshots" "$HOME/Pictures/Wallpapers"
+  mkdir -p "$CONFIG_HOME" "$HOME/Pictures/Screenshots"
   mkdir -p "$CONFIG_HOME/DankMaterialShell/plugins"
 
   if has_command xdg-user-dirs-update; then
@@ -515,6 +515,8 @@ run_doctor_checks() {
   done
 
   check_path "/usr/share/backgrounds/kakku/wallpaper.png" || failed=1
+  check_path "/usr/share/backgrounds/kakku/kakku-default.png" || failed=1
+  check_path "$KAKKU_SHARE/branding/logo.png" || failed=1
   check_path "$KAKKU_SHARE/dms/settings.defaults.json" || failed=1
   check_path "$KAKKU_SHARE/dms/plugin_settings.defaults.json" || failed=1
   check_path "$KAKKU_SHARE/dms/themes/kakku/theme.json" || failed=1
