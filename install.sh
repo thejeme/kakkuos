@@ -213,6 +213,23 @@ install_pacman_packages() {
 
 install_pacman_packages
 
+# Remove CachyOS packages that conflict with or are replaced by KakkuOS.
+cachyos_remove=(
+  cachyos-hello
+  cachyos-wallpapers
+  cachyos-fish-config
+  cachyos-zsh-config
+)
+cachyos_installed=()
+for pkg in "${cachyos_remove[@]}"; do
+  if pacman -Qi "$pkg" >/dev/null 2>&1; then
+    cachyos_installed+=("$pkg")
+  fi
+done
+if (( ${#cachyos_installed[@]} > 0 )); then
+  sudo pacman -Rns --noconfirm "${cachyos_installed[@]}" || true
+fi
+
 install_aur_packages() {
   mapfile -t aur_packages < <(read_package_list "$REPO_DIR/packages/aur.txt")
   if (( ${#aur_packages[@]} == 0 )); then
@@ -311,14 +328,6 @@ fi
 
 if has_command xdg-mime && has_command kakku-defaults; then
   kakku-defaults || true
-fi
-
-# Disable CachyOS welcome app autostart.
-if [[ -f /etc/xdg/autostart/cachyos-hello.desktop ]]; then
-  sudo rm -f /etc/xdg/autostart/cachyos-hello.desktop
-fi
-if [[ -f "$HOME/.config/autostart/cachyos-hello.desktop" ]]; then
-  rm -f "$HOME/.config/autostart/cachyos-hello.desktop"
 fi
 
 copy_file_if_changed "$REPO_DIR/dotfiles/bash/.bashrc" "$HOME/.bashrc"
