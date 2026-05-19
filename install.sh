@@ -336,6 +336,7 @@ if [[ "$KAKKU_SYSTEM_CONFIG" == "1" ]]; then
   sudo systemctl enable bluetooth || true
   sudo systemctl enable docker || true
   sudo systemctl enable tailscaled || true
+  sudo systemctl enable ananicy-cpp || true
   sudo systemctl enable power-profiles-daemon || true
   sudo usermod -aG docker "$USER" || true
 

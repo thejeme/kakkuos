@@ -2,6 +2,9 @@ base-devel
 git
 paru
 pacman-contrib
+cachyos-settings
+cachyos-rate-mirrors
+chwd
 networkmanager
 bluez
 bluez-utils

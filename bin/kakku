@@ -303,7 +303,7 @@ fix_core_services() {
     sudo_cmd=(sudo)
   fi
 
-  for service in NetworkManager.service bluetooth.service greetd.service power-profiles-daemon.service; do
+  for service in NetworkManager.service bluetooth.service greetd.service ananicy-cpp.service power-profiles-daemon.service; do
     if system_unit_exists "$service"; then
       "${sudo_cmd[@]}" systemctl enable "$service" || true
     else
@@ -337,7 +337,7 @@ show_service_status() {
 }
 
 show_services() {
-  for service in NetworkManager bluetooth docker tailscaled power-profiles-daemon; do
+  for service in NetworkManager bluetooth docker tailscaled ananicy-cpp power-profiles-daemon; do
     show_service_status "$service"
   done
 }
@@ -416,8 +416,10 @@ KakkuOS keybindings:
     Super+C                       Center column
     Super+Ctrl+C                  Center visible columns
     Super+- / Super+= / Super++   Adjust column width
+    Super+numpad-                 Decrease column width
     Super+Shift+- / Super+Ctrl+=  Adjust window height
     Super+numpad+                 Increase column width
+    Super+Ctrl+numpad-            Decrease window height
     Super+Ctrl+numpad+            Increase window height
 
   Screenshots
@@ -538,6 +540,7 @@ run_doctor_checks() {
   check_service_enabled greetd
   check_service_enabled docker
   check_service_enabled tailscaled
+  check_service_enabled ananicy-cpp
   check_service_enabled power-profiles-daemon
   check_user_service_available dms.service
   check_user_service_available dsearch.service

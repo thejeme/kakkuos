@@ -195,6 +195,9 @@ These packages make the system useful for source builds, package builds, and day
 | `git` | Version control for projects, dotfiles, package sources, and AUR workflows. |
 | `paru` | AUR helper available in CachyOS repositories, used by the installer for AUR packages. |
 | `pacman-contrib` | Arch maintenance helpers such as `paccache` for package cache cleanup. |
+| `cachyos-settings` | CachyOS baseline system tuning package; provides `game-performance` and the default CachyOS ananicy/zram integration. |
+| `cachyos-rate-mirrors` | CachyOS mirror ranking helper for improving repository download speed and reliability. |
+| `chwd` | CachyOS hardware detection tool. Kakku installs it for inspection and manual troubleshooting, but does not auto-apply driver changes. |
 
 ### Niri And DankMaterialShell Desktop
 
@@ -271,7 +274,7 @@ These packages cover common laptop and desktop hardware needs.
 | `tailscale` | WireGuard-based private mesh VPN for connecting personal machines and servers. |
 | `proton-vpn-gtk-app` | Proton VPN graphical client. |
 
-The installer enables `NetworkManager`, `bluetooth`, `docker`, `tailscaled`, and `power-profiles-daemon` when available.
+The installer enables `NetworkManager`, `bluetooth`, `docker`, `tailscaled`, `ananicy-cpp`, and `power-profiles-daemon` when available.
 
 ### Shell And Prompt
 
@@ -363,21 +366,27 @@ Kakku includes a gaming-ready baseline while still relying on CachyOS for optimi
 
 | Package | Purpose |
 |---|---|
+| `cachyos-gaming-meta` | CachyOS gaming dependency stack, including Proton/Wine helpers, codec/runtime libraries, `umu-launcher`, `protontricks`, `winetricks`, and Vulkan tools. |
+| `cachyos-gaming-applications` | CachyOS gaming app bundle for Steam, Heroic, Lutris, Gamescope, GOverlay, MangoHud, and related 32-bit overlay support. |
 | `steam` | Steam client and Proton game library. |
 | `heroic-games-launcher` | Epic Games, GOG, and Amazon Games launcher. |
-| `protonup-qt` | GUI for installing Proton-GE and compatibility tools. |
+| `lutris` | Launcher and runner manager for Wine, Proton, emulators, and third-party game stores. |
 | `mangohud` | Performance overlay for Vulkan/OpenGL games. |
 | `gamescope` | Nested game compositor useful for scaling, HDR workflows, and Steam-style sessions. |
-| `gamemode` | Lets games request temporary performance-oriented system tuning. |
+| `goverlay` | Graphical MangoHud configuration tool. |
 | `vesktop` | Common voice/chat companion for gaming sessions and communities. |
 
 Useful launch options:
 
 ```text
-gamemoderun %command%
+game-performance %command%
 mangohud %command%
-mangohud gamemoderun %command%
+mangohud game-performance %command%
 ```
+
+Kakku follows CachyOS' `game-performance` wrapper instead of enabling `gamemode` by default. `game-performance` temporarily switches `power-profiles-daemon` to the performance profile while the game runs, then restores the previous profile when the game exits. `ananicy-cpp` is enabled as part of the CachyOS settings baseline, so avoiding `gamemode` also avoids the conflict CachyOS documents between those two process tuners.
+
+Kakku also raises the Mesa and NVIDIA shader cache size limits through `/etc/environment.d/kakku.conf`. This avoids needless shader cache eviction in large games without preallocating the full cache size.
 
 ### Media And Creative Tools
 
