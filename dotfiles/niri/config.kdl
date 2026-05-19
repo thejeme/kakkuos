@@ -276,6 +276,7 @@ binds {
     // === System & Overview ===
     Mod+D repeat=false { toggle-overview; }
     Mod+Tab repeat=false { toggle-overview; }
+    Mod+section { show-hotkey-overlay; }
     Mod+Shift+Slash { show-hotkey-overlay; }
     Mod+S hotkey-overlay-title="Start Kakku Screensaver" {
         spawn "kakku-screensaver";
@@ -363,12 +364,12 @@ binds {
 
     // === Focus Navigation ===
     Mod+Left  { focus-column-left; }
-    Mod+Down  { focus-window-down; }
-    Mod+Up    { focus-window-up; }
+    Mod+Down  { focus-window-or-workspace-down; }
+    Mod+Up    { focus-window-or-workspace-up; }
     Mod+Right { focus-column-right; }
     Mod+H     { focus-column-left; }
-    Mod+J     { focus-window-down; }
-    Mod+K     { focus-window-up; }
+    Mod+J     { focus-window-or-workspace-down; }
+    Mod+K     { focus-window-or-workspace-up; }
     Mod+L     { focus-column-right; }
 
     // === Window Movement ===
@@ -486,16 +487,16 @@ binds {
     Mod+Shift+Equal { set-window-height "+10%"; }
 
     // === Screenshots ===
-    XF86Launch1 { screenshot; }
-    Ctrl+XF86Launch1 { screenshot-screen; }
-    Alt+XF86Launch1 { screenshot-window; }
-    Print { screenshot; }
-    Ctrl+Print { screenshot-screen; }
-    Alt+Print { screenshot-window; }
+    XF86Launch1 { screenshot show-pointer=false; }
+    Ctrl+XF86Launch1 { screenshot-screen show-pointer=false; }
+    Alt+XF86Launch1 { screenshot-window show-pointer=false; }
+    Print { screenshot show-pointer=false; }
+    Ctrl+Print { screenshot-screen show-pointer=false; }
+    Alt+Print { screenshot-window show-pointer=false; }
 
     // === System Controls ===
     Mod+Escape allow-inhibiting=false { toggle-keyboard-shortcuts-inhibit; }
-    Mod+Shift+P { power-off-monitors; }
+    Mod+Shift+P { spawn "dms" "color" "pick" "-a"; }
 }
 
 // Include dms files

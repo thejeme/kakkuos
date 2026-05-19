@@ -345,6 +345,7 @@ show_services() {
 show_keybinds() {
   cat <<'EOF'
 KakkuOS keybindings:
+  Super+§           Show keybindings help
   Super+T           Open terminal
   Super+Space       Open app launcher
   Super+D/Tab       Toggle overview
@@ -353,6 +354,7 @@ KakkuOS keybindings:
   Super+M           Open task manager
   Super+X           Open power menu
   Super+Y           Open wallpaper browser
+  Super+Shift+P     Pick screen color to clipboard
   Super+Q           Close active window
   Super+Shift+E     Exit niri
   Super+Shift+T     Toggle floating
@@ -361,12 +363,13 @@ KakkuOS keybindings:
   Super+Comma       Open DMS settings
   Super+V           Open clipboard
   Super+N           Open notifications
-  Print             Screenshot picker
-  Ctrl+Print        Screen screenshot to ~/Pictures/Screenshots
-  Alt+Print         Window screenshot to ~/Pictures/Screenshots
+  Print             Screenshot picker, copied and saved without cursor
+  Ctrl+Print        Screen screenshot, copied and saved without cursor
+  Alt+Print         Window screenshot, copied and saved without cursor
   Super+1..9        Switch workspace
   Super+Shift+1..9  Move column to workspace
-  Super+Arrows      Move focus
+  Super+Up/Down     Focus window or workspace
+  Super+Left/Right  Move focus between columns
   Super+Shift+Arrows Move window or column
   Volume keys       Adjust/mute audio
   Media keys        Play/pause/next/previous

@@ -158,7 +158,7 @@ Available commands:
 | `kakku keybinds` | Print KakkuOS default keyboard shortcuts. |
 | `kakku paths` | Show important Kakku config and system paths. |
 | `kakku packages` | Show installed package profile information. |
-| `kakku update` | Run a normal interactive system update with `pacman`, then AUR updates with `paru` or `yay` if available. |
+| `kakku update` | Update repo and AUR packages. DMS shell updates arrive through normal package updates. |
 | `kakku defaults` | Configure default applications with `xdg-mime`. |
 | `kakku version` | Show the Kakku version string. |
 
@@ -427,6 +427,7 @@ Kakku ships a niri keybinding config in `~/.config/niri/config.kdl`. The most im
 | Notifications | `dms ipc call notifications toggle` |
 | Settings | `dms ipc call settings focusOrToggle` |
 | Wallpaper browser | `dms ipc call dankdash wallpaper` |
+| Color picker | `dms color pick -a` |
 | Lock | `dms ipc call lock lock` |
 | Screensaver | `kakku screensaver` |
 
