@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-SCREENSAVER_TIMEOUT="${KAKKU_SCREENSAVER_TIMEOUT:-300}"
-LOCK_TIMEOUT="${KAKKU_LOCK_TIMEOUT:-900}"
+SCREENSAVER_TIMEOUT="${KAKKU_SCREENSAVER_TIMEOUT:-900}"
+LOCK_TIMEOUT="${KAKKU_LOCK_TIMEOUT:-3600}"
 LOCK_CMD="${KAKKU_LOCK_CMD:-dms ipc call lock lock || loginctl lock-session}"
 SCREENSAVER_CMD="${KAKKU_SCREENSAVER_CMD:-kakku-screensaver --idle}"
 SCREENSAVER_STOP_CMD="pkill -f 'kakku-screensaver --render' >/dev/null 2>&1 || true"
@@ -17,7 +17,7 @@ Runs the KakkuOS idle policy:
   - stop it on activity
   - hand off to the DMS lock screen after KAKKU_LOCK_TIMEOUT seconds
 
-Defaults: KAKKU_SCREENSAVER_TIMEOUT=300, KAKKU_LOCK_TIMEOUT=900.
+Defaults: KAKKU_SCREENSAVER_TIMEOUT=900, KAKKU_LOCK_TIMEOUT=3600.
 User overrides can be placed in ~/.config/kakku/idle.env when running
 through kakku-idle.service.
 EOF
