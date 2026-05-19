@@ -270,6 +270,8 @@ binds {
     }
     Mod+N hotkey-overlay-title="Notification Center" { spawn "dms" "ipc" "call" "notifications" "toggle"; }
     Mod+Shift+N hotkey-overlay-title="Notepad" { spawn "dms" "ipc" "call" "notepad" "toggle"; }
+    Mod+Alt+B hotkey-overlay-title="Toggle Top Bar" { spawn "dms" "ipc" "call" "bar" "toggle" "index" "0"; }
+    Mod+Alt+N hotkey-overlay-title="Toggle Night Light" { spawn "dms" "ipc" "call" "night" "toggle"; }
 
     // === Security ===
     Mod+Alt+L hotkey-overlay-title="Lock Screen" {
