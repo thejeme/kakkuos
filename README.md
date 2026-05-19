@@ -204,6 +204,7 @@ These packages provide the Wayland desktop session and its core user interface.
 |---|---|
 | `niri` | Scrollable tiling Wayland compositor. |
 | `dms-shell-niri` | DankMaterialShell desktop shell for niri, including bar, launcher, notifications, control center, lock/session UI, wallpaper, and theming integration. |
+| `breeze-cursors` | KDE Breeze cursor theme used as Kakku's default pointer style. |
 | `xwayland-satellite` | Xwayland support for X11 applications under niri. |
 | `xdg-desktop-portal-gnome` | Portal integration used by niri for screen sharing and desktop permissions. |
 | `xdg-desktop-portal-gtk` | GTK portal fallback for file pickers and common desktop dialogs. |

@@ -5,6 +5,7 @@ xdg-desktop-portal-gtk
 xdg-utils
 xdg-user-dirs
 dms-shell-niri
+breeze-cursors
 swayidle
 matugen
 qt6-multimedia

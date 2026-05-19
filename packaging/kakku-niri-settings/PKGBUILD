@@ -12,6 +12,7 @@ depends=(
   'xdg-desktop-portal-gnome'
   'xdg-desktop-portal-gtk'
   'dms-shell-niri'
+  'breeze-cursors'
   'swayidle'
   'matugen'
   'qt6-multimedia'
