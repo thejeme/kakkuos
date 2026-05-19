@@ -345,35 +345,91 @@ show_services() {
 show_keybinds() {
   cat <<'EOF'
 KakkuOS keybindings:
-  Super+§           Show keybindings help
-  Super+T           Open terminal
-  Super+Space       Open app launcher
-  Super+D/Tab       Toggle overview
-  Super+S           Start Kakku screensaver
-  Super+V           Open clipboard
-  Super+M           Open task manager
-  Super+X           Open power menu
-  Super+Y           Open wallpaper browser
-  Super+Shift+P     Pick screen color to clipboard
-  Super+Q           Close active window
-  Super+Shift+E     Exit niri
-  Super+Shift+T     Toggle floating
-  Super+W           Toggle tabbed column
-  Super+Alt+L       Lock screen
-  Super+Comma       Open DMS settings
-  Super+V           Open clipboard
-  Super+N           Open notifications
-  Print             Screenshot picker, copied and saved without cursor
-  Ctrl+Print        Screen screenshot, copied and saved without cursor
-  Alt+Print         Window screenshot, copied and saved without cursor
-  Super+1..9        Switch workspace
-  Super+Shift+1..9  Move column to workspace
-  Super+Up/Down     Focus window or workspace
-  Super+Left/Right  Move focus between columns
-  Super+Shift+Arrows Move window or column
-  Volume keys       Adjust/mute audio
-  Media keys        Play/pause/next/previous
-  Brightness keys   Adjust display brightness
+  Help and overview
+    Super+§                       Show keybindings help
+    Super+D / Super+Tab           Toggle overview
+    Super+S                       Start Kakku screensaver
+    Super+Escape                  Toggle shortcut inhibition
+
+  DMS and applications
+    Super+T                       Open Ghostty terminal
+    Super+Space                   Open DMS launcher
+    Super+V                       Open clipboard
+    Super+M / Ctrl+Alt+Delete     Open task manager
+    Super+X                       Open power menu
+    Super+Comma                   Open DMS settings
+    Super+Y                       Open wallpaper browser
+    Super+N                       Open notifications
+    Super+Shift+N                 Open notepad
+    Super+Alt+L                   Lock screen
+    Super+Shift+P                 Pick screen color to clipboard
+
+  Windows and columns
+    Super+Q                       Close active window
+    Super+F                       Maximize column
+    Super+Shift+F                 Fullscreen window
+    Super+Shift+T                 Toggle floating
+    Super+Shift+V                 Switch floating/tiling focus
+    Super+W                       Toggle tabbed column
+    Super+Shift+W                 Create window rule
+    Super+Alt+Left/Right          Consume or expel window
+    Super+.                       Expel window from column
+    Super+Home / Super+End        Focus first/last column
+    Super+Ctrl+Home/End           Move column to first/last
+
+  Focus and movement
+    Super+Left/Right or H/L       Focus column or monitor
+    Super+Up/Down or J/K          Focus window or workspace
+    Super+Shift+Left/Right or H/L Move column or monitor
+    Super+Shift+Up/Down or J/K    Move window
+    Super+Ctrl+Left/Right or H/L  Focus monitor
+    Super+Ctrl+J/K                Focus monitor down/up
+    Super+Shift+Ctrl+Arrows       Move column to monitor
+    Super+Shift+Ctrl+H/J/K/L      Move column to monitor
+
+  Workspaces
+    Super+PageUp/PageDown         Focus workspace up/down
+    Super+U/I                     Focus workspace down/up
+    Super+Ctrl+Up/Down or U/I     Move column to workspace
+    Super+Shift+PageUp/PageDown   Move workspace up/down
+    Super+Shift+U/I               Move workspace down/up
+    Super+1..9                    Switch workspace by position
+    Super+Shift+1..9              Move column to workspace position
+
+  Mouse wheel
+    Super+WheelUp/Down            Focus workspace up/down
+    Super+Ctrl+WheelUp/Down       Move column to workspace
+    Super+WheelLeft/Right         Focus column
+    Super+Ctrl+WheelLeft/Right    Move column
+    Super+Shift+WheelUp/Down      Focus column
+    Super+Ctrl+Shift+WheelUp/Down Move column
+
+  Layout and config
+    Super+R                       Switch preset column width
+    Super+Shift+R                 Switch preset window height
+    Super+Ctrl+R                  Reset window height
+    Super+Alt+R                   Reload niri config
+    Super+Ctrl+F                  Expand column to available width
+    Super+C                       Center column
+    Super+Ctrl+C                  Center visible columns
+    Super+- / Super+= / Super++   Adjust column width
+    Super+Shift+- / Super+Ctrl+=  Adjust window height
+    Super+numpad+                 Increase column width
+    Super+Ctrl+numpad+            Increase window height
+
+  Screenshots
+    Print / XF86Launch1           Pick area, copied and saved without cursor
+    Ctrl+Print / Ctrl+XF86Launch1 Screenshot screen without cursor
+    Alt+Print / Alt+XF86Launch1   Screenshot window without cursor
+
+  Media and hardware
+    Volume keys                   Adjust/mute audio
+    Mic mute key                  Toggle microphone mute
+    Media keys                    Play/pause/previous/next
+    Ctrl+Volume keys              Seek media
+    Brightness keys               Adjust display brightness
+    Alt+Tab / Alt+Shift+Tab       Cycle windows on output
+    Super+Shift+E                 Exit niri
 EOF
 }
 

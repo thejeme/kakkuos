@@ -416,7 +416,7 @@ These packages make the default install useful for media playback, screen record
 
 ## Keybindings
 
-Kakku ships a niri keybinding config in `~/.config/niri/config.kdl`. The most important DMS actions are listed below so they are easy to audit or rebind.
+Kakku ships a niri keybinding config in `~/.config/niri/config.kdl`. Run `kakku keybinds` for the full configured shortcut list. The most important DMS actions are listed below so they are easy to audit or rebind.
 
 ## DankMaterialShell Actions
 
