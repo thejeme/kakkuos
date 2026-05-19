@@ -31,6 +31,8 @@
   "osdPowerProfileEnabled": true,
   "notificationHistoryMaxCount": 100,
   "notificationHistoryMaxAgeDays": 14,
+  "powerActionConfirm": false,
+  "powerActionHoldDuration": 1,
   "powerMenuDefaultAction": "lock",
   "barConfigs": [
     {
