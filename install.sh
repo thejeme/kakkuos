@@ -25,8 +25,48 @@ require_command() {
   fi
 }
 
+require_user_invocation() {
+  if (( EUID == 0 )); then
+    die "Run this installer as the target desktop user, not with sudo. Use: ./install.sh"
+  fi
+}
+
+require_repo_layout() {
+  local path
+  local -a required_paths=(
+    "$REPO_DIR/packages/profiles/core.txt"
+    "$REPO_DIR/packages/profiles/desktop.txt"
+    "$REPO_DIR/packages/profiles/cli.txt"
+    "$REPO_DIR/packages/aur.txt"
+    "$REPO_DIR/dotfiles/niri/config.kdl"
+    "$REPO_DIR/dotfiles/fish/config.fish"
+    "$REPO_DIR/system/greetd/config.toml"
+    "$REPO_DIR/system/dms/settings.defaults.json"
+    "$REPO_DIR/system/default/limine"
+    "$REPO_DIR/bin/kakku"
+  )
+
+  for path in "${required_paths[@]}"; do
+    if [[ ! -e "$path" ]]; then
+      die "Installer source is incomplete; missing: $path"
+    fi
+  done
+}
+
 target_login_user() {
-  printf '%s\n' "${KAKKU_TARGET_USER:-${SUDO_USER:-$USER}}"
+  printf '%s\n' "${KAKKU_TARGET_USER:-$(id -un)}"
+}
+
+require_target_user_matches_invocation() {
+  local current_user
+  local target_user
+
+  current_user="$(id -un)"
+  target_user="$(target_login_user)"
+
+  if [[ "$target_user" != "$current_user" ]]; then
+    die "Run this installer while logged in as $target_user; current user is $current_user."
+  fi
 }
 
 set_fish_login_shell() {
@@ -80,9 +120,40 @@ enable_greetd_login_manager() {
   echo "Enabled greetd login manager."
 }
 
+verify_login_setup() {
+  local fish_path
+  local target_user
+  local login_shell
+
+  fish_path="$(command -v fish 2>/dev/null || true)"
+  target_user="$(target_login_user)"
+
+  if ! has_command getent; then
+    die "Missing required command for login verification: getent"
+  fi
+
+  login_shell="$(getent passwd "$target_user" | awk -F: '{print $7}')"
+
+  if [[ "$login_shell" != "$fish_path" && "$login_shell" != "/bin/fish" ]]; then
+    die "Login shell verification failed for $target_user: ${login_shell:-unset}"
+  fi
+
+  if ! systemctl is-enabled greetd.service >/dev/null 2>&1; then
+    die "greetd.service is not enabled after install."
+  fi
+
+  if [[ ! -f /etc/greetd/config.toml ]]; then
+    die "greetd config is missing after install: /etc/greetd/config.toml"
+  fi
+}
+
 if [[ "$#" -gt 0 ]]; then
   die "install.sh does not accept command-line options."
 fi
+
+require_user_invocation
+require_repo_layout
+require_target_user_matches_invocation
 
 pacman_flags=("-Syu" "--needed")
 aur_helper_flags=("-S" "--needed")
@@ -220,8 +291,10 @@ for pkg in "${cachyos_remove[@]}"; do
   fi
 done
 if (( ${#cachyos_installed[@]} > 0 )); then
-  sudo pacman -Rns --noconfirm "${cachyos_installed[@]}" || true
+  sudo pacman -R --noconfirm "${cachyos_installed[@]}" || true
 fi
+hash -r
+require_command fish
 
 install_aur_packages() {
   mapfile -t aur_packages < <(read_package_list "$REPO_DIR/packages/aur.txt")
@@ -326,10 +399,8 @@ copy_file_if_changed "$REPO_DIR/dotfiles/bash/.bashrc" "$HOME/.bashrc"
 copy_file_if_changed "$REPO_DIR/dotfiles/zsh/.zshrc" "$HOME/.zshrc"
 copy_config_dir fish
 
-set_fish_login_shell
-
 if has_command kakku-disable-plymouth; then
-  sudo kakku-disable-plymouth
+  sudo kakku-disable-plymouth || echo "Warning: Plymouth disable step failed; continuing install." >&2
 fi
 
 if [[ -f "$REPO_DIR/system/environment.d/kakku.conf" ]]; then
@@ -341,9 +412,9 @@ if [[ -f "$REPO_DIR/system/default/limine" ]]; then
 fi
 
 if [[ -x "$REPO_DIR/bin/kakku-limine-defaults" ]]; then
-  sudo KAKKU_LIMINE_DEFAULTS_SOURCE="$REPO_DIR/system/default/limine" "$REPO_DIR/bin/kakku-limine-defaults"
+  sudo KAKKU_LIMINE_DEFAULTS_SOURCE="$REPO_DIR/system/default/limine" "$REPO_DIR/bin/kakku-limine-defaults" || echo "Warning: Limine defaults step failed; continuing install." >&2
 elif has_command kakku-limine-defaults; then
-  sudo KAKKU_LIMINE_DEFAULTS_SOURCE="$REPO_DIR/system/default/limine" kakku-limine-defaults
+  sudo KAKKU_LIMINE_DEFAULTS_SOURCE="$REPO_DIR/system/default/limine" kakku-limine-defaults || echo "Warning: Limine defaults step failed; continuing install." >&2
 fi
 
 if [[ -f "$REPO_DIR/system/systemd/user/kakku-idle.service" ]]; then
@@ -371,7 +442,9 @@ if [[ -n "$target_user" ]] && id "$target_user" >/dev/null 2>&1; then
   sudo usermod -aG docker "$target_user" || true
 fi
 
+set_fish_login_shell
 enable_greetd_login_manager
+verify_login_setup
 
 # Override os-release with KakkuOS branding
 if [[ -f "$REPO_DIR/system/os-release" ]]; then

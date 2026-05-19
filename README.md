@@ -18,19 +18,15 @@ CachyOS provides the kernel, repositories, hardware enablement, gaming stack, an
 
 ## Install
 
-KakkuOS is designed to be installed on top of a fresh [CachyOS](https://cachyos.org/) base system. CachyOS provides the kernel, repositories, hardware enablement, and performance tuning that KakkuOS builds upon. Install CachyOS first (a minimal or desktop install both work), then run:
-
-```bash
-curl -fsSL https://kakkuos.jeme.app/install.sh | bash
-```
-
-Local checkout:
+KakkuOS is designed to be installed on top of a fresh [CachyOS](https://cachyos.org/) base system. CachyOS provides the kernel, repositories, hardware enablement, and performance tuning that KakkuOS builds upon. Install CachyOS first (a minimal or desktop install both work), then run the installer from a full checkout:
 
 ```bash
 git clone https://github.com/TheJeme/kakkuos
 cd kakkuos
 ./install.sh
 ```
+
+Run `./install.sh` as the target desktop user, not through `sudo`; the script asks for sudo only for system changes.
 
 The installer installs package profiles, copies Kakku-owned dotfiles, sets fish as the login shell, applies branding, sets default apps, configures greetd with the DMS greeter, removes Plymouth, applies Limine timeout defaults, and enables common services. It assumes CachyOS repositories and required AUR packages are available on the system.
 
