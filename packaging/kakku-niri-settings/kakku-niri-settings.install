@@ -1,8 +1,4 @@
 post_install() {
-  # Enable DMS greeter as login manager UI (disable others)
-  systemctl disable sddm.service 2>/dev/null || true
-  systemctl disable ly.service 2>/dev/null || true
-  systemctl enable greetd.service 2>/dev/null || true
   systemctl enable power-profiles-daemon.service 2>/dev/null || true
   systemctl --global enable kakku-idle.service 2>/dev/null || true
 

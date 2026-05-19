@@ -2,27 +2,12 @@
 set -euo pipefail
 
 REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-SCRIPT_NAME="$(basename "$0")"
 
 # Non-interactive installs are the default. Set `KAKKU_NONINTERACTIVE=0` to
 # run interactively. When non-interactive, add `--noconfirm` to pacman/AUR
 # helper flags so the script doesn't pause for user confirmation.
 KAKKU_NONINTERACTIVE="${KAKKU_NONINTERACTIVE:-1}"
-KAKKU_SYSTEM_CONFIG="${KAKKU_SYSTEM_CONFIG:-1}"
 SUDO_KEEPALIVE_PID=""
-
-# Simple CLI parsing: `--interactive` or `-i` will force interactive mode
-# (script will prompt for pacman/AUR confirmations). Default is non-interactive.
-print_usage() {
-  cat <<EOF
-Usage: $SCRIPT_NAME [OPTIONS]
-
-Options:
-  -i, --interactive   Run interactively (ask for confirmations)
-  --no-system-config  Skip login manager, service, and OS branding changes
-  -h, --help          Show this help
-EOF
-}
 
 die() {
   echo "$1" >&2
@@ -45,81 +30,66 @@ target_login_user() {
   printf '%s\n' "${KAKKU_TARGET_USER:-${SUDO_USER:-$USER}}"
 }
 
-ensure_login_shell_listed() {
-  local shell_path="$1"
-
-  if [[ -f /etc/shells ]] && grep -Fxq "$shell_path" /etc/shells; then
-    return 0
-  fi
-
-  echo "Adding login shell to /etc/shells: $shell_path"
-  printf '%s\n' "$shell_path" | sudo tee -a /etc/shells >/dev/null
-}
-
 set_fish_login_shell() {
   local fish_path=""
   local target_user=""
-  local current_shell=""
 
-  if ! has_command fish; then
-    return 0
-  fi
-
-  fish_path="$(command -v fish)"
+  fish_path="$(command -v fish 2>/dev/null || true)"
   target_user="$(target_login_user)"
 
+  if [[ -z "$fish_path" || ! -x "$fish_path" ]]; then
+    echo "Warning: skipped login shell change; fish is unavailable." >&2
+    return 0
+  fi
+
+  if ! "$fish_path" --no-config -c 'exit 0'; then
+    echo "Warning: skipped login shell change; fish did not pass a launch check." >&2
+    return 0
+  fi
+
   if [[ -z "$target_user" ]] || ! id "$target_user" >/dev/null 2>&1; then
-    echo "Warning: cannot set login shell, unknown user: ${target_user:-unset}" >&2
+    echo "Warning: skipped login shell change; unknown user: ${target_user:-unset}" >&2
     return 0
   fi
 
-  if has_command getent; then
-    current_shell="$(getent passwd "$target_user" 2>/dev/null | awk -F: '{print $7}')"
+  if [[ -f /etc/shells ]] && ! grep -Fxq "$fish_path" /etc/shells; then
+    printf '%s\n' "$fish_path" | sudo tee -a /etc/shells >/dev/null
   fi
 
-  if [[ "$current_shell" == "$fish_path" || "$current_shell" == "/bin/fish" ]]; then
-    return 0
-  fi
-
-  ensure_login_shell_listed "$fish_path"
-
-  if has_command usermod; then
-    sudo usermod -s "$fish_path" "$target_user"
-  elif has_command chsh; then
-    sudo chsh -s "$fish_path" "$target_user"
-  else
-    echo "Warning: cannot set login shell, usermod and chsh are missing" >&2
-    return 0
-  fi
-
+  sudo usermod -s "$fish_path" "$target_user"
   echo "Set login shell for $target_user to $fish_path"
 }
 
-while [[ "$#" -gt 0 ]]; do
-  case "$1" in
-    -i|--interactive)
-      KAKKU_NONINTERACTIVE=0
-      shift
-      ;;
-    --no-system-config)
-      KAKKU_SYSTEM_CONFIG=0
-      shift
-      ;;
-    -h|--help)
-      print_usage
-      exit 0
-      ;;
-    --)
-      shift
-      break
-      ;;
-    *)
-      echo "Unknown option: $1" >&2
-      print_usage >&2
-      exit 1
-      ;;
-  esac
-done
+enable_greetd_login_manager() {
+  local config_source="$REPO_DIR/system/greetd/config.toml"
+
+  for command_name in greetd dms-greeter niri; do
+    if ! has_command "$command_name"; then
+      echo "Warning: skipped greetd switch; missing command: $command_name" >&2
+      return 0
+    fi
+  done
+
+  if [[ ! -d /usr/share/quickshell/dms ]]; then
+    echo "Warning: skipped greetd switch; missing DMS shell path: /usr/share/quickshell/dms" >&2
+    return 0
+  fi
+
+  if ! id greeter >/dev/null 2>&1; then
+    echo "Warning: skipped greetd switch; greeter user is missing." >&2
+    return 0
+  fi
+
+  sudo install -Dm644 "$config_source" /etc/greetd/config.toml
+  sudo systemctl disable sddm.service 2>/dev/null || true
+  sudo systemctl disable ly.service 2>/dev/null || true
+  sudo systemctl enable greetd.service || true
+  echo "Enabled greetd login manager."
+}
+
+if [[ "$#" -gt 0 ]]; then
+  die "install.sh does not accept command-line options."
+fi
 
 pacman_flags=("-Syu" "--needed")
 aur_helper_flags=("-S" "--needed")
@@ -370,67 +340,56 @@ copy_file_if_changed "$REPO_DIR/dotfiles/bash/.bashrc" "$HOME/.bashrc"
 copy_file_if_changed "$REPO_DIR/dotfiles/zsh/.zshrc" "$HOME/.zshrc"
 copy_config_dir fish
 
-set_fish_login_shell || true
+set_fish_login_shell
 
-if [[ "$KAKKU_SYSTEM_CONFIG" == "1" ]]; then
-  if has_command kakku-disable-plymouth; then
-    sudo kakku-disable-plymouth
-  fi
+if has_command kakku-disable-plymouth; then
+  sudo kakku-disable-plymouth
+fi
 
-  if [[ -f "$REPO_DIR/system/environment.d/kakku.conf" ]]; then
-    sudo install -Dm644 "$REPO_DIR/system/environment.d/kakku.conf" /etc/environment.d/kakku.conf
-  fi
+if [[ -f "$REPO_DIR/system/environment.d/kakku.conf" ]]; then
+  sudo install -Dm644 "$REPO_DIR/system/environment.d/kakku.conf" /etc/environment.d/kakku.conf
+fi
 
-  if [[ -f "$REPO_DIR/system/default/limine" ]]; then
-    sudo install -Dm644 "$REPO_DIR/system/default/limine" /usr/share/kakku/default/limine
-  fi
+if [[ -f "$REPO_DIR/system/default/limine" ]]; then
+  sudo install -Dm644 "$REPO_DIR/system/default/limine" /usr/share/kakku/default/limine
+fi
 
-  if [[ -x "$REPO_DIR/bin/kakku-limine-defaults" ]]; then
-    sudo KAKKU_LIMINE_DEFAULTS_SOURCE="$REPO_DIR/system/default/limine" "$REPO_DIR/bin/kakku-limine-defaults"
-  elif has_command kakku-limine-defaults; then
-    sudo KAKKU_LIMINE_DEFAULTS_SOURCE="$REPO_DIR/system/default/limine" kakku-limine-defaults
-  fi
+if [[ -x "$REPO_DIR/bin/kakku-limine-defaults" ]]; then
+  sudo KAKKU_LIMINE_DEFAULTS_SOURCE="$REPO_DIR/system/default/limine" "$REPO_DIR/bin/kakku-limine-defaults"
+elif has_command kakku-limine-defaults; then
+  sudo KAKKU_LIMINE_DEFAULTS_SOURCE="$REPO_DIR/system/default/limine" kakku-limine-defaults
+fi
 
-  if [[ -f "$REPO_DIR/system/systemd/user/kakku-idle.service" ]]; then
-    sudo install -Dm644 "$REPO_DIR/system/systemd/user/kakku-idle.service" /usr/lib/systemd/user/kakku-idle.service
-    sudo systemctl --global enable kakku-idle.service || true
-    systemctl --user daemon-reload 2>/dev/null || true
-    systemctl --user enable --now kakku-idle.service 2>/dev/null || true
-    systemctl --user enable --now dsearch.service 2>/dev/null || true
-  fi
+if [[ -f "$REPO_DIR/system/systemd/user/kakku-idle.service" ]]; then
+  sudo install -Dm644 "$REPO_DIR/system/systemd/user/kakku-idle.service" /usr/lib/systemd/user/kakku-idle.service
+  sudo systemctl --global enable kakku-idle.service || true
+  systemctl --user daemon-reload 2>/dev/null || true
+  systemctl --user enable --now kakku-idle.service 2>/dev/null || true
+  systemctl --user enable --now dsearch.service 2>/dev/null || true
+fi
 
-  sudo systemctl enable NetworkManager || true
-  sudo systemctl enable bluetooth || true
-  sudo systemctl enable docker || true
-  sudo systemctl enable tailscaled || true
-  sudo systemctl enable ananicy-cpp || true
-  sudo systemctl enable power-profiles-daemon || true
-  if [[ -x "$REPO_DIR/bin/kakku-firewall-defaults" ]]; then
-    sudo "$REPO_DIR/bin/kakku-firewall-defaults" || true
-  elif has_command kakku-firewall-defaults; then
-    sudo kakku-firewall-defaults || true
-  fi
-  sudo usermod -aG docker "$USER" || true
+sudo systemctl enable NetworkManager || true
+sudo systemctl enable bluetooth || true
+sudo systemctl enable docker || true
+sudo systemctl enable tailscaled || true
+sudo systemctl enable ananicy-cpp || true
+sudo systemctl enable power-profiles-daemon || true
+if [[ -x "$REPO_DIR/bin/kakku-firewall-defaults" ]]; then
+  sudo "$REPO_DIR/bin/kakku-firewall-defaults" || true
+elif has_command kakku-firewall-defaults; then
+  sudo kakku-firewall-defaults || true
+fi
 
-  # Set up DMS greeter as login manager UI.
-  if has_command dms; then
-    DMS_PRIVESC="${DMS_PRIVESC:-sudo}" dms greeter install --yes || true
-    DMS_PRIVESC="${DMS_PRIVESC:-sudo}" dms greeter enable --yes || true
-    if [[ "${KAKKU_SYNC_DMS_GREETER:-0}" == "1" ]]; then
-      DMS_PRIVESC="${DMS_PRIVESC:-sudo}" dms greeter sync --yes || true
-    fi
-  fi
-  sudo install -Dm644 "$REPO_DIR/system/greetd/config.toml" /etc/greetd/config.toml
-  sudo systemctl disable sddm.service 2>/dev/null || true
-  sudo systemctl enable greetd.service || true
+target_user="$(target_login_user)"
+if [[ -n "$target_user" ]] && id "$target_user" >/dev/null 2>&1; then
+  sudo usermod -aG docker "$target_user" || true
+fi
 
-  # Override os-release with KakkuOS branding
-  if [[ -f "$REPO_DIR/system/os-release" ]]; then
-    sudo cp "$REPO_DIR/system/os-release" /usr/lib/os-release
-  fi
+enable_greetd_login_manager
 
-else
-  echo "Skipped KakkuOS system configuration because --no-system-config was set."
+# Override os-release with KakkuOS branding
+if [[ -f "$REPO_DIR/system/os-release" ]]; then
+  sudo cp "$REPO_DIR/system/os-release" /usr/lib/os-release
 fi
 
 echo ""

@@ -248,6 +248,11 @@ fix_login_shell() {
   local fish_path=""
   local target_user=""
 
+  if [[ "${KAKKU_SET_LOGIN_SHELL:-0}" != "1" ]]; then
+    echo "skip login shell unchanged; set KAKKU_SET_LOGIN_SHELL=1 to switch to fish"
+    return 0
+  fi
+
   if has_command fish; then
     fish_path="$(command -v fish)"
   else
