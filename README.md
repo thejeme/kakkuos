@@ -53,7 +53,7 @@ cd kakkuos
 ./install.sh
 ```
 
-The script installs the package list, copies dotfiles into the current user's home directory, installs and configures the DMS greeter for login, removes the default CachyOS Plymouth boot splash, sets `fish` as the login shell when available, and enables common services.
+The script installs the package list, copies dotfiles into the current user home directory, installs and configures the DMS greeter for login, removes the default CachyOS Plymouth boot splash, sets `fish` as the login shell when available, and enables common services.
 
 The installer is safe to run more than once. Unchanged config files are skipped, changed local config paths are backed up with a timestamp.
 
@@ -158,7 +158,7 @@ These packages provide the Wayland desktop session and its core user interface.
 |---|---|
 | `niri` | Scrollable tiling Wayland compositor. |
 | `dms-shell-niri` | DankMaterialShell desktop shell for niri, including bar, launcher, notifications, control center, lock/session UI, wallpaper, and theming integration. |
-| `breeze-cursors` | KDE Breeze cursor theme used as Kakku's default pointer style. |
+| `breeze-cursors` | KDE Breeze cursor theme used as default pointer style. |
 | `xwayland-satellite` | Xwayland support for X11 applications under niri. |
 | `xdg-desktop-portal-gnome` | Portal integration used by niri for screen sharing and desktop permissions. |
 | `xdg-desktop-portal-gtk` | GTK portal fallback for file pickers and common desktop dialogs. |
@@ -354,7 +354,7 @@ These packages make the default install useful for media playback, screen record
 |---|---|
 | `docker` | Container runtime. |
 | `docker-compose` | Compose workflow for multi-container development stacks. |
-| `github-cli` | GitHub command-line tool, installed as `gh`. |
+| `github-cli` | GitHub command-line tool. |
 | `nodejs` | JavaScript runtime for web tooling and server-side development. |
 | `npm` | Node package manager and package registry CLI. |
 | `pnpm` | Fast, disk-efficient package manager for JavaScript and TypeScript projects. |
@@ -362,28 +362,15 @@ These packages make the default install useful for media playback, screen record
 | `lazygit` | Terminal UI for Git repositories. |
 | `lazydocker` | Terminal UI for Docker containers, images, volumes, and logs. |
 | `git-delta` | Better Git diff viewer used by the Lazygit config. |
-| `openai-codex` | OpenAI Codex CLI |
+| `openai-codex` | OpenAI Codex CLI. |
 | `tmux` | Terminal multiplexer for persistent shell sessions, panes, and remote work. |
 | `yazi` | Fast terminal file manager. Kakku keeps Dolphin as the graphical file manager and uses Yazi for terminal workflows. |
 | `visual-studio-code-bin` | Visual Studio Code from the AUR. Kept in `packages/aur.txt` because it is not a normal repo package. |
-| `localsend-bin` | LocalSend from the AUR for local network file sharing between devices. |
+| `localsend-bin` | LocalSend for local network file sharing between devices. |
 
 ## Keybindings
 
 Kakku ships a niri keybinding config in `~/.config/niri/config.kdl`. Run `kakku keybinds` for the full configured shortcut list. The most important DMS actions are listed below so they are easy to audit or rebind.
-
-## DankMaterialShell Actions
-
-| Action | Command |
-|---|---|
-| Launcher | `dms ipc call spotlight toggle` |
-| Clipboard | `dms ipc call clipboard toggle` |
-| Notifications | `dms ipc call notifications toggle` |
-| Settings | `dms ipc call settings focusOrToggle` |
-| Wallpaper browser | `dms ipc call dankdash wallpaper` |
-| Color picker | `dms color pick -a` |
-| Lock | `dms ipc call lock lock` |
-| Screensaver | `kakku screensaver` |
 
 ## Default Applications
 
@@ -393,7 +380,7 @@ KakkuOS configures common default applications with:
 kakku defaults
 ```
 
-Defaults include Zen Browser for web links, Chrome as the compatibility fallback, Dolphin for directories, mpv for audio/video, imv for images, Zathura for PDFs, and LibreOffice applications for office documents. Firefox remains installed as a secondary Gecko fallback if Zen is unavailable.
+Defaults include Zen Browser for web links, Chrome as the compatibility fallback, Dolphin for directories, mpv for audio/video, imv for images, Zathura for PDFs, and LibreOffice applications for office documents.
 
 Zen Browser is configured with a policy file that force-installs uBlock Origin, Dark Reader, and SponsorBlock from Mozilla Add-ons.
 
@@ -431,7 +418,7 @@ sudo pacman -S kakku-desktop
 
 ## Phase 4: Build A KakkuOS ISO
 
-KakkuOS ISO work should use CachyOS' live ISO tooling instead of maintaining a separate ArchISO stack.
+KakkuOS ISO work should use CachyOS live ISO tooling instead of maintaining a separate ArchISO stack.
 
 The scaffold is under:
 
