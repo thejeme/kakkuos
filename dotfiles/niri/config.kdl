@@ -246,9 +246,7 @@ binds {
     // === System & Overview ===
     Mod+Tab repeat=false { toggle-overview; }
     Mod+section { show-hotkey-overlay; }
-    Mod+Ctrl+S hotkey-overlay-title="Start Kakku Screensaver" {
-        spawn "kakku-screensaver";
-    }
+    Mod+Ctrl+S hotkey-overlay-title="Start Kakku Screensaver" { spawn "kakku-screensaver"; }
 
     // === Application Launchers ===
     Mod+T hotkey-overlay-title="Open Terminal" { spawn "ghostty"; }
@@ -285,16 +283,10 @@ binds {
     Ctrl+XF86AudioLowerVolume allow-when-locked=true { spawn "dms" "ipc" "call" "mpris" "decrement" "3"; }
 
     // === Brightness Controls ===
-    XF86MonBrightnessUp allow-when-locked=true {
-       spawn "dms" "ipc" "call" "brightness" "increment" "5" "";
-    }
-    XF86MonBrightnessDown allow-when-locked=true {
-       spawn "dms" "ipc" "call" "brightness" "decrement" "5" "";
-    }
+    XF86MonBrightnessUp allow-when-locked=true { spawn "dms" "ipc" "call" "brightness" "increment" "5" ""; }
+    XF86MonBrightnessDown allow-when-locked=true { spawn "dms" "ipc" "call" "brightness" "decrement" "5" ""; }
 
-    XF86Calculator {
-        spawn "speedcrunch";
-    }
+    XF86Calculator { spawn "speedcrunch"; }
 
     // === Window Management ===
     Mod+Q repeat=false { close-window; }
