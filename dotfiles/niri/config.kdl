@@ -376,12 +376,11 @@ binds {
     Mod+Minus { set-column-width "-10%"; }
     Mod+KP_Subtract { set-column-width "-10%"; }
     Mod+Equal { set-column-width "+10%"; }
-    Mod+Shift+Equal { set-column-width "+10%"; }
     Mod+KP_Add { set-column-width "+10%"; }
+
     Mod+Shift+Minus { set-window-height "-10%"; }
     Mod+Shift+KP_Subtract { set-window-height "-10%"; }
     Mod+Shift+Equal { set-window-height "+10%"; }
-    Mod+Shift+Shift+Equal { set-window-height "+10%"; }
     Mod+Shift+KP_Add { set-window-height "+10%"; }
 
     // === Screenshots ===
