@@ -44,10 +44,12 @@ launch_terminal() {
 
   if command -v ghostty >/dev/null 2>&1; then
     ghostty \
-      --class=KakkuScreensaver \
+      --class=fi.kakku.screensaver \
       --title="Kakku Screensaver" \
       --fullscreen=true \
+      --gtk-single-instance=false \
       --gtk-titlebar=false \
+      --quit-after-last-window-closed=true \
       --font-size=20 \
       --background="#11131a" \
       --foreground="#cad3f5" \
