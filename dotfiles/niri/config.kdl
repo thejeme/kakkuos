@@ -118,8 +118,8 @@ hotkey-overlay {
     skip-at-startup
 }
 cursor {
-    xcursor-theme "Breeze"
-    xcursor-size 12
+    xcursor-theme "breeze_cursors"
+    xcursor-size 24
     hide-after-inactive-ms 100000
 }
 prefer-no-csd
@@ -326,20 +326,16 @@ binds {
     Mod+Shift+Ctrl+Right { move-column-to-monitor-right; }
 
     // === Mouse Wheel Navigation ===
-    Mod+WheelScrollDown      cooldown-ms=150 { focus-workspace-down; }
-    Mod+WheelScrollUp        cooldown-ms=150 { focus-workspace-up; }
-    Mod+Shift+WheelScrollDown cooldown-ms=150 { move-column-to-workspace-down; }
-    Mod+Shift+WheelScrollUp   cooldown-ms=150 { move-column-to-workspace-up; }
+    Mod+WheelScrollUp          { focus-column-left; }
+    Mod+WheelScrollLeft        { focus-column-left; }
+    Mod+WheelScrollRight       { focus-column-right; }
+    Mod+WheelScrollDown        { focus-column-right; }
 
-    Mod+WheelScrollRight      { focus-column-right; }
-    Mod+WheelScrollLeft       { focus-column-left; }
-    Mod+Shift+WheelScrollRight { move-column-right; }
+    // === Mouse Wheel Movement ===
+    Mod+Shift+WheelScrollUp    { move-column-left; }
     Mod+Shift+WheelScrollLeft  { move-column-left; }
-
-    Mod+Shift+WheelScrollDown      { focus-column-right; }
-    Mod+Shift+WheelScrollUp        { focus-column-left; }
-    Mod+Shift+Shift+WheelScrollDown { move-column-right; }
-    Mod+Shift+Shift+WheelScrollUp   { move-column-left; }
+    Mod+Shift+WheelScrollRight { move-column-right; }
+    Mod+Shift+WheelScrollDown  { move-column-right; }
 
     // === Numbered Workspaces ===
     Mod+1 { focus-workspace 1; }
