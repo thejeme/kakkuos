@@ -120,7 +120,7 @@ hotkey-overlay {
 cursor {
     xcursor-theme "Breeze"
     xcursor-size 12
-    hide-after-inactive-ms 1000
+    hide-after-inactive-ms 100000
 }
 prefer-no-csd
 screenshot-path "~/Pictures/Screenshots/Screenshot from %Y-%m-%d %H-%M-%S.png"
@@ -246,7 +246,7 @@ binds {
     // === System & Overview ===
     Mod+Tab repeat=false { toggle-overview; }
     Mod+section { show-hotkey-overlay; }
-    Mod+Alt+S hotkey-overlay-title="Start Kakku Screensaver" {
+    Mod+Ctrl+S hotkey-overlay-title="Start Kakku Screensaver" {
         spawn "kakku-screensaver";
     }
 
@@ -264,11 +264,11 @@ binds {
     Super+X hotkey-overlay-title="Power Menu: Toggle" { spawn "dms" "ipc" "call" "powermenu" "toggle"; }
     Mod+Comma hotkey-overlay-title="Settings" { spawn "dms" "ipc" "call" "settings" "focusOrToggle"; }
     Mod+Y hotkey-overlay-title="Browse Backgrounds" { spawn "dms" "ipc" "call" "dankdash" "wallpaper"; }
-    Mod+Alt+B hotkey-overlay-title="Toggle Top Bar" { spawn "dms" "ipc" "call" "bar" "toggle" "index" "0"; }
-    Mod+Alt+N hotkey-overlay-title="Toggle Night Light" { spawn "dms" "ipc" "call" "night" "toggle"; }
+    Mod+Ctrl+B hotkey-overlay-title="Toggle Top Bar" { spawn "dms" "ipc" "call" "bar" "toggle" "index" "0"; }
+    Mod+Ctrl+N hotkey-overlay-title="Toggle Night Light" { spawn "dms" "ipc" "call" "night" "toggle"; }
 
     // === Security ===
-    Mod+Alt+L hotkey-overlay-title="Lock Screen" { spawn "dms" "ipc" "call" "lock" "lock"; }
+    Mod+Ctrl+L hotkey-overlay-title="Lock Screen" { spawn "dms" "ipc" "call" "lock" "lock"; }
     Ctrl+Alt+End hotkey-overlay-title="Exit niri" { quit; }
     Ctrl+Alt+Delete hotkey-overlay-title="Task Manager" { spawn "dms" "ipc" "call" "processlist" "focusOrToggle"; }
 
@@ -319,10 +319,6 @@ binds {
     Mod+Shift+Down  { move-window-down-or-to-workspace-down; }
     Mod+Shift+Up    { move-window-up-or-to-workspace-up; }
     Mod+Shift+Right { move-column-right-or-to-monitor-right; }
-    Mod+Shift+H     { move-column-left-or-to-monitor-left; }
-    Mod+Shift+J     { move-window-down-or-to-workspace-down; }
-    Mod+Shift+K     { move-window-up-or-to-workspace-up; }
-    Mod+Shift+L     { move-column-right-or-to-monitor-right; }
 
     // === Column Navigation ===
     Mod+Home { focus-column-first; }
@@ -335,20 +331,12 @@ binds {
     Mod+Ctrl+Down  { focus-monitor-down; }
     Mod+Ctrl+Up    { focus-monitor-up; }
     Mod+Ctrl+Right { focus-monitor-right; }
-    Mod+Ctrl+H     { focus-monitor-left; }
-    Mod+Ctrl+J     { focus-monitor-down; }
-    Mod+Ctrl+K     { focus-monitor-up; }
-    Mod+Ctrl+L     { focus-monitor-right; }
 
     // === Move to Monitor ===
     Mod+Shift+Ctrl+Left  { move-column-to-monitor-left; }
     Mod+Shift+Ctrl+Down  { move-column-to-monitor-down; }
     Mod+Shift+Ctrl+Up    { move-column-to-monitor-up; }
     Mod+Shift+Ctrl+Right { move-column-to-monitor-right; }
-    Mod+Shift+Ctrl+H     { move-column-to-monitor-left; }
-    Mod+Shift+Ctrl+J     { move-column-to-monitor-down; }
-    Mod+Shift+Ctrl+K     { move-column-to-monitor-up; }
-    Mod+Shift+Ctrl+L     { move-column-to-monitor-right; }
 
     // === Mouse Wheel Navigation ===
     Mod+WheelScrollDown      cooldown-ms=150 { focus-workspace-down; }
@@ -397,7 +385,6 @@ binds {
     Mod+R { switch-preset-column-width; }
     Mod+Shift+R { switch-preset-window-height; }
     Mod+Ctrl+R { reset-window-height; }
-    Mod+Alt+R { spawn "niri" "msg" "action" "reload-config"; }
     Mod+Ctrl+F { expand-column-to-available-width; }
     Mod+C { center-column; }
     Mod+Ctrl+C { center-visible-columns; }

@@ -53,6 +53,10 @@ launch_terminal() {
       --font-size=20 \
       --background="#11131a" \
       --foreground="#cad3f5" \
+      --window-padding-x=0 \
+      --window-padding-y=0 \
+      --window-padding-balance=true \
+      --window-padding-color=background \
       -e "$self" --render &
     return 0
   fi
@@ -62,6 +66,9 @@ launch_terminal() {
       --class KakkuScreensaver \
       --title "Kakku Screensaver" \
       -o 'window.startup_mode="Fullscreen"' \
+      -o 'window.padding.x=0' \
+      -o 'window.padding.y=0' \
+      -o 'window.dynamic_padding=true' \
       -o 'font.size=20' \
       -o 'colors.primary.background="#11131a"' \
       -o 'colors.primary.foreground="#cad3f5"' \
