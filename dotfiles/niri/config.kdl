@@ -310,8 +310,8 @@ binds {
     // === Column Navigation ===
     Mod+Home { focus-column-first; }
     Mod+End  { focus-column-last; }
-    Mod+Ctrl+Home { move-column-to-first; }
-    Mod+Ctrl+End  { move-column-to-last; }
+    Mod+Shift+Home { move-column-to-first; }
+    Mod+Shift+End  { move-column-to-last; }
 
     // === Monitor Navigation ===
     Mod+Ctrl+Left  { focus-monitor-left; }
