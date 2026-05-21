@@ -346,9 +346,13 @@ install_aur_packages
 mkdir -p "$HOME/.config"
 
 copy_config_dir fastfetch
+copy_config_dir ghostty
+copy_config_dir git
 copy_config_dir lazygit
+copy_config_dir mpv
 copy_config_dir starship
 copy_config_dir yazi
+copy_config_dir zathura
 copy_niri_config
 copy_config_dir nvim
 install_dms_user_settings

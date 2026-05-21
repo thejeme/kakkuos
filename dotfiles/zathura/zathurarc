@@ -1,0 +1,23 @@
+# ~/.config/zathura/zathurarc
+
+set selection-clipboard clipboard
+set adjust-open "best-fit"
+set pages-per-row 1
+set scroll-page-aware true
+set scroll-full-overlap 0.01
+set scroll-step 100
+
+set font "JetBrainsMono Nerd Font 11"
+set recolor true
+set recolor-keephue true
+
+# Key mappings
+map u scroll half-up
+map d scroll half-down
+map D toggle_page_mode
+map r reload
+map R rotate
+
+map <C-=> zoom in
+map <C--> zoom out
+map <C-0> zoom original

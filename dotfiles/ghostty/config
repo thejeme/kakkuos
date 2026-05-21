@@ -1,0 +1,17 @@
+# ~/.config/ghostty/config
+
+font-family = JetBrainsMono Nerd Font
+font-size = 13
+
+cursor-style = bar
+cursor-style-blink = false
+
+mouse-hide-while-typing = true
+
+window-padding-x = 4
+window-padding-y = 4
+window-decoration = false
+
+confirm-close-surface = false
+
+gtk-single-instance = true
