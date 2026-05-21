@@ -1,5 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-label="KakkuOS logo">
-  <rect width="256" height="256" rx="48" fill="#11111b"/>
-  <path d="M58 190V66h30v50l46-50h38l-52 57 56 67h-39l-49-59v59H58z" fill="#9ece6a"/>
-  <path d="M178 190l-38-47 18-20 58 67h-38z" fill="#7aa2f7"/>
-</svg>

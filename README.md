@@ -34,7 +34,7 @@ The installer installs package profiles, copies Kakku-owned dotfiles, sets fish 
 
 ```text
 backgrounds/              OS background images
-branding/                 logos, wordmarks, default wallpaper
+branding/                 branding assets
 bin/                      kakku commands and helpers
 dotfiles/                 user config defaults
 packages/                 package profile lists
