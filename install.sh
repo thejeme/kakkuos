@@ -433,6 +433,10 @@ elif has_command kakku-limine-defaults; then
   sudo KAKKU_LIMINE_DEFAULTS_SOURCE="$REPO_DIR/system/default/limine" kakku-limine-defaults || echo "Warning: Limine defaults step failed; continuing install." >&2
 fi
 
+if has_command limine-entry-tool; then
+  sudo limine-entry-tool --scan || echo "Warning: Limine entry scan failed; continuing install." >&2
+fi
+
 if [[ -f "$REPO_DIR/system/systemd/user/kakku-idle.service" ]]; then
   sudo install -Dm644 "$REPO_DIR/system/systemd/user/kakku-idle.service" /usr/lib/systemd/user/kakku-idle.service
   systemctl --user daemon-reload 2>/dev/null || true
