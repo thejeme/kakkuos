@@ -4,10 +4,6 @@
     "source": "~/.config/fastfetch/logo.txt",
     "type": "file"
   },
-  "display": {
-    "separator": "  ",
-    "color": "green"
-  },
   "modules": [
     "title",
     "separator",
