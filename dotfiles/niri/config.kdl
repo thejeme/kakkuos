@@ -113,7 +113,12 @@ overview {
 // This line starts waybar, a commonly used bar for Wayland compositors.
 environment {
   XDG_CURRENT_DESKTOP "niri"
+  GTK_IM_MODULE "ibus"
+  QT_IM_MODULE "ibus"
+  XMODIFIERS "@im=ibus"
 }
+
+spawn-at-startup "ibus-daemon" "-drx"
 hotkey-overlay {
     skip-at-startup
 }

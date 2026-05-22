@@ -28,6 +28,7 @@ depends=(
   'fprintd'
   'curl'
   'wl-clipboard'
+  'ibus'
   'ghostty'
   'fastfetch'
   'fontconfig'
@@ -51,6 +52,7 @@ package() {
   cp -r "$repo_root/dotfiles/yazi" "$pkgdir/etc/skel/.config/yazi"
   cp -r "$repo_root/dotfiles/fish" "$pkgdir/etc/skel/.config/fish"
   cp -r "$repo_root/dotfiles/niri" "$pkgdir/etc/skel/.config/niri"
+  cp -r "$repo_root/dotfiles/ghostty" "$pkgdir/etc/skel/.config/ghostty"
   cp -r "$repo_root/dotfiles/nvim" "$pkgdir/etc/skel/.config/nvim"
   install -Dm644 "$repo_root/system/dms/settings.defaults.json" "$pkgdir/etc/skel/.config/DankMaterialShell/settings.json"
 
@@ -88,6 +90,7 @@ package() {
   install -m755 "$repo_root"/bin/kakku-screensaver "$pkgdir/usr/bin/"
 
   install -Dm644 "$repo_root/system/systemd/user/kakku-idle.service" "$pkgdir/usr/lib/systemd/user/kakku-idle.service"
+  install -Dm644 "$repo_root/system/systemd/user/ibus-daemon.service" "$pkgdir/usr/lib/systemd/user/ibus-daemon.service"
 
   install -Dm644 "$repo_root/system/xdg-desktop-portal/niri-portals.conf" "$pkgdir/usr/share/xdg-desktop-portal/niri-portals.conf"
 

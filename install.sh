@@ -435,10 +435,14 @@ fi
 
 if [[ -f "$REPO_DIR/system/systemd/user/kakku-idle.service" ]]; then
   sudo install -Dm644 "$REPO_DIR/system/systemd/user/kakku-idle.service" /usr/lib/systemd/user/kakku-idle.service
+  if [[ -f "$REPO_DIR/system/systemd/user/ibus-daemon.service" ]]; then
+    sudo install -Dm644 "$REPO_DIR/system/systemd/user/ibus-daemon.service" /usr/lib/systemd/user/ibus-daemon.service
+  fi
   systemctl --user daemon-reload 2>/dev/null || true
   enable_user_service_if_available dms.service
   enable_user_service_if_available dsearch.service
   enable_user_service_if_available kakku-idle.service
+  enable_user_service_if_available ibus-daemon.service
 fi
 
 sudo systemctl enable NetworkManager || true
