@@ -342,6 +342,18 @@ binds {
     Mod+Shift+WheelScrollRight { move-column-right; }
     Mod+Shift+WheelScrollDown  { move-column-right; }
 
+    // === Mouse Wheel Workspace Navigation ===
+    Mod+Ctrl+WheelScrollUp    { focus-workspace-up; }
+    Mod+Ctrl+WheelScrollDown  { focus-workspace-down; }
+    Mod+Ctrl+WheelScrollLeft  { focus-workspace-up; }
+    Mod+Ctrl+WheelScrollRight { focus-workspace-down; }
+
+    // === Mouse Wheel Workspace Movement ===
+    Mod+Shift+Ctrl+WheelScrollUp    { move-column-to-workspace-up; }
+    Mod+Shift+Ctrl+WheelScrollDown  { move-column-to-workspace-down; }
+    Mod+Shift+Ctrl+WheelScrollLeft  { move-column-to-workspace-up; }
+    Mod+Shift+Ctrl+WheelScrollRight { move-column-to-workspace-down; }
+
     // === Numbered Workspaces ===
     Mod+1 { focus-workspace 1; }
     Mod+2 { focus-workspace 2; }
