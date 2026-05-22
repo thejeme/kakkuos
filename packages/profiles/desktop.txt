@@ -33,5 +33,6 @@ fontconfig
 noto-fonts
 noto-fonts-cjk
 noto-fonts-emoji
+ttf-fira-code
 ttf-jetbrains-mono-nerd
 greetd
