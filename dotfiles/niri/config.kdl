@@ -386,7 +386,7 @@ binds {
 
     Mod+Shift+Minus { set-window-height "-10%"; }
     Mod+Shift+KP_Subtract { set-window-height "-10%"; }
-    Mod+Shift+Plus { set-column-width "+10%"; }
+    Mod+Shift+Plus { set-column-height "+10%"; }
     Mod+Shift+Equal { set-window-height "+10%"; }
     Mod+Shift+KP_Add { set-window-height "+10%"; }
 
