@@ -66,17 +66,37 @@
         "name": "Matcha",
         "dark": {
           "primary": "#a8d8a0",
-          "primaryText": "#1e1c1e",
+          "primaryText": "#141c14",
           "primaryContainer": "#2e5e36",
           "secondary": "#c8e6c0",
-          "surfaceTint": "#242e26"
+          "surface": "#141c14",
+          "surfaceText": "#d4e8d8",
+          "surfaceVariant": "#1a231a",
+          "surfaceVariantText": "#98b09c",
+          "surfaceTint": "#1e2a20",
+          "background": "#1a231a",
+          "backgroundText": "#d4e8d8",
+          "outline": "#516b55",
+          "surfaceContainer": "#1a231a",
+          "surfaceContainerHigh": "#283428",
+          "surfaceContainerHighest": "#384738"
         },
         "light": {
           "primary": "#2d8a3e",
-          "primaryText": "#f8f4f0",
+          "primaryText": "#f4faf4",
           "primaryContainer": "#d5f0d8",
           "secondary": "#4a9e5a",
-          "surfaceTint": "#d5f0d8"
+          "surface": "#ecf5ec",
+          "surfaceText": "#2a3e2c",
+          "surfaceVariant": "#f4faf4",
+          "surfaceVariantText": "#4a6050",
+          "surfaceTint": "#d5f0d8",
+          "background": "#f4faf4",
+          "backgroundText": "#2a3e2c",
+          "outline": "#7a9a80",
+          "surfaceContainer": "#ecf5ec",
+          "surfaceContainerHigh": "#dceede",
+          "surfaceContainerHighest": "#cce6d0"
         }
       },
       {
@@ -84,17 +104,37 @@
         "name": "Blueberry",
         "dark": {
           "primary": "#8b9cf5",
-          "primaryText": "#1e1c1e",
+          "primaryText": "#121520",
           "primaryContainer": "#2e3578",
           "secondary": "#b0b8f8",
-          "surfaceTint": "#24253c"
+          "surface": "#121520",
+          "surfaceText": "#d0d5e8",
+          "surfaceVariant": "#181c28",
+          "surfaceVariantText": "#949ab0",
+          "surfaceTint": "#1e2238",
+          "background": "#181c28",
+          "backgroundText": "#d0d5e8",
+          "outline": "#4d5370",
+          "surfaceContainer": "#181c28",
+          "surfaceContainerHigh": "#272c3e",
+          "surfaceContainerHighest": "#373d54"
         },
         "light": {
           "primary": "#4060e8",
-          "primaryText": "#f8f4f0",
+          "primaryText": "#f0f2fc",
           "primaryContainer": "#dce2ff",
           "secondary": "#6080f5",
-          "surfaceTint": "#dce2ff"
+          "surface": "#eceef8",
+          "surfaceText": "#2a2e44",
+          "surfaceVariant": "#f0f2fc",
+          "surfaceVariantText": "#4a5070",
+          "surfaceTint": "#dce2ff",
+          "background": "#f0f2fc",
+          "backgroundText": "#2a2e44",
+          "outline": "#8088a8",
+          "surfaceContainer": "#eceef8",
+          "surfaceContainerHigh": "#dce0f0",
+          "surfaceContainerHighest": "#ccd2e8"
         }
       },
       {
@@ -102,17 +142,37 @@
         "name": "Strawberry",
         "dark": {
           "primary": "#f58b9c",
-          "primaryText": "#1e1c1e",
+          "primaryText": "#1c1216",
           "primaryContainer": "#782e3a",
           "secondary": "#f8b0b8",
-          "surfaceTint": "#3c2328"
+          "surface": "#1c1216",
+          "surfaceText": "#f0d8e0",
+          "surfaceVariant": "#22161b",
+          "surfaceVariantText": "#b8989f",
+          "surfaceTint": "#301c22",
+          "background": "#22161b",
+          "backgroundText": "#f0d8e0",
+          "outline": "#6e4d57",
+          "surfaceContainer": "#22161b",
+          "surfaceContainerHigh": "#36252d",
+          "surfaceContainerHighest": "#4a3540"
         },
         "light": {
           "primary": "#e03860",
-          "primaryText": "#f8f4f0",
+          "primaryText": "#fef2f4",
           "primaryContainer": "#ffd6e0",
           "secondary": "#f06080",
-          "surfaceTint": "#ffd6e0"
+          "surface": "#f8ecf0",
+          "surfaceText": "#442830",
+          "surfaceVariant": "#fef2f4",
+          "surfaceVariantText": "#6e4450",
+          "surfaceTint": "#ffd6e0",
+          "background": "#fef2f4",
+          "backgroundText": "#442830",
+          "outline": "#a07880",
+          "surfaceContainer": "#f8ecf0",
+          "surfaceContainerHigh": "#f0dce2",
+          "surfaceContainerHighest": "#e8ccd4"
         }
       },
       {
@@ -120,17 +180,37 @@
         "name": "Funfetti",
         "dark": {
           "primary": "#e8a0f0",
-          "primaryText": "#1e1c1e",
+          "primaryText": "#18141c",
           "primaryContainer": "#5e2e70",
           "secondary": "#a0d8f0",
-          "surfaceTint": "#34253c"
+          "surface": "#18141c",
+          "surfaceText": "#e8ddf0",
+          "surfaceVariant": "#1e1824",
+          "surfaceVariantText": "#a898b0",
+          "surfaceTint": "#2a2038",
+          "background": "#1e1824",
+          "backgroundText": "#e8ddf0",
+          "outline": "#605470",
+          "surfaceContainer": "#1e1824",
+          "surfaceContainerHigh": "#2e2838",
+          "surfaceContainerHighest": "#403848"
         },
         "light": {
           "primary": "#9040c8",
-          "primaryText": "#f8f4f0",
+          "primaryText": "#faf4fe",
           "primaryContainer": "#eedcf8",
           "secondary": "#2898d0",
-          "surfaceTint": "#eedcf8"
+          "surface": "#f4eef8",
+          "surfaceText": "#3a2844",
+          "surfaceVariant": "#faf4fe",
+          "surfaceVariantText": "#604870",
+          "surfaceTint": "#eedcf8",
+          "background": "#faf4fe",
+          "backgroundText": "#3a2844",
+          "outline": "#9880a8",
+          "surfaceContainer": "#f4eef8",
+          "surfaceContainerHigh": "#e8dcf0",
+          "surfaceContainerHighest": "#dccce8"
         }
       },
       {
@@ -138,17 +218,37 @@
         "name": "Red Velvet",
         "dark": {
           "primary": "#d44050",
-          "primaryText": "#e4e0e2",
+          "primaryText": "#1c1012",
           "primaryContainer": "#6e2028",
           "secondary": "#e87080",
-          "surfaceTint": "#3a1e22"
+          "surface": "#1c1012",
+          "surfaceText": "#eed5d8",
+          "surfaceVariant": "#241416",
+          "surfaceVariantText": "#b09496",
+          "surfaceTint": "#341820",
+          "background": "#241416",
+          "backgroundText": "#eed5d8",
+          "outline": "#6e4a4e",
+          "surfaceContainer": "#241416",
+          "surfaceContainerHigh": "#382226",
+          "surfaceContainerHighest": "#4e3338"
         },
         "light": {
           "primary": "#b82030",
-          "primaryText": "#f8f4f0",
+          "primaryText": "#fef0f0",
           "primaryContainer": "#f8d5d8",
           "secondary": "#d04050",
-          "surfaceTint": "#f8d5d8"
+          "surface": "#f8ecea",
+          "surfaceText": "#442022",
+          "surfaceVariant": "#fef0f0",
+          "surfaceVariantText": "#6e3840",
+          "surfaceTint": "#f8d5d8",
+          "background": "#fef0f0",
+          "backgroundText": "#442022",
+          "outline": "#a06868",
+          "surfaceContainer": "#f8ecea",
+          "surfaceContainerHigh": "#f0dcd8",
+          "surfaceContainerHighest": "#e8ccc8"
         }
       },
       {
@@ -156,17 +256,37 @@
         "name": "Lemon",
         "dark": {
           "primary": "#f0e060",
-          "primaryText": "#1e1c1e",
+          "primaryText": "#1a1a10",
           "primaryContainer": "#6e6818",
           "secondary": "#f5ea90",
-          "surfaceTint": "#36341c"
+          "surface": "#1a1a10",
+          "surfaceText": "#eae8d0",
+          "surfaceVariant": "#222214",
+          "surfaceVariantText": "#b0ae90",
+          "surfaceTint": "#34341c",
+          "background": "#222214",
+          "backgroundText": "#eae8d0",
+          "outline": "#6a6840",
+          "surfaceContainer": "#222214",
+          "surfaceContainerHigh": "#343420",
+          "surfaceContainerHighest": "#484830"
         },
         "light": {
           "primary": "#b89c00",
-          "primaryText": "#f8f4f0",
+          "primaryText": "#fcfcf0",
           "primaryContainer": "#fff8c0",
           "secondary": "#d0b020",
-          "surfaceTint": "#fff8c0"
+          "surface": "#f8f6e8",
+          "surfaceText": "#3a3a20",
+          "surfaceVariant": "#fcfcf0",
+          "surfaceVariantText": "#606030",
+          "surfaceTint": "#fff8c0",
+          "background": "#fcfcf0",
+          "backgroundText": "#3a3a20",
+          "outline": "#a0a060",
+          "surfaceContainer": "#f8f6e8",
+          "surfaceContainerHigh": "#f0eedc",
+          "surfaceContainerHighest": "#e8e6cc"
         }
       },
       {
@@ -174,17 +294,37 @@
         "name": "Carrot",
         "dark": {
           "primary": "#f0983c",
-          "primaryText": "#1e1c1e",
+          "primaryText": "#1c1610",
           "primaryContainer": "#704018",
           "secondary": "#f5b870",
-          "surfaceTint": "#38281c"
+          "surface": "#1c1610",
+          "surfaceText": "#ede2d6",
+          "surfaceVariant": "#231c14",
+          "surfaceVariantText": "#b5a697",
+          "surfaceTint": "#36261a",
+          "background": "#231c14",
+          "backgroundText": "#ede2d6",
+          "outline": "#6e5a46",
+          "surfaceContainer": "#231c14",
+          "surfaceContainerHigh": "#382d1f",
+          "surfaceContainerHighest": "#4d3f2e"
         },
         "light": {
           "primary": "#d06810",
-          "primaryText": "#f8f4f0",
+          "primaryText": "#fef6f0",
           "primaryContainer": "#ffe8d0",
           "secondary": "#e88030",
-          "surfaceTint": "#ffe8d0"
+          "surface": "#f8f0e8",
+          "surfaceText": "#3e3020",
+          "surfaceVariant": "#fef6f0",
+          "surfaceVariantText": "#6a5440",
+          "surfaceTint": "#ffe8d0",
+          "background": "#fef6f0",
+          "backgroundText": "#3e3020",
+          "outline": "#a08860",
+          "surfaceContainer": "#f8f0e8",
+          "surfaceContainerHigh": "#f0e4d8",
+          "surfaceContainerHighest": "#e8d8c8"
         }
       },
       {
@@ -192,17 +332,37 @@
         "name": "Black Forest",
         "dark": {
           "primary": "#c84060",
-          "primaryText": "#e4e0e2",
+          "primaryText": "#1a1016",
           "primaryContainer": "#601828",
           "secondary": "#e07090",
-          "surfaceTint": "#361820"
+          "surface": "#1a1016",
+          "surfaceText": "#e8d5dc",
+          "surfaceVariant": "#201419",
+          "surfaceVariantText": "#b09a9f",
+          "surfaceTint": "#2e1620",
+          "background": "#201419",
+          "backgroundText": "#e8d5dc",
+          "outline": "#6b5158",
+          "surfaceContainer": "#201419",
+          "surfaceContainerHigh": "#33222a",
+          "surfaceContainerHighest": "#46313b"
         },
         "light": {
           "primary": "#a82040",
-          "primaryText": "#f8f4f0",
+          "primaryText": "#fcf0f2",
           "primaryContainer": "#f8d0d8",
           "secondary": "#c04060",
-          "surfaceTint": "#f8d0d8"
+          "surface": "#f6eaee",
+          "surfaceText": "#402028",
+          "surfaceVariant": "#fcf0f2",
+          "surfaceVariantText": "#6a3848",
+          "surfaceTint": "#f8d0d8",
+          "background": "#fcf0f2",
+          "backgroundText": "#402028",
+          "outline": "#987080",
+          "surfaceContainer": "#f6eaee",
+          "surfaceContainerHigh": "#eedce2",
+          "surfaceContainerHighest": "#e6ccd4"
         }
       },
       {
@@ -210,17 +370,37 @@
         "name": "Tiramisu",
         "dark": {
           "primary": "#d4a878",
-          "primaryText": "#1e1c1e",
+          "primaryText": "#1c1714",
           "primaryContainer": "#604428",
           "secondary": "#e8c8a0",
-          "surfaceTint": "#322822"
+          "surface": "#1c1714",
+          "surfaceText": "#ede3db",
+          "surfaceVariant": "#241e19",
+          "surfaceVariantText": "#b5a99e",
+          "surfaceTint": "#302420",
+          "background": "#241e19",
+          "backgroundText": "#ede3db",
+          "outline": "#736558",
+          "surfaceContainer": "#241e19",
+          "surfaceContainerHigh": "#382e26",
+          "surfaceContainerHighest": "#4c4035"
         },
         "light": {
           "primary": "#a07040",
-          "primaryText": "#f8f4f0",
+          "primaryText": "#fef8f2",
           "primaryContainer": "#f5e8d8",
           "secondary": "#b88850",
-          "surfaceTint": "#f5e8d8"
+          "surface": "#f6f0ea",
+          "surfaceText": "#3c3228",
+          "surfaceVariant": "#fef8f2",
+          "surfaceVariantText": "#665848",
+          "surfaceTint": "#f5e8d8",
+          "background": "#fef8f2",
+          "backgroundText": "#3c3228",
+          "outline": "#9c8c78",
+          "surfaceContainer": "#f6f0ea",
+          "surfaceContainerHigh": "#eee4dc",
+          "surfaceContainerHighest": "#e6d8cc"
         }
       },
       {
@@ -228,17 +408,37 @@
         "name": "Mocha",
         "dark": {
           "primary": "#b08868",
-          "primaryText": "#e4e0e2",
+          "primaryText": "#1a1410",
           "primaryContainer": "#503820",
           "secondary": "#c8a080",
-          "surfaceTint": "#2e2420"
+          "surface": "#1a1410",
+          "surfaceText": "#e8ddd4",
+          "surfaceVariant": "#211a14",
+          "surfaceVariantText": "#b0a498",
+          "surfaceTint": "#2c221c",
+          "background": "#211a14",
+          "backgroundText": "#e8ddd4",
+          "outline": "#6b5d51",
+          "surfaceContainer": "#211a14",
+          "surfaceContainerHigh": "#342a20",
+          "surfaceContainerHighest": "#473b2f"
         },
         "light": {
           "primary": "#785030",
-          "primaryText": "#f8f4f0",
+          "primaryText": "#faf6f2",
           "primaryContainer": "#eedccc",
           "secondary": "#906840",
-          "surfaceTint": "#eedccc"
+          "surface": "#f4eeea",
+          "surfaceText": "#382c22",
+          "surfaceVariant": "#faf6f2",
+          "surfaceVariantText": "#605040",
+          "surfaceTint": "#eedccc",
+          "background": "#faf6f2",
+          "backgroundText": "#382c22",
+          "outline": "#988878",
+          "surfaceContainer": "#f4eeea",
+          "surfaceContainerHigh": "#ece2dc",
+          "surfaceContainerHighest": "#e4d6cc"
         }
       }
     ]
