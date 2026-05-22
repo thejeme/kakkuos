@@ -15,3 +15,5 @@ window-decoration = false
 confirm-close-surface = false
 
 gtk-single-instance = false
+
+keybind = performable:ctrl+c=copy_to_clipboard
