@@ -416,11 +416,11 @@ binds {
 }
 
 // Include dms files
-//include "dms/alttab.kdl"
-//include "dms/binds.kdl"
-//include "dms/colors.kdl"
-//include "dms/layout.kdl"
-//include "dms/cursor.kdl"
-//include "dms/outputs.kdl"
-//include "dms/windowrules.kdl"
-//include "dms/wpblur.kdl"
+include "dms/alttab.kdl"
+include "dms/binds.kdl"
+include "dms/colors.kdl"
+include "dms/layout.kdl"
+include "dms/cursor.kdl"
+include "dms/outputs.kdl"
+include "dms/windowrules.kdl"
+include "dms/wpblur.kdl"
