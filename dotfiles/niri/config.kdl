@@ -380,6 +380,7 @@ binds {
     // === Manual Sizing ===
     Mod+Minus { set-column-width "-10%"; }
     Mod+KP_Subtract { set-column-width "-10%"; }
+    Mod+Plus { set-column-width "+10%"; }
     Mod+Equal { set-column-width "+10%"; }
     Mod+KP_Add { set-column-width "+10%"; }
 
@@ -392,6 +393,7 @@ binds {
     XF86Launch1 { screenshot show-pointer=false; }
     Ctrl+XF86Launch1 { screenshot-screen show-pointer=false; }
     Alt+XF86Launch1 { screenshot-window show-pointer=false; }
+    Mod+Shift+S { screenshot show-pointer=false; }
     Print { screenshot show-pointer=false; }
     Ctrl+Print { screenshot-screen show-pointer=false; }
     Alt+Print { screenshot-window show-pointer=false; }
