@@ -152,21 +152,21 @@
         }
       },
       {
-        "id": "caramel",
-        "name": "Caramel",
+        "id": "lemon",
+        "name": "Lemon",
         "dark": {
-          "primary": "#e8b860",
+          "primary": "#f0e060",
           "primaryText": "#1e1c1e",
-          "primaryContainer": "#6e5020",
-          "secondary": "#f0d090",
-          "surfaceTint": "#362c20"
+          "primaryContainer": "#6e6818",
+          "secondary": "#f5ea90",
+          "surfaceTint": "#36341c"
         },
         "light": {
-          "primary": "#c08020",
+          "primary": "#b89c00",
           "primaryText": "#f8f4f0",
-          "primaryContainer": "#fff0d0",
-          "secondary": "#d89830",
-          "surfaceTint": "#fff0d0"
+          "primaryContainer": "#fff8c0",
+          "secondary": "#d0b020",
+          "surfaceTint": "#fff8c0"
         }
       },
       {
