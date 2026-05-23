@@ -264,7 +264,7 @@ binds {
     Mod+Space hotkey-overlay-title="Application Launcher" { spawn "dms" "ipc" "call" "spotlight" "toggle"; }
     Mod+V hotkey-overlay-title="Clipboard Manager" { spawn "dms" "ipc" "call" "clipboard" "toggle"; }
     Mod+M hotkey-overlay-title="Open Music" { spawn "cider"; }
-    Super+X hotkey-overlay-title="Power Menu: Toggle" { spawn "dms" "ipc" "call" "powermenu" "toggle"; }
+    Super+P hotkey-overlay-title="Power Menu: Toggle" { spawn "dms" "ipc" "call" "powermenu" "toggle"; }
     Mod+Comma hotkey-overlay-title="Settings" { spawn "dms" "ipc" "call" "settings" "focusOrToggle"; }
     Mod+Y hotkey-overlay-title="Browse Backgrounds" { spawn "dms" "ipc" "call" "dankdash" "wallpaper"; }
     Mod+Ctrl+B hotkey-overlay-title="Toggle Top Bar" { spawn "dms" "ipc" "call" "bar" "toggle" "index" "0"; }
@@ -318,18 +318,6 @@ binds {
     Mod+Shift+Home { move-column-to-first; }
     Mod+Shift+End  { move-column-to-last; }
 
-    // === Monitor Navigation ===
-    Mod+Ctrl+Left  { focus-monitor-left; }
-    Mod+Ctrl+Down  { focus-monitor-down; }
-    Mod+Ctrl+Up    { focus-monitor-up; }
-    Mod+Ctrl+Right { focus-monitor-right; }
-
-    // === Move to Monitor ===
-    Mod+Shift+Ctrl+Left  { move-column-to-monitor-left; }
-    Mod+Shift+Ctrl+Down  { move-column-to-monitor-down; }
-    Mod+Shift+Ctrl+Up    { move-column-to-monitor-up; }
-    Mod+Shift+Ctrl+Right { move-column-to-monitor-right; }
-
     // === Mouse Wheel Navigation ===
     Mod+WheelScrollUp          { focus-column-left; }
     Mod+WheelScrollLeft        { focus-column-left; }
@@ -377,8 +365,8 @@ binds {
     Mod+Shift+9 { move-column-to-workspace 9; }
 
     // === Column Management ===
-    Mod+Alt+Left  { consume-or-expel-window-left; }
-    Mod+Alt+Right { consume-or-expel-window-right; }
+    Mod+Ctrl+Left  { consume-or-expel-window-left; }
+    Mod+Ctrl+Right { consume-or-expel-window-right; }
     Mod+Period { expel-window-from-column; }
 
     // === Sizing & Layout ===
