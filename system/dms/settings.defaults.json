@@ -6,7 +6,6 @@
   "widgetColorMode": "primary",
   "controlCenterTileColorMode": "primary",
   "buttonColorMode": "primary",
-  "cornerRadius": 10,
   "use24HourClock": true,
   "clockDateFormat": "d.M",
   "windSpeedUnit": "ms",
