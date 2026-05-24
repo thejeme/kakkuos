@@ -236,6 +236,7 @@ fix_missing_user_configs() {
   copy_missing_path /etc/skel/.config/fish "$CONFIG_HOME/fish"
   copy_missing_path /etc/skel/.config/starship "$CONFIG_HOME/starship"
   copy_missing_path /etc/skel/.config/niri "$CONFIG_HOME/niri"
+  copy_missing_path /etc/skel/.config/niri-screensaver "$CONFIG_HOME/niri-screensaver"
   copy_missing_path /etc/skel/.config/nvim "$CONFIG_HOME/nvim"
   copy_missing_path /etc/skel/.config/DankMaterialShell "$CONFIG_HOME/DankMaterialShell"
   copy_missing_path /etc/skel/.zshrc "$HOME/.zshrc"
@@ -534,7 +535,7 @@ run_doctor_fix() {
 run_doctor_checks() {
   local failed=0
 
-  for command_name in niri dms dsearch xwayland-satellite ghostty swayidle niri-screensaver kakku kakku-defaults kakku-browser-policies yazi btop fish zathura nvim codex; do
+  for command_name in niri dms dsearch xwayland-satellite ghostty swayidle niri-screensaver niri-screensaver-ctl kakku kakku-defaults kakku-browser-policies yazi btop fish zathura nvim codex; do
     check_command "$command_name" || failed=1
   done
 
@@ -547,6 +548,7 @@ run_doctor_checks() {
   check_path "$CONFIG_HOME/DankMaterialShell/settings.json" || failed=1
   check_path "$CONFIG_HOME/fish/config.fish" || failed=1
   check_path "$CONFIG_HOME/niri/config.kdl" || failed=1
+  check_path "$CONFIG_HOME/niri-screensaver/config" || failed=1
   check_path "$CONFIG_HOME/nvim/init.lua" || failed=1
   check_optional_path "$HOME/.zshrc"
 

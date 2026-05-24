@@ -1,0 +1,22 @@
+# ~/.config/niri-screensaver/config
+
+# This file is sourced as shell by niri-screensaver.
+BATTERY_MIN_PERCENT=10
+FRAME_RATE=60
+
+EXCLUDE_EFFECTS="dev_worm"
+FADE_IN_EFFECT="expand"
+FADE_OUT_EFFECT="burn"
+
+SHOW_CLOCK=true
+CLOCK_DURATION=3
+CLOCK_FORMAT="%H:%M"
+
+SHOW_NOW_PLAYING=false
+NOW_PLAYING_DURATION=3
+
+CURSOR_HIDE=true
+DISMISS_ON_KEY=true
+
+RANDOM_LOGO=false
+LOGO_FILE="/usr/share/niri-screensaver/logos/niri-name-with-tiles.txt"

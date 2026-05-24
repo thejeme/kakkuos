@@ -115,7 +115,7 @@ environment {
   XDG_CURRENT_DESKTOP "niri"
 }
 
-spawn-at-startup "swayidle" "-w" "timeout" "900" "niri-screensaver" "resume" "pkill -f '(^|/)niri-screensaver($| )' >/dev/null 2>&1 || true" "timeout" "3600" "pkill -f '(^|/)niri-screensaver($| )' >/dev/null 2>&1 || true; dms ipc call lock lock || loginctl lock-session" "before-sleep" "pkill -f '(^|/)niri-screensaver($| )' >/dev/null 2>&1 || true; dms ipc call lock lock || loginctl lock-session"
+spawn-at-startup "swayidle" "-w" "timeout" "900" "niri-screensaver-ctl launch" "resume" "niri-screensaver-ctl kill" "timeout" "3600" "niri-screensaver-ctl kill; dms ipc call lock lock || loginctl lock-session" "before-sleep" "niri-screensaver-ctl kill; dms ipc call lock lock || loginctl lock-session"
 hotkey-overlay {
     skip-at-startup
 }
@@ -216,8 +216,7 @@ window-rule {
     open-floating true
 }
 window-rule {
-    match app-id=r#"^fi\.kakku\.screensaver$"#
-    match app-id="KakkuScreensaver"
+    match app-id="niri-screensaver"
     open-fullscreen true
     open-focused true
 }
@@ -248,7 +247,7 @@ binds {
     // === System & Overview ===
     Mod+Tab repeat=false { toggle-overview; }
     Mod+section { show-hotkey-overlay; }
-     Mod+Shift+Escape hotkey-overlay-title="Start Screensaver" { spawn "niri-screensaver"; }
+    Mod+Shift+Escape hotkey-overlay-title="Start Screensaver" { spawn "niri-screensaver-ctl" "launch"; }
 
     // === Application Launchers ===
     Mod+T hotkey-overlay-title="Open Terminal" { spawn "ghostty"; }

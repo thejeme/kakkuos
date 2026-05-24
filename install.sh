@@ -354,6 +354,7 @@ copy_config_dir starship
 copy_config_dir yazi
 copy_config_dir zathura
 copy_niri_config
+copy_config_dir niri-screensaver
 copy_config_dir nvim
 install_dms_user_settings
 

@@ -21,6 +21,7 @@ if [[ -o interactive ]]; then
   export FZF_DEFAULT_OPTS="${FZF_DEFAULT_OPTS:---height=40% --layout=reverse --border}"
 
   if command -v starship >/dev/null 2>&1; then
+    export STARSHIP_CONFIG="$HOME/.config/starship/starship.toml"
     eval "$(starship init zsh)"
   fi
 

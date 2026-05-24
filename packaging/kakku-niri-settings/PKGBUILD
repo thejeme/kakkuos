@@ -53,6 +53,7 @@ package() {
   cp -r "$repo_root/dotfiles/yazi" "$pkgdir/etc/skel/.config/yazi"
   cp -r "$repo_root/dotfiles/fish" "$pkgdir/etc/skel/.config/fish"
   cp -r "$repo_root/dotfiles/niri" "$pkgdir/etc/skel/.config/niri"
+  cp -r "$repo_root/dotfiles/niri-screensaver" "$pkgdir/etc/skel/.config/niri-screensaver"
   cp -r "$repo_root/dotfiles/ghostty" "$pkgdir/etc/skel/.config/ghostty"
   cp -r "$repo_root/dotfiles/nvim" "$pkgdir/etc/skel/.config/nvim"
   install -Dm644 "$repo_root/system/dms/settings.defaults.json" "$pkgdir/etc/skel/.config/DankMaterialShell/settings.json"

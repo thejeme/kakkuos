@@ -33,7 +33,7 @@ _apply_configs() {
     id "$username" &>/dev/null || continue
 
     # Update owned files inside .config directories without replacing the directories.
-    for dir in DankMaterialShell fastfetch lazygit starship yazi fish niri ghostty nvim; do
+    for dir in DankMaterialShell fastfetch lazygit starship yazi fish niri niri-screensaver ghostty nvim; do
       if [ -d "$skel/.config/$dir" ]; then
         _copy_tree_files "$skel/.config/$dir" "$user_home/.config/$dir" "$username"
       fi
