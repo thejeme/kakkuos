@@ -150,6 +150,12 @@ Run a general health check with:
 kakku doctor
 ```
 
+Generate a support summary that can be pasted into an AI chat or support request:
+
+```bash
+kakku context
+```
+
 Try safe repair steps with:
 
 ```bash
@@ -175,6 +181,12 @@ niri msg action load-config-file
 systemctl --user restart dms.service
 ```
 
+When asking an AI assistant for help, include what you want to change and the output of:
+
+```bash
+kakku context
+```
+
 ## Advice For AI Assistants
 
 When helping a non-developer user:
@@ -183,8 +195,8 @@ When helping a non-developer user:
 - prefer GUI or user-level config changes before system-level changes;
 - show exact files and commands;
 - validate before reloading niri;
+- ask for `kakku context` when system details are needed;
 - avoid deleting or overwriting user config;
 - make backups before large manual edits;
 - mention when logout or reboot is required;
 - do not suggest rebuilding packages or ISO images unless the user is actually developing KakkuOS.
-

@@ -11,6 +11,7 @@ Usage:
   kakku help
   kakku info
   kakku doctor [--fix]
+  kakku context
   kakku services
   kakku keybinds
   kakku paths
@@ -490,6 +491,107 @@ show_info() {
 
 }
 
+print_command_output() {
+  local label="$1"
+  shift
+
+  echo "$label:"
+  if "$@" 2>/dev/null; then
+    :
+  else
+    echo "  unavailable"
+  fi
+  echo
+}
+
+print_command_version() {
+  local label="$1"
+  local command_name="$2"
+  shift 2
+
+  if has_command "$command_name"; then
+    printf '%-18s %s\n' "$label:" "$("$command_name" "$@" 2>/dev/null | head -n 1 || printf 'available')"
+  else
+    printf '%-18s %s\n' "$label:" "missing"
+  fi
+}
+
+show_context() {
+  echo "KakkuOS support context"
+  echo "Generated: $(date -Is 2>/dev/null || date)"
+  echo
+  echo "This output is intended to paste into an AI chat or support request."
+  echo "It avoids logs and personal file listings, but review it before sharing."
+  echo
+
+  echo "System:"
+  if [[ -f /etc/os-release ]]; then
+    . /etc/os-release
+    printf '%-18s %s\n' "OS:" "${PRETTY_NAME:-unknown}"
+    printf '%-18s %s\n' "OS ID:" "${ID:-unknown}"
+  fi
+  if has_command uname; then
+    printf '%-18s %s\n' "Kernel:" "$(uname -r)"
+    printf '%-18s %s\n' "Machine:" "$(uname -m)"
+  fi
+  printf '%-18s %s\n' "Session:" "${XDG_SESSION_TYPE:-unknown}"
+  printf '%-18s %s\n' "Desktop:" "${XDG_CURRENT_DESKTOP:-unknown}"
+  printf '%-18s %s\n' "Shell:" "${SHELL:-unknown}"
+  echo
+
+  echo "Versions:"
+  print_command_version "kakku" kakku version
+  print_command_version "niri" niri --version
+  print_command_version "dms" dms version
+  print_command_version "quickshell" quickshell --version
+  print_command_version "ghostty" ghostty --version
+  print_command_version "fish" fish --version
+  echo
+
+  echo "Important paths:"
+  for path in \
+    "$CONFIG_HOME/niri/config.kdl" \
+    "$CONFIG_HOME/DankMaterialShell/settings.json" \
+    "$CONFIG_HOME/fish/config.fish" \
+    "$CONFIG_HOME/niri-screensaver/config" \
+    "$KAKKU_SHARE/dms/settings.defaults.json" \
+    "/usr/share/backgrounds/kakku"; do
+    if [[ -e "$path" ]]; then
+      printf 'ok   %s\n' "$path"
+    else
+      printf 'miss %s\n' "$path"
+    fi
+  done
+  echo
+
+  if has_command niri; then
+    print_command_output "Niri outputs" niri msg outputs
+  fi
+
+  if has_command dms; then
+    print_command_output "DMS outputs" dms randr
+  fi
+
+  echo "Services:"
+  show_services
+  echo
+
+  echo "User services:"
+  for service in dms.service dsearch.service; do
+    if has_command systemctl; then
+      printf '%-16s active=%-10s enabled=%s\n' "$service" "$(systemctl --user is-active "$service" 2>/dev/null || true)" "$(systemctl --user is-enabled "$service" 2>/dev/null || true)"
+    else
+      printf '%-16s unavailable\n' "$service"
+    fi
+  done
+  echo
+
+  echo "Useful next checks:"
+  echo "  kakku doctor"
+  echo "  niri validate -c ~/.config/niri/config.kdl"
+  echo "  dms doctor"
+}
+
 show_paths() {
   cat <<EOF
 Kakku paths:
@@ -645,6 +747,9 @@ case "${1:-help}" in
     ;;
   info)
     show_info
+    ;;
+  context)
+    show_context
     ;;
   doctor)
     shift

@@ -75,6 +75,7 @@ Available commands:
 | `kakku info` | Show OS, kernel, compositor, and shell info. |
 | `kakku doctor` | Check expected commands, configs, assets, defaults, and services. |
 | `kakku doctor --fix` | Reapply safe local defaults and enable expected services. |
+| `kakku context` | Print safe system context for AI chats or support requests. |
 | `kakku services` | Show service active/enabled state. |
 | `kakku keybinds` | Print default keybindings. |
 | `kakku paths` | Show important Kakku paths. |

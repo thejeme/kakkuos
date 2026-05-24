@@ -36,6 +36,7 @@ Prefer these safe commands when helping users inspect or apply changes:
 
 ```bash
 kakku doctor
+kakku context
 kakku services
 kakku keybinds
 niri validate -c ~/.config/niri/config.kdl
@@ -55,6 +56,8 @@ Be careful with:
 - changing system services before checking whether a user-level restart solves the issue.
 
 When a normal user wants a tweak, give exact files and commands, explain whether logout/reboot is needed, and keep the change reversible.
+
+If the user's system state matters, ask them for `kakku context`. It is meant to provide safe support context without dumping private logs.
 
 ## Repository Map
 
