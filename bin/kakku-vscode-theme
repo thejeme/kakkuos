@@ -1,0 +1,50 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
+VSCODE_SETTINGS="${KAKKU_VSCODE_SETTINGS:-$CONFIG_HOME/Code/User/settings.json}"
+VSCODE_THEME="${KAKKU_VSCODE_THEME:-Dynamic Base16 DankShell}"
+VSIX_SOURCE="${KAKKU_DMS_VSCODE_VSIX:-/usr/share/quickshell/dms/matugen/dms-theme.vsix}"
+
+has_command() {
+  command -v "$1" >/dev/null 2>&1
+}
+
+install_extension() {
+  if ! has_command code; then
+    echo "warn VS Code command not found: code"
+    return 0
+  fi
+
+  if [[ ! -f "$VSIX_SOURCE" ]]; then
+    echo "warn DMS VS Code theme extension missing: $VSIX_SOURCE"
+    return 0
+  fi
+
+  code --install-extension "$VSIX_SOURCE" --force >/dev/null
+  echo "ok   VS Code DMS theme extension installed"
+}
+
+configure_theme() {
+  local tmp_file
+
+  mkdir -p "$(dirname "$VSCODE_SETTINGS")"
+  if [[ ! -f "$VSCODE_SETTINGS" ]]; then
+    printf '{}\n' > "$VSCODE_SETTINGS"
+  fi
+
+  if has_command jq; then
+    tmp_file="$(mktemp)"
+    jq --arg theme "$VSCODE_THEME" '."workbench.colorTheme" = $theme' "$VSCODE_SETTINGS" > "$tmp_file"
+    mv "$tmp_file" "$VSCODE_SETTINGS"
+  else
+    echo "warn jq is missing; cannot safely update $VSCODE_SETTINGS"
+    return 0
+  fi
+
+  echo "ok   VS Code theme: $VSCODE_THEME"
+}
+
+install_extension
+configure_theme
+

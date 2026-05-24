@@ -19,6 +19,7 @@ Usage:
   kakku update
   kakku defaults
   kakku browser-theme
+  kakku vscode-theme
   kakku version
 EOF
 }
@@ -265,6 +266,14 @@ fix_browser_theme() {
     run_kakku_helper kakku-browser-theme
   else
     echo "warn kakku-browser-theme is missing"
+  fi
+}
+
+fix_vscode_theme() {
+  if has_command kakku-vscode-theme; then
+    run_kakku_helper kakku-vscode-theme
+  else
+    echo "warn kakku-vscode-theme is missing"
   fi
 }
 
@@ -625,6 +634,7 @@ run_doctor_fix() {
   run_fix_step "configure default applications" fix_defaults
   run_fix_step "install browser policies" fix_browser_policies
   run_fix_step "configure browser theme hooks" fix_browser_theme
+  run_fix_step "configure VS Code theme" fix_vscode_theme
   run_fix_step "set fish as login shell" fix_login_shell
   run_fix_step "enable core services" fix_core_services
   run_fix_step "enable user services" fix_user_services
@@ -637,7 +647,7 @@ run_doctor_fix() {
 run_doctor_checks() {
   local failed=0
 
-  for command_name in niri dms dsearch xwayland-satellite ghostty swayidle niri-screensaver niri-screensaver-ctl kakku kakku-defaults kakku-browser-policies yazi btop fish zathura nvim codex; do
+  for command_name in niri dms dsearch xwayland-satellite ghostty swayidle niri-screensaver niri-screensaver-ctl kakku kakku-defaults kakku-browser-policies kakku-vscode-theme yazi btop fish zathura nvim codex; do
     check_command "$command_name" || failed=1
   done
 
@@ -662,6 +672,7 @@ run_doctor_checks() {
 
   check_browser_policies || failed=1
   check_command kakku-browser-theme || failed=1
+  check_command kakku-vscode-theme || failed=1
   check_login_shell
 
   check_service_enabled NetworkManager
@@ -778,6 +789,10 @@ case "${1:-help}" in
   browser-theme)
     shift
     run_kakku_helper kakku-browser-theme "$@"
+    ;;
+  vscode-theme)
+    shift
+    run_kakku_helper kakku-vscode-theme "$@"
     ;;
   version)
     echo "KakkuOS 0.1.0"

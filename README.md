@@ -82,6 +82,7 @@ Available commands:
 | `kakku packages` | Show package profile information. |
 | `kakku update` | Update repo and AUR packages. |
 | `kakku defaults` | Reapply default applications. |
+| `kakku vscode-theme` | Install and select the DMS dynamic VS Code theme. |
 
 ## Desktop Defaults
 
@@ -115,6 +116,14 @@ Kakku ships default DMS settings at:
 ```
 
 Those settings provide the KakkuOS theme, bar layout, power-menu hold duration, and shell behavior. User-edited settings remain authoritative after first boot.
+
+For VS Code theming, KakkuOS uses DMS' bundled dynamic theme extension. Run:
+
+```bash
+kakku vscode-theme
+```
+
+This installs the local DMS VS Code theme VSIX and selects `Dynamic Base16 DankShell`, allowing DMS matugen to detect and update VS Code colors.
 
 ## Defaults
 

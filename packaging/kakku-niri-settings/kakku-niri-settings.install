@@ -51,6 +51,10 @@ _apply_configs() {
     if command -v kakku-browser-theme >/dev/null 2>&1 && command -v runuser >/dev/null 2>&1; then
       runuser -u "$username" -- env HOME="$user_home" XDG_CONFIG_HOME="$user_home/.config" XDG_CACHE_HOME="$user_home/.cache" kakku-browser-theme >/dev/null 2>&1 || true
     fi
+
+    if command -v kakku-vscode-theme >/dev/null 2>&1 && command -v runuser >/dev/null 2>&1; then
+      runuser -u "$username" -- env HOME="$user_home" XDG_CONFIG_HOME="$user_home/.config" kakku-vscode-theme >/dev/null 2>&1 || true
+    fi
   done
 }
 

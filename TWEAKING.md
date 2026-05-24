@@ -123,6 +123,7 @@ Useful commands:
 ```bash
 kakku defaults
 kakku browser-theme
+kakku vscode-theme
 kakku doctor
 ```
 

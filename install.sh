@@ -407,6 +407,10 @@ if [[ -x "$REPO_DIR/bin/kakku-browser-theme" ]]; then
   "$REPO_DIR/bin/kakku-browser-theme" || true
 fi
 
+if [[ -x "$REPO_DIR/bin/kakku-vscode-theme" ]]; then
+  "$REPO_DIR/bin/kakku-vscode-theme" || true
+fi
+
 if has_command xdg-mime && has_command kakku-defaults; then
   kakku-defaults || true
 fi
