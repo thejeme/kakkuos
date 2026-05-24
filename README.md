@@ -77,8 +77,6 @@ Available commands:
 | `kakku packages` | Show package profile information. |
 | `kakku update` | Update repo and AUR packages. |
 | `kakku defaults` | Reapply default applications. |
-| `kakku screensaver` | Start the visual screensaver. |
-| `kakku idle` | Run the idle/screen-lock helper. |
 
 ## Desktop Defaults
 
