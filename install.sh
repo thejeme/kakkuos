@@ -306,6 +306,22 @@ if (( ${#cachyos_installed[@]} > 0 )); then
   sudo pacman -R --noconfirm "${cachyos_installed[@]}" || true
 fi
 hash -r
+
+install_calccu() {
+  if has_command calccu; then
+    return 0
+  fi
+
+  require_command npm
+  sudo npm install -g calccu
+  hash -r
+  require_command calccu
+}
+
+if ! has_command calccu; then
+  install_calccu || die "Failed to install calccu from npm."
+fi
+
 require_command fish
 
 install_aur_packages() {
@@ -349,6 +365,7 @@ copy_config_dir fastfetch
 copy_config_dir ghostty
 copy_config_dir git
 copy_config_dir lazygit
+copy_config_dir menus
 copy_config_dir mpv
 copy_config_dir starship
 copy_config_dir yazi

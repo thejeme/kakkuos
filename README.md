@@ -98,6 +98,7 @@ Notable defaults:
 - `Mod+Shift+B`: Chrome
 - `Mod+D`: Vesktop
 - `Mod+S`: Steam
+- `Mod+C`: `calccu` in Ghostty
 - `Mod+Y`: Background browser
 - `Mod+section`: Keybinding help
 - `Print`: Screenshot

@@ -14,6 +14,7 @@ depends=(
   'dms-shell-niri'
   'breeze-cursors'
   'swayidle'
+  'wf-recorder'
   'matugen'
   'qt6-imageformats'
   'qt6-multimedia'
@@ -29,6 +30,7 @@ depends=(
   'cups-pk-helper'
   'fprintd'
   'curl'
+  'npm'
   'wl-clipboard'
   'ghostty'
   'fastfetch'
@@ -49,6 +51,7 @@ package() {
   install -dm755 "$pkgdir/etc/skel/.config"
   cp -r "$repo_root/dotfiles/fastfetch" "$pkgdir/etc/skel/.config/fastfetch"
   cp -r "$repo_root/dotfiles/lazygit" "$pkgdir/etc/skel/.config/lazygit"
+  cp -r "$repo_root/dotfiles/menus" "$pkgdir/etc/skel/.config/menus"
   cp -r "$repo_root/dotfiles/starship" "$pkgdir/etc/skel/.config/starship"
   cp -r "$repo_root/dotfiles/yazi" "$pkgdir/etc/skel/.config/yazi"
   cp -r "$repo_root/dotfiles/fish" "$pkgdir/etc/skel/.config/fish"
@@ -82,6 +85,7 @@ package() {
   install -m755 "$repo_root"/bin/kakku "$pkgdir/usr/bin/"
   install -m755 "$repo_root"/bin/kakku-browser-policies "$pkgdir/usr/bin/"
   install -m755 "$repo_root"/bin/kakku-browser-theme "$pkgdir/usr/bin/"
+  install -m755 "$repo_root"/bin/kakku-screenrecord "$pkgdir/usr/bin/"
   install -m755 "$repo_root"/bin/kakku-vscode-theme "$pkgdir/usr/bin/"
   install -m755 "$repo_root"/bin/kakku-defaults "$pkgdir/usr/bin/"
   install -m755 "$repo_root"/bin/kakku-disable-plymouth "$pkgdir/usr/bin/"

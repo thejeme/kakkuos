@@ -237,6 +237,7 @@ fix_user_dirs() {
 fix_missing_user_configs() {
   copy_missing_path /etc/skel/.config/fish "$CONFIG_HOME/fish"
   copy_missing_path /etc/skel/.config/starship "$CONFIG_HOME/starship"
+  copy_missing_path /etc/skel/.config/menus "$CONFIG_HOME/menus"
   copy_missing_path /etc/skel/.config/niri "$CONFIG_HOME/niri"
   copy_missing_path /etc/skel/.config/niri-screensaver "$CONFIG_HOME/niri-screensaver"
   copy_missing_path /etc/skel/.config/nvim "$CONFIG_HOME/nvim"
@@ -274,6 +275,20 @@ fix_vscode_theme() {
     run_kakku_helper kakku-vscode-theme
   else
     echo "warn kakku-vscode-theme is missing"
+  fi
+}
+
+fix_calccu() {
+  if has_command calccu; then
+    echo "ok   calccu is installed"
+    return 0
+  fi
+
+  if has_command npm; then
+    run_as_root npm install -g calccu
+    hash -r 2>/dev/null || true
+  else
+    echo "warn npm is missing"
   fi
 }
 
@@ -389,19 +404,22 @@ KakkuOS keybindings:
     Super+§                       Show keybindings help
     Super+Tab                     Toggle workspace overview
     Mod+Shift+Escape              Start screensaver
-    Super+Escape                  Toggle shortcut inhibition
+    Super+Escape                  Open power menu
 
   Shell and applications
     Super+T                       Open Ghostty terminal
     Super+E                       Open Dolphin files
     Super+B                       Open Zen browser
-    Super+Shift+B                 Open Chrome fallback browser
+    Super+Ctrl+B                  Open private browser window
+    Super+A                       Open ChatGPT
     Super+D                       Open Discord/Vesktop
+    Super+H                       Open btop
+    Super+P                       Open Pinta
     Super+S                       Open Steam
+    Super+C / Calculator key      Open calculator
     Super+Space                   Open app launcher
     Super+V                       Open clipboard
     Super+M / Ctrl+Alt+Delete     Open task manager
-    Super+X                       Open power menu
     Super+Comma                   Open DMS settings
     Super+Y                       Open wallpaper browser
     Super+N                       Open notifications
@@ -425,6 +443,8 @@ KakkuOS keybindings:
   Focus and movement
     Super+Left/Right or H/L       Focus column or monitor
     Super+Up/Down or J/K          Focus window or workspace
+    Super+Z/X                     Focus column or monitor left/right
+    Super+Shift+Z/X               Focus window or workspace up/down
     Super+Shift+Left/Right or H/L Move column or monitor
     Super+Shift+Up/Down or J/K    Move window
     Super+Ctrl+Left/Right or H/L  Focus monitor
@@ -453,8 +473,7 @@ KakkuOS keybindings:
     Super+Ctrl+R                  Reset window height
     Super+Alt+R                   Reload niri config
     Super+Ctrl+F                  Expand column to available width
-    Super+C                       Center column
-    Super+Ctrl+C                  Center visible columns
+    Super+Shift+C                 Center visible columns
     Super+- / Super+= / Super++   Adjust column width
     Super+numpad-                 Decrease column width
     Super+Shift+- / Super+Ctrl+=  Adjust window height
@@ -466,6 +485,8 @@ KakkuOS keybindings:
     Print / XF86Launch1           Pick area, copied and saved without cursor
     Ctrl+Print / Ctrl+XF86Launch1 Screenshot screen without cursor
     Alt+Print / Alt+XF86Launch1   Screenshot window without cursor
+    Super+Ctrl+Shift+S / Shift+Print
+                                  Toggle screen recording
 
   Media and hardware
     Volume keys                   Adjust/mute audio
@@ -635,6 +656,7 @@ run_doctor_fix() {
   run_fix_step "install browser policies" fix_browser_policies
   run_fix_step "configure browser theme hooks" fix_browser_theme
   run_fix_step "configure VS Code theme" fix_vscode_theme
+  run_fix_step "install calccu calculator" fix_calccu
   run_fix_step "set fish as login shell" fix_login_shell
   run_fix_step "enable core services" fix_core_services
   run_fix_step "enable user services" fix_user_services
@@ -647,7 +669,7 @@ run_doctor_fix() {
 run_doctor_checks() {
   local failed=0
 
-  for command_name in niri dms dsearch xwayland-satellite ghostty swayidle niri-screensaver niri-screensaver-ctl kakku kakku-defaults kakku-browser-policies kakku-vscode-theme yazi btop fish zathura nvim codex; do
+  for command_name in niri dms dsearch xwayland-satellite ghostty swayidle wf-recorder niri-screensaver niri-screensaver-ctl kakku kakku-defaults kakku-browser-policies kakku-screenrecord kakku-vscode-theme calccu yazi btop fish zathura nvim codex; do
     check_command "$command_name" || failed=1
   done
 

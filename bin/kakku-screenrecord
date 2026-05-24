@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+notify() {
+  if command -v notify-send >/dev/null 2>&1; then
+    notify-send "Kakku Screenrecord" "$1"
+  fi
+}
+
+if pgrep -u "$UID" -x wf-recorder >/dev/null 2>&1; then
+  pkill -INT -u "$UID" -x wf-recorder
+  notify "Recording stopped"
+  exit 0
+fi
+
+if ! command -v wf-recorder >/dev/null 2>&1; then
+  notify "wf-recorder is not installed"
+  exit 1
+fi
+
+record_dir="${KAKKU_SCREENRECORD_DIR:-${XDG_VIDEOS_DIR:-$HOME/Videos}/Screenrecords}"
+mkdir -p "$record_dir"
+
+file="$record_dir/Screenrecord from $(date +'%Y-%m-%d %H-%M-%S').mp4"
+notify "Recording started"
+
+wf-recorder -f "$file" >/tmp/kakku-screenrecord.log 2>&1 &
+disown

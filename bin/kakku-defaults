@@ -51,9 +51,15 @@ set_default org.kde.dolphin.desktop \
 
 set_default mpv.desktop \
   video/mp4 \
+  application/x-extension-mp4 \
+  video/x-m4v \
+  video/quicktime \
   video/x-matroska \
   video/webm \
+  video/x-msvideo \
+  video/x-ms-wmv \
   audio/mpeg \
+  audio/mp4 \
   audio/flac \
   audio/ogg
 

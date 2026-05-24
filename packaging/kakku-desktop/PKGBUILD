@@ -17,6 +17,7 @@ depends=(
   'dms-shell-niri'
   'breeze-cursors'
   'swayidle'
+  'wf-recorder'
   'matugen'
   'qt5ct'
   'qt6-imageformats'
