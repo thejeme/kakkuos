@@ -113,12 +113,8 @@ overview {
 // This line starts waybar, a commonly used bar for Wayland compositors.
 environment {
   XDG_CURRENT_DESKTOP "niri"
-  GTK_IM_MODULE "ibus"
-  QT_IM_MODULE "ibus"
-  XMODIFIERS "@im=ibus"
 }
 
-spawn-at-startup "ibus-daemon" "-drx"
 spawn-at-startup "swayidle" "-w" "timeout" "900" "niri-screensaver" "resume" "pkill -f '(^|/)niri-screensaver($| )' >/dev/null 2>&1 || true" "timeout" "3600" "pkill -f '(^|/)niri-screensaver($| )' >/dev/null 2>&1 || true; dms ipc call lock lock || loginctl lock-session" "before-sleep" "pkill -f '(^|/)niri-screensaver($| )' >/dev/null 2>&1 || true; dms ipc call lock lock || loginctl lock-session"
 hotkey-overlay {
     skip-at-startup

@@ -2,7 +2,6 @@ post_install() {
   systemctl enable power-profiles-daemon.service 2>/dev/null || true
   systemctl --global enable dms.service 2>/dev/null || true
   systemctl --global enable dsearch.service 2>/dev/null || true
-  systemctl --global enable ibus-daemon.service 2>/dev/null || true
 
   # Override os-release with KakkuOS branding
   if [ -f /usr/share/kakku/os-release ]; then

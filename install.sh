@@ -432,14 +432,9 @@ elif has_command kakku-limine-defaults; then
   sudo KAKKU_LIMINE_DEFAULTS_SOURCE="$REPO_DIR/system/default/limine" kakku-limine-defaults || echo "Warning: Limine defaults step failed; continuing install." >&2
 fi
 
-if [[ -f "$REPO_DIR/system/systemd/user/ibus-daemon.service" ]]; then
-  sudo install -Dm644 "$REPO_DIR/system/systemd/user/ibus-daemon.service" /usr/lib/systemd/user/ibus-daemon.service
-fi
-
 systemctl --user daemon-reload 2>/dev/null || true
 enable_user_service_if_available dms.service
 enable_user_service_if_available dsearch.service
-enable_user_service_if_available ibus-daemon.service
 
 sudo systemctl enable NetworkManager || true
 sudo systemctl enable bluetooth || true

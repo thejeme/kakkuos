@@ -29,7 +29,6 @@ depends=(
   'i2c-tools'
   'cups-pk-helper'
   'fprintd'
-  'ibus'
   'ghostty'
   'dolphin'
   'zen-browser-bin'

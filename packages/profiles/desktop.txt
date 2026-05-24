@@ -16,7 +16,6 @@ kimageformats
 cava
 khal
 wtype
-ibus
 power-profiles-daemon
 i2c-tools
 cups-pk-helper
