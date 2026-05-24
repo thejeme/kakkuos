@@ -2,6 +2,7 @@
 
 font-family = JetBrainsMono Nerd Font
 font-size = 13
+theme = dankcolors
 
 cursor-style = bar
 cursor-style-blink = false
