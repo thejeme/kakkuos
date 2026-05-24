@@ -497,7 +497,6 @@ show_paths() {
 Kakku paths:
   Config home:        $CONFIG_HOME
   DMS config:         $CONFIG_HOME/DankMaterialShell
-  Screensaver logo:   $CONFIG_HOME/kakku/screensaver.txt
   Shared files:       $KAKKU_SHARE
   Backgrounds:        /usr/share/backgrounds/kakku
 EOF
@@ -538,7 +537,7 @@ run_doctor_fix() {
 run_doctor_checks() {
   local failed=0
 
-  for command_name in niri dms dsearch xwayland-satellite ghostty swayidle kakku kakku-defaults kakku-browser-policies kakku-screensaver kakku-idle yazi btop fish zathura nvim codex; do
+  for command_name in niri dms dsearch xwayland-satellite ghostty swayidle niri-screensaver kakku kakku-defaults kakku-browser-policies kakku-screensaver kakku-idle yazi btop fish zathura nvim codex; do
     check_command "$command_name" || failed=1
   done
 
@@ -548,7 +547,6 @@ run_doctor_checks() {
   check_path "$KAKKU_SHARE/dms/settings.defaults.json" || failed=1
   check_path "$KAKKU_SHARE/dms/themes/kakku/theme.json" || failed=1
   check_command dms-greeter || failed=1
-  check_path "$KAKKU_SHARE/screensaver/kakku.txt" || failed=1
   check_path /usr/lib/systemd/user/kakku-idle.service || failed=1
   check_path "$CONFIG_HOME/DankMaterialShell/settings.json" || failed=1
   check_path "$CONFIG_HOME/fish/config.fish" || failed=1

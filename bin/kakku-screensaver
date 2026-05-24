@@ -1,12 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
-LOGO_FILE="${KAKKU_SCREENSAVER_LOGO:-$CONFIG_HOME/kakku/screensaver.txt}"
-SYSTEM_LOGO_FILE="${KAKKU_SCREENSAVER_SYSTEM_LOGO:-/usr/share/kakku/screensaver/kakku.txt}"
-SCREENSAVER_RENDERER="${KAKKU_SCREENSAVER_RENDERER:-auto}"
-RENDER_PATTERN="kakku-screensaver --render"
-
 usage() {
   cat <<'EOF'
 Usage:
@@ -14,180 +8,23 @@ Usage:
   kakku-screensaver --idle
   kakku-screensaver --render
 
-Starts the KakkuOS visual screensaver. It is not a lock screen; DMS remains
-responsible for secure locking.
+Starts niri-screensaver. This command is kept as KakkuOS compatibility glue
+for keybinds and idle hooks.
 EOF
 }
 
-is_running() {
-  pgrep -f "$RENDER_PATTERN" >/dev/null 2>&1
-}
-
-load_logo() {
-  if [[ -f "$LOGO_FILE" ]]; then
-    cat "$LOGO_FILE"
-  elif [[ -f "$SYSTEM_LOGO_FILE" ]]; then
-    cat "$SYSTEM_LOGO_FILE"
-  else
-    cat <<'EOF'
-KAKKUOS
-EOF
-  fi
-}
-
-launch_terminal() {
-  local self
-  self="$(command -v kakku-screensaver || true)"
-  if [[ -z "$self" ]]; then
-    self="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/$(basename "${BASH_SOURCE[0]}")"
-  fi
-
-  if command -v ghostty >/dev/null 2>&1; then
-    ghostty \
-      --class=fi.kakku.screensaver \
-      --title="Kakku Screensaver" \
-      --fullscreen=true \
-      --gtk-single-instance=false \
-      --gtk-titlebar=false \
-      --quit-after-last-window-closed=true \
-      --font-size=20 \
-      --background="#11131a" \
-      --foreground="#cad3f5" \
-      --window-padding-x=0 \
-      --window-padding-y=0 \
-      --window-padding-balance=true \
-      --window-padding-color=background \
-      -e "$self" --render &
-    return 0
-  fi
-
-  if command -v alacritty >/dev/null 2>&1; then
-    alacritty \
-      --class KakkuScreensaver \
-      --title "Kakku Screensaver" \
-      -o 'window.startup_mode="Fullscreen"' \
-      -o 'window.padding.x=0' \
-      -o 'window.padding.y=0' \
-      -o 'window.dynamic_padding=true' \
-      -o 'font.size=20' \
-      -o 'colors.primary.background="#11131a"' \
-      -o 'colors.primary.foreground="#cad3f5"' \
-      -e "$self" --render &
-    return 0
-  fi
-
-  echo "Missing terminal: install ghostty or alacritty to run kakku-screensaver." >&2
-  return 1
-}
-
-cleanup_render() {
-  if [[ -n "${STTY_ORIGINAL:-}" ]]; then
-    stty "$STTY_ORIGINAL" 2>/dev/null || true
-  fi
-
-  printf '\033[?1003l\033[?1006l\033[?25h\033[0m\033[2J\033[H\033[?1049l'
-}
-
-run_pointer_aware_command() {
-  local status
-
-  printf '\033[?1003h\033[?1006h'
-  set +e
-  "$@"
-  status="$?"
-  set -e
-  printf '\033[?1003l\033[?1006l'
-  return "$status"
-}
-
-render_loop() {
-  local frame=0
-  local rows cols logo_rows width start_row start_col line row col color pulse time_now
-  local i
-  local colors=(36 35 34 32 33 31)
-  local logo_lines=()
-
-  if [[ "$SCREENSAVER_RENDERER" == "auto" || "$SCREENSAVER_RENDERER" == "cmatrix" ]]; then
-    if command -v cmatrix >/dev/null 2>&1; then
-      run_pointer_aware_command cmatrix -s -b -C cyan -u 7
-      return
-    fi
-  fi
-
-  if [[ "$SCREENSAVER_RENDERER" == "cbonsai" ]] && command -v cbonsai >/dev/null 2>&1; then
-    run_pointer_aware_command cbonsai --screensaver --message "KakkuOS" --time 0.08 --wait 2.5 --leaf "*,+,o" --color "36,94,86,231"
-    return
-  fi
-
-  if [[ ! -t 0 || ! -t 1 ]]; then
-    echo "kakku-screensaver --render must run inside a terminal." >&2
+run_screensaver() {
+  if ! command -v niri-screensaver >/dev/null 2>&1; then
+    echo "Missing command: install niri-screensaver to run kakku-screensaver." >&2
     exit 1
   fi
 
-  mapfile -t logo_lines < <(load_logo)
-  logo_rows="${#logo_lines[@]}"
-  width=0
-  for line in "${logo_lines[@]}"; do
-    ((${#line} > width)) && width="${#line}"
-  done
-
-  STTY_ORIGINAL="$(stty -g 2>/dev/null || true)"
-  stty -echo -icanon time 0 min 0 2>/dev/null || true
-  trap cleanup_render EXIT INT TERM
-
-  printf '\033[?1049h\033[?1003h\033[?1006h\033[?25l\033[2J'
-
-  while true; do
-    if read -rsn1 -t 0.02 _; then
-      break
-    fi
-
-    rows="$(tput lines 2>/dev/null || printf '24')"
-    cols="$(tput cols 2>/dev/null || printf '80')"
-    start_row=$(( (rows - logo_rows) / 2 - 2 ))
-    start_col=$(( (cols - width) / 2 ))
-    ((start_row < 2)) && start_row=2
-    ((start_col < 1)) && start_col=1
-
-    printf '\033[2J'
-
-    for i in {0..15}; do
-      row=$(( (i * 7 + frame) % rows + 1 ))
-      col=$(( (i * 17 + frame * 3) % cols + 1 ))
-      color="${colors[$(((i + frame) % ${#colors[@]}))]}"
-      printf '\033[%s;%sH\033[2;%sm%s\033[0m' "$row" "$col" "$color" "."
-    done
-
-    pulse="${colors[$((frame % ${#colors[@]}))]}"
-    for i in "${!logo_lines[@]}"; do
-      line="${logo_lines[$i]}"
-      printf '\033[%s;%sH\033[1;%sm%s\033[0m' "$((start_row + i))" "$start_col" "$pulse" "$line"
-    done
-
-    time_now="$(date '+%H:%M')"
-    printf '\033[%s;%sH\033[38;5;245m%s\033[0m' "$((start_row + logo_rows + 2))" "$(( (cols - ${#time_now}) / 2 ))" "$time_now"
-    printf '\033[%s;%sH\033[38;5;245m%s\033[0m' "$((start_row + logo_rows + 4))" "$(( (cols - 24) / 2 ))" "press any key to return"
-
-    sleep 0.15
-    frame=$((frame + 1))
-  done
+  exec niri-screensaver
 }
 
 case "${1:-start}" in
-  start)
-    if is_running; then
-      exit 0
-    fi
-    launch_terminal
-    ;;
-  --idle)
-    if is_running; then
-      exit 0
-    fi
-    launch_terminal
-    ;;
-  --render)
-    render_loop
+  start|--idle|--render)
+    run_screensaver
     ;;
   -h|--help|help)
     usage

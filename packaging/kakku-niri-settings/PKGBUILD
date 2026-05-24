@@ -22,6 +22,8 @@ depends=(
   'cava'
   'khal'
   'wtype'
+  'alacritty'
+  'niri-screensaver'
   'power-profiles-daemon'
   'i2c-tools'
   'cups-pk-helper'
@@ -75,9 +77,6 @@ package() {
 
   install -dm755 "$pkgdir/usr/share/kakku/dms"
   cp -r "$repo_root/system/dms/." "$pkgdir/usr/share/kakku/dms/"
-
-  install -dm755 "$pkgdir/usr/share/kakku/screensaver"
-  cp -r "$repo_root/system/screensaver/." "$pkgdir/usr/share/kakku/screensaver/"
 
   install -dm755 "$pkgdir/usr/bin"
   install -m755 "$repo_root"/bin/kakku "$pkgdir/usr/bin/"

@@ -387,11 +387,6 @@ if [[ -d "$REPO_DIR/system/dms" ]]; then
   sudo cp -r "$REPO_DIR/system/dms/." /usr/share/kakku/dms/
 fi
 
-if [[ -d "$REPO_DIR/system/screensaver" ]]; then
-  sudo install -dm755 /usr/share/kakku/screensaver
-  sudo cp -r "$REPO_DIR/system/screensaver/." /usr/share/kakku/screensaver/
-fi
-
 if [[ -d "$REPO_DIR/bin" ]]; then
   for script in "$REPO_DIR"/bin/kakku*; do
     [[ -f "$script" ]] || continue
