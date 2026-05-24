@@ -247,27 +247,28 @@ binds {
     // === System & Overview ===
     Mod+Tab repeat=false { toggle-overview; }
     Mod+section { show-hotkey-overlay; }
-    Mod+Shift+Escape hotkey-overlay-title="Start Screensaver" { spawn "niri-screensaver-ctl" "launch"; }
+    Mod+Shift+Escape hotkey-overlay-title="Start Kakku Screensaver" { spawn "kakku-screensaver"; }
 
     // === Application Launchers ===
     Mod+T hotkey-overlay-title="Open Terminal" { spawn "ghostty"; }
     Mod+E hotkey-overlay-title="Open Files" { spawn "dolphin"; }
     Mod+B hotkey-overlay-title="Open Browser" { spawn "zen-browser"; }
-    Mod+Shift+B hotkey-overlay-title="Open Chrome" { spawn "sh" "-lc" "command -v google-chrome-stable >/dev/null 2>&1 && exec google-chrome-stable || exec google-chrome"; }
     Mod+D hotkey-overlay-title="Open Discord" { spawn "vesktop" "--ozone-platform-hint=auto"; }
     Mod+S hotkey-overlay-title="Open Steam" { spawn "steam"; }
     Mod+N hotkey-overlay-title="Notepad" { spawn "dms" "ipc" "call" "notepad" "toggle"; }
     Mod+Space hotkey-overlay-title="Application Launcher" { spawn "dms" "ipc" "call" "spotlight" "toggle"; }
     Mod+V hotkey-overlay-title="Clipboard Manager" { spawn "dms" "ipc" "call" "clipboard" "toggle"; }
+    Mod+C hotkey-overlay-title="Open Calculator" { spawn "speedcrunch"; }
     Mod+M hotkey-overlay-title="Open Music" { spawn "cider"; }
     Super+P hotkey-overlay-title="Power Menu: Toggle" { spawn "dms" "ipc" "call" "powermenu" "toggle"; }
     Mod+Comma hotkey-overlay-title="Settings" { spawn "dms" "ipc" "call" "settings" "focusOrToggle"; }
     Mod+Y hotkey-overlay-title="Browse Backgrounds" { spawn "dms" "ipc" "call" "dankdash" "wallpaper"; }
-    Mod+Ctrl+B hotkey-overlay-title="Toggle Top Bar" { spawn "dms" "ipc" "call" "bar" "toggle" "index" "0"; }
-    Mod+Ctrl+N hotkey-overlay-title="Toggle Night Light" { spawn "dms" "ipc" "call" "night" "toggle"; }
+    
+    Mod+Shift+B hotkey-overlay-title="Toggle Top Bar" { spawn "dms" "ipc" "call" "bar" "toggle" "index" "0"; }
+    Mod+Shift+N hotkey-overlay-title="Toggle Night Light" { spawn "dms" "ipc" "call" "night" "toggle"; }
 
     // === Security ===
-    Mod+Ctrl+L hotkey-overlay-title="Lock Screen" { spawn "dms" "ipc" "call" "lock" "lock"; }
+    Mod+Shift+L hotkey-overlay-title="Lock Screen" { spawn "dms" "ipc" "call" "lock" "lock"; }
     Ctrl+Alt+End hotkey-overlay-title="Exit niri" { quit; }
     Ctrl+Alt+Delete hotkey-overlay-title="Task Manager" { spawn "dms" "ipc" "call" "processlist" "focusOrToggle"; }
 
@@ -280,8 +281,8 @@ binds {
     XF86AudioPlay allow-when-locked=true { spawn "dms" "ipc" "call" "mpris" "playPause"; }
     XF86AudioPrev allow-when-locked=true { spawn "dms" "ipc" "call" "mpris" "previous"; }
     XF86AudioNext allow-when-locked=true { spawn "dms" "ipc" "call" "mpris" "next"; }
-    Ctrl+XF86AudioRaiseVolume allow-when-locked=true { spawn "dms" "ipc" "call" "mpris" "increment" "3"; }
-    Ctrl+XF86AudioLowerVolume allow-when-locked=true { spawn "dms" "ipc" "call" "mpris" "decrement" "3"; }
+    Shift+XF86AudioRaiseVolume allow-when-locked=true { spawn "dms" "ipc" "call" "mpris" "increment" "3"; }
+    Shift+XF86AudioLowerVolume allow-when-locked=true { spawn "dms" "ipc" "call" "mpris" "decrement" "3"; }
 
     // === Brightness Controls ===
     XF86MonBrightnessUp allow-when-locked=true { spawn "dms" "ipc" "call" "brightness" "increment" "5" ""; }
@@ -363,8 +364,7 @@ binds {
     // === Sizing & Layout ===
     Mod+R { switch-preset-column-width; }
     Mod+Shift+R { reset-window-height; }
-    Mod+Ctrl+F { expand-column-to-available-width; }
-    Mod+C { center-column; }
+    Mod+Shift+D { expand-column-to-available-width; }
     Mod+Shift+C { center-visible-columns; }
 
     // === Manual Sizing ===
@@ -382,12 +382,8 @@ binds {
 
     // === Screenshots ===
     XF86Launch1 { screenshot show-pointer=false; }
-    Ctrl+XF86Launch1 { screenshot-screen show-pointer=false; }
-    Alt+XF86Launch1 { screenshot-window show-pointer=false; }
-    Mod+Shift+S { screenshot show-pointer=false; }
     Print { screenshot show-pointer=false; }
-    Ctrl+Print { screenshot-screen show-pointer=false; }
-    Alt+Print { screenshot-window show-pointer=false; }
+    Mod+Shift+S { screenshot show-pointer=false; }
 
     // === System Controls ===
     Mod+Escape allow-inhibiting=false { toggle-keyboard-shortcuts-inhibit; }
