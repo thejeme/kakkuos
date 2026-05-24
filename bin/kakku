@@ -19,6 +19,7 @@ Usage:
   kakku idle
   kakku update
   kakku defaults
+  kakku browser-theme
   kakku version
 EOF
 }
@@ -256,6 +257,14 @@ fix_browser_policies() {
     run_kakku_helper kakku-browser-policies
   else
     echo "warn kakku-browser-policies is missing"
+  fi
+}
+
+fix_browser_theme() {
+  if has_command kakku-browser-theme; then
+    run_kakku_helper kakku-browser-theme
+  else
+    echo "warn kakku-browser-theme is missing"
   fi
 }
 
@@ -516,6 +525,7 @@ run_doctor_fix() {
   run_fix_step "restore missing user configs from /etc/skel" fix_missing_user_configs
   run_fix_step "configure default applications" fix_defaults
   run_fix_step "install browser policies" fix_browser_policies
+  run_fix_step "configure browser theme hooks" fix_browser_theme
   run_fix_step "set fish as login shell" fix_login_shell
   run_fix_step "enable core services" fix_core_services
   run_fix_step "enable user services" fix_user_services
@@ -553,6 +563,7 @@ run_doctor_checks() {
   check_xdg_default x-scheme-handler/https zen-browser.desktop zen.desktop zen-browser-bin.desktop firefox.desktop || failed=1
 
   check_browser_policies || failed=1
+  check_command kakku-browser-theme || failed=1
   check_login_shell
 
   check_service_enabled NetworkManager
@@ -672,6 +683,10 @@ case "${1:-help}" in
   defaults)
     shift
     run_kakku_helper kakku-defaults "$@"
+    ;;
+  browser-theme)
+    shift
+    run_kakku_helper kakku-browser-theme "$@"
     ;;
   version)
     echo "KakkuOS 0.1.0"

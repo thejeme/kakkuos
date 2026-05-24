@@ -49,6 +49,10 @@ _apply_configs() {
     if [ -f "$skel/.zshrc" ]; then
       _copy_file "$skel/.zshrc" "$user_home/.zshrc" "$username"
     fi
+
+    if command -v kakku-browser-theme >/dev/null 2>&1 && command -v runuser >/dev/null 2>&1; then
+      runuser -u "$username" -- env HOME="$user_home" XDG_CONFIG_HOME="$user_home/.config" XDG_CACHE_HOME="$user_home/.cache" kakku-browser-theme >/dev/null 2>&1 || true
+    fi
   done
 }
 

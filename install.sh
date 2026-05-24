@@ -407,6 +407,10 @@ if [[ -x "$REPO_DIR/bin/kakku-browser-policies" ]]; then
   KAKKU_BROWSER_POLICIES_SOURCE="$REPO_DIR/system/browser/policies.json" "$REPO_DIR/bin/kakku-browser-policies" || true
 fi
 
+if [[ -x "$REPO_DIR/bin/kakku-browser-theme" ]]; then
+  "$REPO_DIR/bin/kakku-browser-theme" || true
+fi
+
 if has_command xdg-mime && has_command kakku-defaults; then
   kakku-defaults || true
 fi

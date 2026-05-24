@@ -9,3 +9,4 @@ cider
 qt6ct-kde
 greetd-dms-greeter-git
 dsearch-bin
+python-pywalfox

@@ -82,6 +82,7 @@ package() {
   install -dm755 "$pkgdir/usr/bin"
   install -m755 "$repo_root"/bin/kakku "$pkgdir/usr/bin/"
   install -m755 "$repo_root"/bin/kakku-browser-policies "$pkgdir/usr/bin/"
+  install -m755 "$repo_root"/bin/kakku-browser-theme "$pkgdir/usr/bin/"
   install -m755 "$repo_root"/bin/kakku-defaults "$pkgdir/usr/bin/"
   install -m755 "$repo_root"/bin/kakku-disable-plymouth "$pkgdir/usr/bin/"
   install -m755 "$repo_root"/bin/kakku-firewall-defaults "$pkgdir/usr/bin/"

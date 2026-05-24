@@ -13,6 +13,10 @@
       "sponsorBlocker@ajay.app": {
         "installation_mode": "force_installed",
         "install_url": "https://addons.mozilla.org/firefox/downloads/latest/sponsorblock/latest.xpi"
+      },
+      "pywalfox@frewacom.org": {
+        "installation_mode": "force_installed",
+        "install_url": "https://addons.mozilla.org/firefox/downloads/latest/pywalfox/latest.xpi"
       }
     }
   }

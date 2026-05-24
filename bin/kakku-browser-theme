@@ -1,0 +1,190 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
+CACHE_HOME="${XDG_CACHE_HOME:-$HOME/.cache}"
+WAL_DIR="$CACHE_HOME/wal"
+DMS_ZEN_CSS="$CONFIG_HOME/DankMaterialShell/zen.css"
+DMS_PYWALFOX_JSON="$WAL_DIR/dank-pywalfox.json"
+PYWALFOX_JSON="$WAL_DIR/colors.json"
+GHOSTTY_THEME="$CONFIG_HOME/ghostty/themes/dankcolors"
+
+append_pref() {
+  local file="$1"
+  local pref="$2"
+
+  mkdir -p "$(dirname "$file")"
+  touch "$file"
+
+  if ! grep -Fxq "$pref" "$file"; then
+    printf '%s\n' "$pref" >> "$file"
+  fi
+}
+
+ensure_css_import() {
+  local file="$1"
+  local import_line="$2"
+  local tmp_file
+
+  mkdir -p "$(dirname "$file")"
+  touch "$file"
+
+  if grep -Fxq "$import_line" "$file"; then
+    return 0
+  fi
+
+  tmp_file="$(mktemp)"
+  {
+    printf '%s\n' "$import_line"
+    cat "$file"
+  } > "$tmp_file"
+
+  mv "$tmp_file" "$file"
+}
+
+configure_zen_profile() {
+  local profile="$1"
+  local chrome_dir="$profile/chrome"
+
+  [[ -d "$profile" ]] || return 0
+
+  ensure_css_import "$chrome_dir/userChrome.css" '@import url("../../../DankMaterialShell/zen.css");'
+  append_pref "$profile/user.js" 'user_pref("toolkit.legacyUserProfileCustomizations.stylesheets", true);'
+  append_pref "$profile/user.js" 'user_pref("browser.theme.content-theme", 0);'
+  append_pref "$profile/user.js" 'user_pref("browser.theme.toolbar-theme", 0);'
+
+  echo "ok   Zen theme hook: $profile"
+}
+
+json_color() {
+  local key="$1"
+
+  if command -v jq >/dev/null 2>&1 && [[ -f "$DMS_PYWALFOX_JSON" ]]; then
+    jq -r --arg key "$key" '.colors[$key] // empty' "$DMS_PYWALFOX_JSON" 2>/dev/null || true
+  fi
+}
+
+ghostty_color() {
+  local key="$1"
+
+  [[ -f "$GHOSTTY_THEME" ]] || return 0
+
+  awk -F'[ =]+' -v key="$key" '
+    $1 == "background" && key == "background" { print $2; exit }
+    $1 == "foreground" && key == "foreground" { print $2; exit }
+    $1 == "cursor-color" && key == "cursor" { print $2; exit }
+    $1 == "palette" && $2 == key { print $3; exit }
+  ' "$GHOSTTY_THEME"
+}
+
+valid_hex() {
+  [[ "$1" =~ ^#[0-9A-Fa-f]{6}$ ]]
+}
+
+pick_color() {
+  local preferred="$1"
+  local fallback="$2"
+
+  if valid_hex "$preferred"; then
+    printf '%s\n' "$preferred"
+  else
+    printf '%s\n' "$fallback"
+  fi
+}
+
+write_pywalfox_colors() {
+  local color0 color1 color2 color3 color4 color5 color6 color7
+  local color8 color9 color10 color11 color12 color13 color14 color15
+  local background foreground primary surface wallpaper
+
+  mkdir -p "$WAL_DIR"
+
+  if [[ ! -f "$DMS_PYWALFOX_JSON" && ! -L "$DMS_PYWALFOX_JSON" ]]; then
+    echo "warn DMS pywalfox colors missing: $DMS_PYWALFOX_JSON"
+  fi
+
+  background="$(pick_color "$(json_color color0)" "$(pick_color "$(ghostty_color background)" "#101010")")"
+  foreground="$(pick_color "$(json_color color15)" "$(pick_color "$(ghostty_color foreground)" "#f0f0f0")")"
+  primary="$(pick_color "$(json_color color10)" "$(pick_color "$(ghostty_color cursor)" "$foreground")")"
+  surface="$(pick_color "$(json_color color13)" "$(pick_color "$(ghostty_color 8)" "$background")")"
+  wallpaper="$(command -v jq >/dev/null 2>&1 && [[ -f "$DMS_PYWALFOX_JSON" ]] && jq -r '.wallpaper // "Null"' "$DMS_PYWALFOX_JSON" 2>/dev/null || printf 'Null')"
+
+  color0="$background"
+  color1="$(pick_color "$(ghostty_color 1)" "$primary")"
+  color2="$(pick_color "$(ghostty_color 2)" "$primary")"
+  color3="$(pick_color "$(ghostty_color 3)" "$primary")"
+  color4="$(pick_color "$(ghostty_color 4)" "$primary")"
+  color5="$(pick_color "$(ghostty_color 5)" "$surface")"
+  color6="$(pick_color "$(ghostty_color 6)" "$primary")"
+  color7="$(pick_color "$(ghostty_color 7)" "$foreground")"
+  color8="$(pick_color "$(ghostty_color 8)" "$surface")"
+  color9="$(pick_color "$(ghostty_color 9)" "$color1")"
+  color10="$primary"
+  color11="$(pick_color "$(ghostty_color 11)" "$color3")"
+  color12="$(pick_color "$(ghostty_color 12)" "$color4")"
+  color13="$surface"
+  color14="$(pick_color "$(ghostty_color 14)" "$color6")"
+  color15="$foreground"
+
+  cat > "$PYWALFOX_JSON" <<EOF
+{
+  "wallpaper": "$wallpaper",
+  "alpha": "100",
+  "colors": {
+    "color0": "$color0",
+    "color1": "$color1",
+    "color2": "$color2",
+    "color3": "$color3",
+    "color4": "$color4",
+    "color5": "$color5",
+    "color6": "$color6",
+    "color7": "$color7",
+    "color8": "$color8",
+    "color9": "$color9",
+    "color10": "$color10",
+    "color11": "$color11",
+    "color12": "$color12",
+    "color13": "$color13",
+    "color14": "$color14",
+    "color15": "$color15"
+  }
+}
+EOF
+
+  echo "ok   pywalfox colors: $PYWALFOX_JSON"
+}
+
+update_pywalfox() {
+  if command -v pywalfox >/dev/null 2>&1 && [[ -e "$PYWALFOX_JSON" ]]; then
+    pywalfox update >/dev/null 2>&1 || true
+  fi
+}
+
+main() {
+  local found=0
+  local profile
+
+  if [[ ! -f "$DMS_ZEN_CSS" ]]; then
+    echo "warn DMS Zen CSS missing: $DMS_ZEN_CSS"
+  fi
+
+  write_pywalfox_colors
+
+  shopt -s nullglob
+  for profile in "$CONFIG_HOME"/zen/*; do
+    [[ -d "$profile" ]] || continue
+    if [[ -f "$profile/prefs.js" || -f "$profile/compatibility.ini" ]]; then
+      configure_zen_profile "$profile"
+      found=1
+    fi
+  done
+  shopt -u nullglob
+
+  if (( found == 0 )); then
+    echo "warn no Zen profiles found under $CONFIG_HOME/zen"
+  fi
+
+  update_pywalfox
+}
+
+main "$@"
