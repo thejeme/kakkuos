@@ -1,0 +1,10 @@
+# KakkuOS
+
+KakkuOS is a layered Linux desktop distribution built on CachyOS. CachyOS provides the base OS, kernel, repositories, hardware enablement, gaming stack, and performance tuning. This repository adds the KakkuOS desktop layer: niri, DankMaterialShell, Ghostty, fish, Starship, Zen Browser defaults, package profiles, helper commands, branding, greetd configuration, browser policies, packaging, and CachyOS-Live-ISO overlays.
+
+For AI agent context and repository guidelines, read:
+
+- `AGENTS.md`
+- `TWEAKING.md`
+- `README.md`
+- `iso/README.md`

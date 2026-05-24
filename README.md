@@ -45,6 +45,10 @@ system/                   system defaults and shared assets
 
 Backgrounds install to `/usr/share/backgrounds/kakku/`. Branding assets install to `/usr/share/kakku/branding/`.
 
+## AI Tooling Context
+
+Repository context for AI tools lives in `AGENTS.md`. Practical context for helping normal users customize and troubleshoot KakkuOS lives in `TWEAKING.md`. Lightweight tool-specific pointers are also provided in `CLAUDE.md`, `.github/copilot-instructions.md`, and `llms.txt`.
+
 ## Package Profiles
 
 Default package lists live in `packages/profiles/`:
