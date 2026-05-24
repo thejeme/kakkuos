@@ -307,10 +307,10 @@ binds {
     Mod+Right { focus-column-or-monitor-right; }
 
     // === Window Movement ===
-    Mod+Shift+Left  { move-column-left-or-to-monitor-left; }
+    Mod+Shift+Left  { consume-or-expel-window-left; }
     Mod+Shift+Down  { move-window-down-or-to-workspace-down; }
     Mod+Shift+Up    { move-window-up-or-to-workspace-up; }
-    Mod+Shift+Right { move-column-right-or-to-monitor-right; }
+    Mod+Shift+Right { consume-or-expel-window-right; }
 
     // === Column Navigation ===
     Mod+Home { focus-column-first; }
@@ -363,11 +363,6 @@ binds {
     Mod+Shift+7 { move-column-to-workspace 7; }
     Mod+Shift+8 { move-column-to-workspace 8; }
     Mod+Shift+9 { move-column-to-workspace 9; }
-
-    // === Column Management ===
-    Mod+Ctrl+Left  { consume-or-expel-window-left; }
-    Mod+Ctrl+Right { consume-or-expel-window-right; }
-    Mod+Period { expel-window-from-column; }
 
     // === Sizing & Layout ===
     Mod+R { switch-preset-column-width; }
