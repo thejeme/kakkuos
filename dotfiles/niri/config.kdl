@@ -217,8 +217,6 @@ window-rule {
 window-rule {
     match app-id="vesktop"
     match app-id="speedcrunch"
-    match app-id="sh.cider.Cider"
-    match app-id="Cider"
     match app-id=r#"^blueman-manager$"#
     match app-id=r#"^pavucontrol$"#
     opacity 0.95
@@ -280,7 +278,7 @@ binds {
     Mod+Space hotkey-overlay-title="Application Launcher" { spawn "dms" "ipc" "call" "spotlight" "toggle"; }
     Mod+V hotkey-overlay-title="Clipboard Manager" { spawn "dms" "ipc" "call" "clipboard" "toggle"; }
     Mod+C hotkey-overlay-title="Open Calculator" { spawn "ghostty" "-e" "calccu"; }
-    Mod+M hotkey-overlay-title="Open Music" { spawn "cider"; }
+    Mod+M hotkey-overlay-title="Open Music" { spawn "sidra"; }
     Mod+P hotkey-overlay-title="Open Pinta" { spawn "pinta"; }
     Mod+Comma hotkey-overlay-title="Settings" { spawn "dms" "ipc" "call" "settings" "focusOrToggle"; }
     Mod+Y hotkey-overlay-title="Browse Backgrounds" { spawn "dms" "ipc" "call" "dankdash" "wallpaper"; }

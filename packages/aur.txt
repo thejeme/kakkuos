@@ -4,7 +4,7 @@ localsend-bin
 pinta-git
 musikcube-bin
 pacseek
-cider
+sidra-bin
 qt6ct-kde
 greetd-dms-greeter-git
 dsearch-bin

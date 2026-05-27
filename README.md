@@ -60,7 +60,7 @@ Default package lists live in `packages/profiles/`:
 - `gaming.txt`: gaming stack
 - `media.txt`: media, office, creative tools
 
-`packages/aur.txt` contains AUR defaults such as Chrome, VS Code, Cider, and LocalSend. `packages/pacman.txt` contains extra repo packages.
+`packages/aur.txt` contains AUR defaults such as Chrome, VS Code, Sidra, and LocalSend. `packages/pacman.txt` contains extra repo packages.
 
 ## Kakku Command
 
@@ -98,7 +98,7 @@ Notable defaults:
 - `Mod+Shift+B`: Chrome
 - `Mod+D`: Vesktop
 - `Mod+S`: Steam
-- `Mod+C`: `calccu` in Ghostty
+- `Mod+C`: calccu
 - `Mod+Y`: Background browser
 - `Mod+section`: Keybinding help
 - `Print`: Screenshot
