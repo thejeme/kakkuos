@@ -817,7 +817,7 @@ case "${1:-help}" in
     run_kakku_helper kakku-vscode-theme "$@"
     ;;
   version)
-    echo "KakkuOS 0.1.0"
+    echo "KakkuOS 0.2.0"
     ;;
   *)
     usage >&2
