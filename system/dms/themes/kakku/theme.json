@@ -99,9 +99,47 @@
           "surfaceContainerHighest": "#c8d0e8"
         }
       },
-      {
+       {
         "id": "matcha",
         "name": "Matcha",
+        "dark": {
+          "primary": "#90c884",
+          "primaryText": "#101a0e",
+          "primaryContainer": "#2a5030",
+          "secondary": "#b8deb0",
+          "surface": "#101a0e",
+          "surfaceText": "#cce4c8",
+          "surfaceVariant": "#162016",
+          "surfaceVariantText": "#88a886",
+          "surfaceTint": "#1c2c1c",
+          "background": "#162016",
+          "backgroundText": "#cce4c8",
+          "outline": "#4a6848",
+          "surfaceContainer": "#162016",
+          "surfaceContainerHigh": "#243224",
+          "surfaceContainerHighest": "#324432"
+        },
+        "light": {
+          "primary": "#287838",
+          "primaryText": "#f0faf0",
+          "primaryContainer": "#c8eece",
+          "secondary": "#3e9450",
+          "surface": "#e8f5e8",
+          "surfaceText": "#1e3820",
+          "surfaceVariant": "#f0faf0",
+          "surfaceVariantText": "#3c5840",
+          "surfaceTint": "#c8eece",
+          "background": "#f0faf0",
+          "backgroundText": "#1e3820",
+          "outline": "#6e9c74",
+          "surfaceContainer": "#e8f5e8",
+          "surfaceContainerHigh": "#d8eeda",
+          "surfaceContainerHighest": "#c8e6cc"
+        }
+      },
+      {
+        "id": "strawberry",
+        "name": "Strawberry",
         "dark": {
           "primary": "#f880a8",
           "primaryText": "#1c0e18",
