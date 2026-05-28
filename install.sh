@@ -373,6 +373,9 @@ copy_config_dir zathura
 copy_niri_config
 copy_config_dir niri-screensaver
 copy_config_dir nvim
+copy_config_dir kakku
+copy_config_dir github-copilot
+copy_config_dir claude
 install_dms_user_settings
 
 if has_command xdg-user-dirs-update; then

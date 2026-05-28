@@ -622,6 +622,132 @@ show_context() {
   echo "  dms doctor"
 }
 
+show_context_json() {
+  local os_name="" os_id="" kernel="" machine=""
+
+  if [[ -f /etc/os-release ]]; then
+    . /etc/os-release
+    os_name="${PRETTY_NAME:-unknown}"
+    os_id="${ID:-unknown}"
+  fi
+
+  if has_command uname; then
+    kernel="$(uname -r)"
+    machine="$(uname -m)"
+  fi
+
+  local niri_version="" dms_version="" ghostty_version="" fish_version=""
+  niri_version="$(niri --version 2>/dev/null | head -n1 || true)"
+  dms_version="$(dms version 2>/dev/null | head -n1 || true)"
+  ghostty_version="$(ghostty --version 2>/dev/null | head -n1 || true)"
+  fish_version="$(fish --version 2>/dev/null | head -n1 || true)"
+
+  local paths_json="{"
+  local first=1
+  for path in \
+    "$CONFIG_HOME/niri/config.kdl" \
+    "$CONFIG_HOME/DankMaterialShell/settings.json" \
+    "$CONFIG_HOME/fish/config.fish" \
+    "$CONFIG_HOME/niri-screensaver/config" \
+    "$KAKKU_SHARE/dms/settings.defaults.json" \
+    "/usr/share/backgrounds/kakku"; do
+    (( first )) || paths_json+=","
+    first=0
+    if [[ -e "$path" ]]; then
+      paths_json+="\"$path\":true"
+    else
+      paths_json+="\"$path\":false"
+    fi
+  done
+  paths_json+="}"
+
+  local services_json="{"
+  first=1
+  for service in NetworkManager bluetooth docker tailscaled ananicy-cpp power-profiles-daemon ufw; do
+    (( first )) || services_json+=","
+    first=0
+    local active="" enabled=""
+    if has_command systemctl; then
+      active="$(systemctl is-active "$service" 2>/dev/null || true)"
+      enabled="$(systemctl is-enabled "$service" 2>/dev/null || true)"
+    fi
+    services_json+="\"$service\":{\"active\":\"$active\",\"enabled\":\"$enabled\"}"
+  done
+  services_json+="}"
+
+  local user_services_json="{"
+  first=1
+  for service in dms.service dsearch.service; do
+    (( first )) || user_services_json+=","
+    first=0
+    local active="" enabled=""
+    if has_command systemctl; then
+      active="$(systemctl --user is-active "$service" 2>/dev/null || true)"
+      enabled="$(systemctl --user is-enabled "$service" 2>/dev/null || true)"
+    fi
+    user_services_json+="\"$service\":{\"active\":\"$active\",\"enabled\":\"$enabled\"}"
+  done
+  user_services_json+="}"
+
+  local niri_config=""
+  if [[ -f "$CONFIG_HOME/niri/config.kdl" ]]; then
+    niri_config="$(cat "$CONFIG_HOME/niri/config.kdl")"
+  fi
+
+  local dms_settings=""
+  if [[ -f "$CONFIG_HOME/DankMaterialShell/settings.json" ]]; then
+    dms_settings="$(cat "$CONFIG_HOME/DankMaterialShell/settings.json")"
+  fi
+
+  local fish_config=""
+  if [[ -f "$CONFIG_HOME/fish/config.fish" ]]; then
+    fish_config="$(cat "$CONFIG_HOME/fish/config.fish")"
+  fi
+
+  local changelog_entries=""
+  local changelog_file="$HOME/.local/share/kakku/changelog.jsonl"
+  if [[ -f "$changelog_file" ]]; then
+    changelog_entries="$(tail -n 20 "$changelog_file")"
+  fi
+
+  # Use jq if available for safe JSON encoding, otherwise use printf
+  if has_command jq; then
+    jq -n \
+      --arg os "$os_name" \
+      --arg os_id "$os_id" \
+      --arg kernel "$kernel" \
+      --arg machine "$machine" \
+      --arg session "${XDG_SESSION_TYPE:-unknown}" \
+      --arg desktop "${XDG_CURRENT_DESKTOP:-unknown}" \
+      --arg shell "${SHELL:-unknown}" \
+      --arg niri_ver "$niri_version" \
+      --arg dms_ver "$dms_version" \
+      --arg ghostty_ver "$ghostty_version" \
+      --arg fish_ver "$fish_version" \
+      --argjson paths "$paths_json" \
+      --argjson services "$services_json" \
+      --argjson user_services "$user_services_json" \
+      --arg niri_config "$niri_config" \
+      --arg dms_settings "$dms_settings" \
+      --arg fish_config "$fish_config" \
+      --arg changelog "$changelog_entries" \
+      '{
+        system: {os: $os, os_id: $os_id, kernel: $kernel, machine: $machine, session: $session, desktop: $desktop, shell: $shell},
+        versions: {niri: $niri_ver, dms: $dms_ver, ghostty: $ghostty_ver, fish: $fish_ver},
+        paths: $paths,
+        services: $services,
+        user_services: $user_services,
+        config: {niri: $niri_config, dms_settings: $dms_settings, fish: $fish_config},
+        recent_changes: $changelog
+      }'
+  else
+    # Fallback: minimal JSON without proper escaping for config contents
+    cat <<ENDJSON
+{"system":{"os":"$os_name","os_id":"$os_id","kernel":"$kernel","machine":"$machine","session":"${XDG_SESSION_TYPE:-unknown}","desktop":"${XDG_CURRENT_DESKTOP:-unknown}","shell":"${SHELL:-unknown}"},"versions":{"niri":"$niri_version","dms":"$dms_version","ghostty":"$ghostty_version","fish":"$fish_version"},"paths":$paths_json,"services":$services_json,"user_services":$user_services_json}
+ENDJSON
+  fi
+}
+
 show_paths() {
   cat <<EOF
 Kakku paths:
@@ -669,7 +795,7 @@ run_doctor_fix() {
 run_doctor_checks() {
   local failed=0
 
-  for command_name in niri dms dsearch xwayland-satellite ghostty swayidle wf-recorder niri-screensaver niri-screensaver-ctl kakku kakku-defaults kakku-browser-policies kakku-screenrecord kakku-vscode-theme calccu yazi btop fish zathura nvim codex; do
+  for command_name in niri dms dsearch xwayland-satellite ghostty swayidle wf-recorder niri-screensaver niri-screensaver-ctl kakku kakku-defaults kakku-browser-policies kakku-screenrecord kakku-vscode-theme kakku-edit calccu yazi btop fish zathura nvim codex; do
     check_command "$command_name" || failed=1
   done
 
@@ -782,7 +908,12 @@ case "${1:-help}" in
     show_info
     ;;
   context)
-    show_context
+    shift
+    if [[ "${1:-}" == "--json" ]]; then
+      show_context_json
+    else
+      show_context
+    fi
     ;;
   doctor)
     shift

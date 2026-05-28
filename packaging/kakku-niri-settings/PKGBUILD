@@ -30,6 +30,7 @@ depends=(
   'cups-pk-helper'
   'fprintd'
   'curl'
+  'jq'
   'npm'
   'wl-clipboard'
   'ghostty'
@@ -59,6 +60,9 @@ package() {
   cp -r "$repo_root/dotfiles/niri-screensaver" "$pkgdir/etc/skel/.config/niri-screensaver"
   cp -r "$repo_root/dotfiles/ghostty" "$pkgdir/etc/skel/.config/ghostty"
   cp -r "$repo_root/dotfiles/nvim" "$pkgdir/etc/skel/.config/nvim"
+  cp -r "$repo_root/dotfiles/kakku" "$pkgdir/etc/skel/.config/kakku"
+  cp -r "$repo_root/dotfiles/github-copilot" "$pkgdir/etc/skel/.config/github-copilot"
+  cp -r "$repo_root/dotfiles/claude" "$pkgdir/etc/skel/.config/claude"
   install -Dm644 "$repo_root/system/dms/settings.defaults.json" "$pkgdir/etc/skel/.config/DankMaterialShell/settings.json"
 
   install -Dm644 "$repo_root/dotfiles/bash/.bashrc" "$pkgdir/etc/skel/.bashrc"
@@ -90,6 +94,7 @@ package() {
   install -m755 "$repo_root"/bin/kakku-defaults "$pkgdir/usr/bin/"
   install -m755 "$repo_root"/bin/kakku-disable-plymouth "$pkgdir/usr/bin/"
   install -m755 "$repo_root"/bin/kakku-firewall-defaults "$pkgdir/usr/bin/"
+  install -m755 "$repo_root"/bin/kakku-edit "$pkgdir/usr/bin/"
   install -m755 "$repo_root"/bin/kakku-limine-defaults "$pkgdir/usr/bin/"
 
   install -Dm644 "$repo_root/system/xdg-desktop-portal/niri-portals.conf" "$pkgdir/usr/share/xdg-desktop-portal/niri-portals.conf"

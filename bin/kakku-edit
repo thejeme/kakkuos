@@ -1,0 +1,265 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# kakku-edit: Safe config file editor with backup, validation, and changelog.
+# Intended for AI tools to safely mutate user config with rollback on failure.
+#
+# Usage:
+#   kakku-edit <file> [--content <new-content> | --patch <diff-file>]
+#   kakku-edit <file> --stdin
+#   echo "new content" | kakku-edit <file> --stdin
+#
+# Options:
+#   --content <text>   Replace file content with the given text.
+#   --stdin            Read new content from stdin.
+#   --patch <file>     Apply a unified diff patch.
+#   --no-validate      Skip automatic validation.
+#   --message <msg>    Changelog message (default: "edited by kakku-edit").
+
+CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
+DATA_HOME="${XDG_DATA_HOME:-$HOME/.local/share}"
+CHANGELOG_DIR="$DATA_HOME/kakku"
+CHANGELOG_FILE="$CHANGELOG_DIR/changelog.jsonl"
+BACKUP_DIR="$DATA_HOME/kakku/backups"
+
+usage() {
+  cat <<'EOF'
+Usage:
+  kakku-edit <file> --content <new-content>
+  kakku-edit <file> --stdin
+  kakku-edit <file> --patch <diff-file>
+
+Options:
+  --no-validate      Skip automatic validation after edit.
+  --message <msg>    Changelog message.
+  -h, --help         Show this help.
+EOF
+}
+
+has_command() {
+  command -v "$1" >/dev/null 2>&1
+}
+
+log_change() {
+  local file="$1"
+  local message="$2"
+  local before_hash="$3"
+  local after_hash="$4"
+  local status="$5"
+
+  mkdir -p "$CHANGELOG_DIR"
+
+  local timestamp
+  timestamp="$(date -Is 2>/dev/null || date)"
+
+  printf '{"timestamp":"%s","file":"%s","message":"%s","before_hash":"%s","after_hash":"%s","status":"%s","agent":"%s"}\n' \
+    "$timestamp" "$file" "$message" "$before_hash" "$after_hash" "$status" "${KAKKU_EDIT_AGENT:-unknown}" \
+    >> "$CHANGELOG_FILE"
+}
+
+file_hash() {
+  local file="$1"
+  if [[ -f "$file" ]]; then
+    sha256sum "$file" 2>/dev/null | awk '{print $1}' || echo "unknown"
+  else
+    echo "none"
+  fi
+}
+
+backup_file() {
+  local file="$1"
+
+  if [[ ! -f "$file" ]]; then
+    return 0
+  fi
+
+  mkdir -p "$BACKUP_DIR"
+
+  local basename
+  basename="$(basename "$file")"
+  local timestamp
+  timestamp="$(date +%Y%m%d-%H%M%S)"
+
+  cp -a "$file" "$BACKUP_DIR/${basename}.${timestamp}.bak"
+}
+
+validate_file() {
+  local file="$1"
+
+  case "$file" in
+    */niri/config.kdl|*/niri/*.kdl)
+      if has_command niri; then
+        niri validate -c "$file" 2>&1
+        return $?
+      fi
+      ;;
+    *.fish|*/fish/config.fish|*/fish/conf.d/*.fish)
+      if has_command fish; then
+        fish --no-execute "$file" 2>&1
+        return $?
+      fi
+      ;;
+    *.json)
+      if has_command jq; then
+        jq empty "$file" 2>&1
+        return $?
+      elif has_command python3; then
+        python3 -c "import json,sys; json.load(open(sys.argv[1]))" "$file" 2>&1
+        return $?
+      fi
+      ;;
+    *.toml)
+      if has_command taplo; then
+        taplo check "$file" 2>&1
+        return $?
+      fi
+      ;;
+    *.sh|*/bin/kakku*)
+      if has_command bash; then
+        bash -n "$file" 2>&1
+        return $?
+      fi
+      ;;
+  esac
+
+  # No validator available; pass
+  return 0
+}
+
+rollback_file() {
+  local file="$1"
+  local backup="$2"
+
+  if [[ -f "$backup" ]]; then
+    cp -a "$backup" "$file"
+    echo "rollback: restored $file from backup" >&2
+  fi
+}
+
+main() {
+  local target_file=""
+  local new_content=""
+  local patch_file=""
+  local use_stdin=0
+  local skip_validate=0
+  local message="edited by kakku-edit"
+
+  while [[ "$#" -gt 0 ]]; do
+    case "$1" in
+      -h|--help)
+        usage
+        exit 0
+        ;;
+      --content)
+        new_content="$2"
+        shift 2
+        ;;
+      --stdin)
+        use_stdin=1
+        shift
+        ;;
+      --patch)
+        patch_file="$2"
+        shift 2
+        ;;
+      --no-validate)
+        skip_validate=1
+        shift
+        ;;
+      --message)
+        message="$2"
+        shift 2
+        ;;
+      -*)
+        echo "Unknown option: $1" >&2
+        usage >&2
+        exit 1
+        ;;
+      *)
+        if [[ -z "$target_file" ]]; then
+          target_file="$1"
+        else
+          echo "Unexpected argument: $1" >&2
+          exit 1
+        fi
+        shift
+        ;;
+    esac
+  done
+
+  if [[ -z "$target_file" ]]; then
+    echo "Error: no target file specified." >&2
+    usage >&2
+    exit 1
+  fi
+
+  # Resolve to absolute path
+  target_file="$(realpath -m "$target_file")"
+
+  if (( use_stdin )); then
+    new_content="$(cat)"
+  fi
+
+  if [[ -z "$new_content" && -z "$patch_file" ]]; then
+    echo "Error: provide --content, --stdin, or --patch." >&2
+    exit 1
+  fi
+
+  # Create parent directory if needed
+  mkdir -p "$(dirname "$target_file")"
+
+  # Record before state
+  local before_hash
+  before_hash="$(file_hash "$target_file")"
+
+  # Backup existing file
+  backup_file "$target_file"
+  local backup_path=""
+  if [[ -f "$target_file" ]]; then
+    local basename timestamp
+    basename="$(basename "$target_file")"
+    timestamp="$(date +%Y%m%d-%H%M%S)"
+    backup_path="$BACKUP_DIR/${basename}.${timestamp}.bak"
+  fi
+
+  # Apply change
+  if [[ -n "$patch_file" ]]; then
+    if ! patch "$target_file" < "$patch_file"; then
+      echo "Error: patch failed." >&2
+      log_change "$target_file" "$message" "$before_hash" "none" "patch-failed"
+      exit 1
+    fi
+  else
+    printf '%s' "$new_content" > "$target_file"
+  fi
+
+  local after_hash
+  after_hash="$(file_hash "$target_file")"
+
+  # Validate
+  if (( ! skip_validate )); then
+    local validate_output
+    if ! validate_output="$(validate_file "$target_file")"; then
+      echo "Validation failed:" >&2
+      echo "$validate_output" >&2
+      # Rollback
+      if [[ -n "$backup_path" && -f "$backup_path" ]]; then
+        rollback_file "$target_file" "$backup_path"
+        log_change "$target_file" "$message" "$before_hash" "$after_hash" "rolled-back"
+        echo "Change rolled back due to validation failure." >&2
+        exit 1
+      else
+        # No backup to restore (new file) — remove it
+        rm -f "$target_file"
+        log_change "$target_file" "$message" "$before_hash" "$after_hash" "rolled-back-removed"
+        echo "New file removed due to validation failure." >&2
+        exit 1
+      fi
+    fi
+  fi
+
+  log_change "$target_file" "$message" "$before_hash" "$after_hash" "applied"
+  echo "ok: $target_file updated"
+}
+
+main "$@"
