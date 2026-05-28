@@ -224,7 +224,7 @@ window-rule {
 window-rule {
     match app-id="vesktop"
     match app-id="speedcrunch"
-    match app-id='sidra'
+    match app-id="sidra"
     match app-id=r#"^blueman-manager$"#
     match app-id=r#"^pavucontrol$"#
     opacity 0.95
