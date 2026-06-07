@@ -8,6 +8,12 @@ dms-shell-niri
 breeze-cursors
 swayidle
 wf-recorder
+grim
+slurp
+tesseract
+tesseract-data-eng
+tesseract-data-fin
+libnotify
 matugen
 qt5ct
 qt6-imageformats

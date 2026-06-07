@@ -415,6 +415,7 @@ binds {
     XF86Launch1 { screenshot show-pointer=false; }
     Print { screenshot show-pointer=false; }
     Mod+Shift+S { screenshot show-pointer=false; }
+    Mod+Shift+O hotkey-overlay-title="OCR Copy Text" { spawn-sh "text=\"$(grim -g \"$(slurp)\" - | tesseract stdin stdout -l eng+fin 2>/dev/null | sed 's/[[:space:]]*$//')\"; if [ -n \"$text\" ]; then printf '%s' \"$text\" | wl-copy; notify-send 'OCR' 'Text copied'; else notify-send 'OCR' 'No text detected'; fi"; }
     Mod+Shift+Ctrl+S hotkey-overlay-title="Toggle Screen Recording" { spawn "kakku-screenrecord"; }
     Shift+Print hotkey-overlay-title="Toggle Screen Recording" { spawn "kakku-screenrecord"; }
 

@@ -485,6 +485,7 @@ KakkuOS keybindings:
     Print / XF86Launch1           Pick area, copied and saved without cursor
     Ctrl+Print / Ctrl+XF86Launch1 Screenshot screen without cursor
     Alt+Print / Alt+XF86Launch1   Screenshot window without cursor
+    Super+Shift+O                 OCR selected area to clipboard
     Super+Ctrl+Shift+S / Shift+Print
                                   Toggle screen recording
 
