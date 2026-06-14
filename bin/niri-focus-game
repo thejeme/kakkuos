@@ -1,0 +1,52 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+windows_json="$(niri msg -j windows)"
+outputs_json="$(niri msg -j outputs)"
+
+target_id="$(
+  jq -nr --argjson windows "$windows_json" --argjson outputs "$outputs_json" '
+    def abs: if . < 0 then -. else . end;
+    def ts: ((.focus_timestamp.secs // 0) * 1000000000) + (.focus_timestamp.nanos // 0);
+    def output_logicals:
+      $outputs
+      | to_entries[]
+      | .value.logical
+      | select(. != null)
+      | {w: .width, h: .height};
+    def matches_output_size($size):
+      ($size != null)
+      and any(output_logicals; ((($size[0] - .w) | abs) <= 2) and ((($size[1] - .h) | abs) <= 2));
+    def is_full_output:
+      matches_output_size(.layout.window_size) or matches_output_size(.layout.tile_size);
+    def is_likely_game:
+      (.app_id == null and (.title // "") != "")
+      or ((.app_id // "") | test("^(steam_app_.*|gamescope|net\\.lutris\\.|com\\.heroicgameslauncher\\.hgl)$"; "i"));
+    def score:
+      if is_full_output then 300
+      elif is_likely_game then 200
+      else 0
+      end;
+
+    [
+      $windows[]
+      | . + {score: score, ts: ts}
+      | select(.score > 0)
+    ]
+    | sort_by(.score, .ts)
+    | last
+    | .id // empty
+  '
+)"
+
+if [[ -z "$target_id" ]]; then
+  notify-send "Niri" "No fullscreen or game-like window found" 2>/dev/null || true
+  exit 1
+fi
+
+if [[ "${1:-}" == "--print" ]]; then
+  printf '%s\n' "$target_id"
+  exit 0
+fi
+
+niri msg action focus-window --id "$target_id"

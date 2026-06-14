@@ -413,6 +413,9 @@ if [[ -d "$REPO_DIR/bin" ]]; then
     [[ -f "$script" ]] || continue
     sudo install -Dm755 "$script" "/usr/bin/$(basename "$script")"
   done
+  if [[ -f "$REPO_DIR/bin/niri-focus-game" ]]; then
+    sudo install -Dm755 "$REPO_DIR/bin/niri-focus-game" /usr/bin/niri-focus-game
+  fi
 fi
 
 if [[ -f "$REPO_DIR/system/xdg-desktop-portal/niri-portals.conf" ]]; then

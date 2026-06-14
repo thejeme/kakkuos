@@ -101,6 +101,7 @@ package() {
   install -m755 "$repo_root"/bin/kakku-firewall-defaults "$pkgdir/usr/bin/"
   install -m755 "$repo_root"/bin/kakku-edit "$pkgdir/usr/bin/"
   install -m755 "$repo_root"/bin/kakku-limine-defaults "$pkgdir/usr/bin/"
+  install -m755 "$repo_root"/bin/niri-focus-game "$pkgdir/usr/bin/"
 
   install -Dm644 "$repo_root/system/xdg-desktop-portal/niri-portals.conf" "$pkgdir/usr/share/xdg-desktop-portal/niri-portals.conf"
 

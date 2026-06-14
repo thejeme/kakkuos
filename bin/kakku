@@ -416,6 +416,7 @@ KakkuOS keybindings:
     Super+H                       Open btop
     Super+P                       Open Pinta
     Super+S                       Open Steam
+    Super+G                       Focus fullscreen/game window
     Super+C / Calculator key      Open calculator
     Super+Space                   Open app launcher
     Super+V                       Open clipboard
@@ -796,7 +797,7 @@ run_doctor_fix() {
 run_doctor_checks() {
   local failed=0
 
-  for command_name in niri dms dsearch xwayland-satellite ghostty swayidle wf-recorder niri-screensaver niri-screensaver-ctl kakku kakku-defaults kakku-browser-policies kakku-vscode-theme kakku-edit calccu yazi btop fish zathura nvim codex; do
+  for command_name in niri dms dsearch xwayland-satellite ghostty swayidle wf-recorder niri-screensaver niri-screensaver-ctl niri-focus-game kakku kakku-defaults kakku-browser-policies kakku-vscode-theme kakku-edit calccu yazi btop fish zathura nvim codex; do
     check_command "$command_name" || failed=1
   done
 

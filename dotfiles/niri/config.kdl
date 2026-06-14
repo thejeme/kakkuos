@@ -282,6 +282,7 @@ binds {
     Mod+H hotkey-overlay-title="Open btop" { spawn "ghostty" "-e" "btop"; }
     Mod+A hotkey-overlay-title="Open ChatGPT" { spawn "google-chrome-stable" "--app=https://chatgpt.com" "--ozone-platform-hint=auto"; }
     Mod+S hotkey-overlay-title="Open Steam" { spawn "steam"; }
+    Mod+G hotkey-overlay-title="Focus Game" { spawn "niri-focus-game"; }
     Mod+N hotkey-overlay-title="Notepad" { spawn "dms" "ipc" "call" "notepad" "toggle"; }
     Mod+Space hotkey-overlay-title="Application Launcher" { spawn "dms" "ipc" "call" "spotlight" "toggle"; }
     Mod+V hotkey-overlay-title="Clipboard Manager" { spawn "dms" "ipc" "call" "clipboard" "toggle"; }
