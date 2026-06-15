@@ -7,4 +7,3 @@ ffmpegthumbnailer
 obs-studio
 kdenlive
 speedcrunch
-libreoffice-fresh

@@ -1,5 +1,6 @@
 visual-studio-code-bin
 google-chrome
+onlyoffice-bin
 localsend-bin
 pinta-git
 musikcube-bin

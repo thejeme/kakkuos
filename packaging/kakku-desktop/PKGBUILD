@@ -69,7 +69,7 @@ depends=(
   'obs-studio'
   'kdenlive'
   'speedcrunch'
-  'libreoffice-fresh'
+  'onlyoffice-bin'
   'docker'
   'docker-compose'
   'git'

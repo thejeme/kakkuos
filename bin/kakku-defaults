@@ -80,17 +80,17 @@ set_default_from_candidates "code.desktop visual-studio-code.desktop code-oss.de
   text/x-shellscript \
   text/csv
 
-set_default libreoffice-writer.desktop \
+set_default_from_candidates "onlyoffice-desktopeditors.desktop org.onlyoffice.desktopeditors.desktop" \
   application/vnd.oasis.opendocument.text \
   application/msword \
   application/vnd.openxmlformats-officedocument.wordprocessingml.document
 
-set_default libreoffice-calc.desktop \
+set_default_from_candidates "onlyoffice-desktopeditors.desktop org.onlyoffice.desktopeditors.desktop" \
   application/vnd.oasis.opendocument.spreadsheet \
   application/vnd.ms-excel \
   application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
 
-set_default libreoffice-impress.desktop \
+set_default_from_candidates "onlyoffice-desktopeditors.desktop org.onlyoffice.desktopeditors.desktop" \
   application/vnd.oasis.opendocument.presentation \
   application/vnd.ms-powerpoint \
   application/vnd.openxmlformats-officedocument.presentationml.presentation
