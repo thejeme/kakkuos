@@ -57,10 +57,13 @@ package() {
 
   install -dm755 "$pkgdir/etc/skel/.config"
   cp -r "$repo_root/dotfiles/fastfetch" "$pkgdir/etc/skel/.config/fastfetch"
+  cp -r "$repo_root/dotfiles/git" "$pkgdir/etc/skel/.config/git"
   cp -r "$repo_root/dotfiles/lazygit" "$pkgdir/etc/skel/.config/lazygit"
   cp -r "$repo_root/dotfiles/menus" "$pkgdir/etc/skel/.config/menus"
+  cp -r "$repo_root/dotfiles/mpv" "$pkgdir/etc/skel/.config/mpv"
   cp -r "$repo_root/dotfiles/starship" "$pkgdir/etc/skel/.config/starship"
   cp -r "$repo_root/dotfiles/yazi" "$pkgdir/etc/skel/.config/yazi"
+  cp -r "$repo_root/dotfiles/zathura" "$pkgdir/etc/skel/.config/zathura"
   cp -r "$repo_root/dotfiles/fish" "$pkgdir/etc/skel/.config/fish"
   cp -r "$repo_root/dotfiles/niri" "$pkgdir/etc/skel/.config/niri"
   cp -r "$repo_root/dotfiles/niri-screensaver" "$pkgdir/etc/skel/.config/niri-screensaver"

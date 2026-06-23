@@ -1,4 +1,4 @@
-post_install() {
+_enable_defaults() {
   systemctl enable power-profiles-daemon.service 2>/dev/null || true
   systemctl --global enable dms.service 2>/dev/null || true
   systemctl --global enable dsearch.service 2>/dev/null || true
@@ -12,22 +12,21 @@ post_install() {
     kakku-limine-defaults || true
   fi
 
-  if ! command -v calccu >/dev/null 2>&1 && command -v npm >/dev/null 2>&1; then
-    npm install -g calccu || true
-  fi
-
   # Remove CachyOS welcome app autostart
   rm -f /etc/xdg/autostart/cachyos-hello.desktop
+}
 
-  # Apply configs to existing users
-  _apply_configs
+post_install() {
+  _enable_defaults
+  _apply_missing_configs
 }
 
 post_upgrade() {
-  post_install
+  _enable_defaults
+  _apply_missing_configs
 }
 
-_apply_configs() {
+_apply_missing_configs() {
   local skel="/etc/skel"
 
   for user_home in /home/*; do
@@ -36,20 +35,20 @@ _apply_configs() {
     username=$(basename "$user_home")
     id "$username" &>/dev/null || continue
 
-    # Update owned files inside .config directories without replacing the directories.
-    for dir in DankMaterialShell fastfetch lazygit menus starship yazi fish niri niri-screensaver ghostty nvim; do
+    # Seed missing files inside .config directories without replacing user edits.
+    for dir in DankMaterialShell fastfetch git lazygit menus mpv starship yazi zathura fish niri niri-screensaver ghostty nvim kakku github-copilot claude; do
       if [ -d "$skel/.config/$dir" ]; then
-        _copy_tree_files "$skel/.config/$dir" "$user_home/.config/$dir" "$username"
+        _copy_missing_tree_files "$skel/.config/$dir" "$user_home/.config/$dir" "$username"
       fi
     done
 
-    # Shell rc files are individual Kakku-owned defaults and may be updated.
+    # Shell rc files are individual Kakku-owned defaults; seed only if missing.
     if [ -f "$skel/.bashrc" ]; then
-      _copy_file "$skel/.bashrc" "$user_home/.bashrc" "$username"
+      _copy_missing_file "$skel/.bashrc" "$user_home/.bashrc" "$username"
     fi
 
     if [ -f "$skel/.zshrc" ]; then
-      _copy_file "$skel/.zshrc" "$user_home/.zshrc" "$username"
+      _copy_missing_file "$skel/.zshrc" "$user_home/.zshrc" "$username"
     fi
 
     if command -v kakku-browser-theme >/dev/null 2>&1 && command -v runuser >/dev/null 2>&1; then
@@ -62,17 +61,21 @@ _apply_configs() {
   done
 }
 
-_copy_file() {
+_copy_missing_file() {
   local source="$1"
   local target="$2"
   local username="$3"
+
+  if [ -e "$target" ]; then
+    return 0
+  fi
 
   mkdir -p "$(dirname "$target")"
   cp -a "$source" "$target"
   chown "$username:$username" "$target"
 }
 
-_copy_tree_files() {
+_copy_missing_tree_files() {
   local source="$1"
   local target="$2"
   local username="$3"
@@ -102,6 +105,10 @@ _copy_tree_files() {
     target_path="$target/$relative_path"
 
     mkdir -p "$(dirname "$target_path")"
+    if [ -e "$target_path" ]; then
+      continue
+    fi
+
     cp -a "$source_path" "$target_path"
     chown "$username:$username" "$target_path"
   done

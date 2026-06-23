@@ -170,19 +170,6 @@ read_package_list() {
   fi
 }
 
-paths_match() {
-  local source="$1"
-  local target="$2"
-
-  if [[ -d "$source" && -d "$target" ]]; then
-    diff -qr "$source" "$target" >/dev/null 2>&1
-  elif [[ -f "$source" && -f "$target" ]]; then
-    cmp -s "$source" "$target"
-  else
-    return 1
-  fi
-}
-
 copy_config_dir() {
   local name="$1"
   local source="$REPO_DIR/dotfiles/$name"
@@ -199,13 +186,18 @@ copy_config_dir() {
       target_path="$target/$relative_path"
 
       mkdir -p "$(dirname "$target_path")"
+      if [[ -e "$target_path" ]]; then
+        echo "Preserved existing: $target_path"
+        continue
+      fi
+
       cp -a "$source_path" "$target_path"
       echo "Installed: $target_path"
     done < <(find "$source" -type f -print0)
   fi
 }
 
-copy_file_if_changed() {
+copy_file_if_missing() {
   local source="$1"
   local target="$2"
 
@@ -214,10 +206,8 @@ copy_file_if_changed() {
   fi
 
   if [[ -e "$target" ]]; then
-    if paths_match "$source" "$target"; then
-      echo "Unchanged: $target"
-      return
-    fi
+    echo "Preserved existing: $target"
+    return
   fi
 
   mkdir -p "$(dirname "$target")"
@@ -234,7 +224,7 @@ copy_niri_config() {
   fi
 
   mkdir -p "$target"
-  copy_file_if_changed "$source/config.kdl" "$target/config.kdl"
+  copy_file_if_missing "$source/config.kdl" "$target/config.kdl"
 
   if [[ -d "$source/kakku" ]]; then
     copy_config_dir niri/kakku
@@ -250,6 +240,11 @@ install_dms_user_settings() {
   fi
 
   mkdir -p "$(dirname "$target")"
+  if [[ -e "$target" ]]; then
+    echo "Preserved existing: $target"
+    return
+  fi
+
   cp "$source" "$target"
   echo "Installed: $target"
 }
@@ -306,21 +301,6 @@ if (( ${#cachyos_installed[@]} > 0 )); then
   sudo pacman -R --noconfirm "${cachyos_installed[@]}" || true
 fi
 hash -r
-
-install_calccu() {
-  if has_command calccu; then
-    return 0
-  fi
-
-  require_command npm
-  sudo npm install -g calccu
-  hash -r
-  require_command calccu
-}
-
-if ! has_command calccu; then
-  install_calccu || die "Failed to install calccu from npm."
-fi
 
 require_command fish
 
@@ -438,8 +418,8 @@ if has_command xdg-mime && has_command kakku-defaults; then
   kakku-defaults || true
 fi
 
-copy_file_if_changed "$REPO_DIR/dotfiles/bash/.bashrc" "$HOME/.bashrc"
-copy_file_if_changed "$REPO_DIR/dotfiles/zsh/.zshrc" "$HOME/.zshrc"
+copy_file_if_missing "$REPO_DIR/dotfiles/bash/.bashrc" "$HOME/.bashrc"
+copy_file_if_missing "$REPO_DIR/dotfiles/zsh/.zshrc" "$HOME/.zshrc"
 copy_config_dir fish
 
 if has_command kakku-disable-plymouth; then

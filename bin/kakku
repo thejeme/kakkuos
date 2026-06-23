@@ -278,20 +278,6 @@ fix_vscode_theme() {
   fi
 }
 
-fix_calccu() {
-  if has_command calccu; then
-    echo "ok   calccu is installed"
-    return 0
-  fi
-
-  if has_command npm; then
-    run_as_root npm install -g calccu
-    hash -r 2>/dev/null || true
-  else
-    echo "warn npm is missing"
-  fi
-}
-
 fix_login_shell() {
   local current_shell=""
   local fish_path=""
@@ -423,10 +409,10 @@ KakkuOS keybindings:
     Super+M / Ctrl+Alt+Delete     Open task manager
     Super+Comma                   Open DMS settings
     Super+Y                       Open wallpaper browser
-    Super+N                       Open notifications
-    Super+Shift+N                 Open notepad
+    Super+N                       Open notepad
     Super+Alt+L                   Lock screen
     Super+Shift+P                 Pick screen color to clipboard
+    Super+Shift+B                 Toggle Top Bar
     Ctrl+Alt+End                  Exit niri
 
   Windows and columns
@@ -691,27 +677,6 @@ show_context_json() {
   done
   user_services_json+="}"
 
-  local niri_config=""
-  if [[ -f "$CONFIG_HOME/niri/config.kdl" ]]; then
-    niri_config="$(cat "$CONFIG_HOME/niri/config.kdl")"
-  fi
-
-  local dms_settings=""
-  if [[ -f "$CONFIG_HOME/DankMaterialShell/settings.json" ]]; then
-    dms_settings="$(cat "$CONFIG_HOME/DankMaterialShell/settings.json")"
-  fi
-
-  local fish_config=""
-  if [[ -f "$CONFIG_HOME/fish/config.fish" ]]; then
-    fish_config="$(cat "$CONFIG_HOME/fish/config.fish")"
-  fi
-
-  local changelog_entries=""
-  local changelog_file="$HOME/.local/share/kakku/changelog.jsonl"
-  if [[ -f "$changelog_file" ]]; then
-    changelog_entries="$(tail -n 20 "$changelog_file")"
-  fi
-
   # Use jq if available for safe JSON encoding, otherwise use printf
   if has_command jq; then
     jq -n \
@@ -729,18 +694,12 @@ show_context_json() {
       --argjson paths "$paths_json" \
       --argjson services "$services_json" \
       --argjson user_services "$user_services_json" \
-      --arg niri_config "$niri_config" \
-      --arg dms_settings "$dms_settings" \
-      --arg fish_config "$fish_config" \
-      --arg changelog "$changelog_entries" \
       '{
         system: {os: $os, os_id: $os_id, kernel: $kernel, machine: $machine, session: $session, desktop: $desktop, shell: $shell},
         versions: {niri: $niri_ver, dms: $dms_ver, ghostty: $ghostty_ver, fish: $fish_ver},
         paths: $paths,
         services: $services,
-        user_services: $user_services,
-        config: {niri: $niri_config, dms_settings: $dms_settings, fish: $fish_config},
-        recent_changes: $changelog
+        user_services: $user_services
       }'
   else
     # Fallback: minimal JSON without proper escaping for config contents
@@ -784,7 +743,6 @@ run_doctor_fix() {
   run_fix_step "install browser policies" fix_browser_policies
   run_fix_step "configure browser theme hooks" fix_browser_theme
   run_fix_step "configure VS Code theme" fix_vscode_theme
-  run_fix_step "install calccu calculator" fix_calccu
   run_fix_step "set fish as login shell" fix_login_shell
   run_fix_step "enable core services" fix_core_services
   run_fix_step "enable user services" fix_user_services
@@ -797,7 +755,7 @@ run_doctor_fix() {
 run_doctor_checks() {
   local failed=0
 
-  for command_name in niri dms dsearch xwayland-satellite ghostty swayidle wf-recorder niri-screensaver niri-screensaver-ctl niri-focus-game kakku kakku-defaults kakku-browser-policies kakku-vscode-theme kakku-edit calccu yazi btop fish zathura nvim codex; do
+  for command_name in niri dms dsearch xwayland-satellite ghostty swayidle wf-recorder niri-screensaver niri-screensaver-ctl niri-focus-game kakku kakku-defaults kakku-browser-policies kakku-vscode-theme kakku-edit speedcrunch yazi btop fish zathura nvim codex; do
     check_command "$command_name" || failed=1
   done
 

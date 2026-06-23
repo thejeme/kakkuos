@@ -98,7 +98,7 @@ Notable defaults:
 - `Mod+Shift+B`: Chrome
 - `Mod+D`: Vesktop
 - `Mod+S`: Steam
-- `Mod+C`: calccu
+- `Mod+C`: SpeedCrunch
 - `Mod+Y`: Background browser
 - `Mod+section`: Keybinding help
 - `Print`: Screenshot

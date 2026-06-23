@@ -54,7 +54,7 @@ Mod+Space      DMS launcher
 Mod+T          Ghostty terminal
 Mod+E          Dolphin file manager
 Mod+B          Zen Browser
-Mod+C          calccu calculator in Ghostty
+Mod+C          SpeedCrunch calculator
 Mod+Shift+L    Lock screen
 Print          Screenshot picker
 ```
@@ -136,7 +136,7 @@ Reapply default apps with:
 kakku defaults
 ```
 
-Defaults include Zen Browser for web links, Dolphin for folders, mpv for media, imv for images, Zathura for PDFs, LibreOffice for office files, and `calccu` as the calculator launched from niri keybindings.
+Defaults include Zen Browser for web links, Dolphin for folders, mpv for media, imv for images, Zathura for PDFs, LibreOffice for office files, and SpeedCrunch as the calculator launched from niri keybindings.
 
 KakkuOS also ships `~/.config/menus/applications.menu` so KDE apps such as Dolphin can build their application/service cache correctly under niri.
 

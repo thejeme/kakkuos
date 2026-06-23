@@ -294,7 +294,7 @@ binds {
     Mod+N hotkey-overlay-title="Notepad" { spawn "dms" "ipc" "call" "notepad" "toggle"; }
     Mod+Space hotkey-overlay-title="Application Launcher" { spawn "dms" "ipc" "call" "spotlight" "toggle"; }
     Mod+V hotkey-overlay-title="Clipboard Manager" { spawn "dms" "ipc" "call" "clipboard" "toggle"; }
-    Mod+C hotkey-overlay-title="Open Calculator" { spawn "ghostty" "-e" "calccu"; }
+    Mod+C hotkey-overlay-title="Open Calculator" { spawn "speedcrunch"; }
     Mod+M hotkey-overlay-title="Open Music" { spawn "sidra"; }
     Mod+P hotkey-overlay-title="Open Pinta" { spawn "pinta"; }
     Mod+Comma hotkey-overlay-title="Settings" { spawn "dms" "ipc" "call" "settings" "focusOrToggle"; }
@@ -424,7 +424,10 @@ binds {
     XF86Launch1 { screenshot show-pointer=false; }
     Print { screenshot show-pointer=false; }
     Mod+Shift+S { screenshot show-pointer=false; }
-    Mod+Shift+O hotkey-overlay-title="OCR Copy Text" { spawn-sh "text=\"$(grim -g \"$(slurp)\" - | tesseract stdin stdout -l eng+fin 2>/dev/null | sed 's/[[:space:]]*$//')\"; if [ -n \"$text\" ]; then printf '%s' \"$text\" | wl-copy; notify-send 'OCR' 'Text copied'; else notify-send 'OCR' 'No text detected'; fi"; }
+    Mod+Shift+O hotkey-overlay-title="OCR Copy Text" {
+      spawn-sh "text=\"$(grim -g \"$(slurp)\" - | tesseract stdin stdout -l eng+fin 2>/dev/null | sed 's/[[:space:]]*$//')\"; if [ -n \"$text\" ]; then printf '%s' \"$text\" | wl-copy; notify-
+      send 'OCR' 'Text copied'; else notify-send 'OCR' 'No text detected'; fi"
+    }
     Mod+Shift+Ctrl+S hotkey-overlay-title="Toggle Screen Recording" { spawn-sh "if pgrep -u \"$UID\" -x wf-recorder >/dev/null 2>&1; then pkill -INT -u \"$UID\" -x wf-recorder && notify-send 'Kakku Screenrecord' 'Recording stopped'; elif command -v wf-recorder >/dev/null 2>&1; then dir=\"${KAKKU_SCREENRECORD_DIR:-${XDG_VIDEOS_DIR:-$HOME/Videos}/Screenrecords}\"; mkdir -p \"$dir\"; file=\"$dir/Screenrecord from $(date +'%Y-%m-%d %H-%M-%S').mp4\"; notify-send 'Kakku Screenrecord' 'Recording started'; wf-recorder -f \"$file\" >/tmp/kakku-screenrecord.log 2>&1 & else notify-send 'Kakku Screenrecord' 'wf-recorder is not installed'; fi"; }
     Shift+Print hotkey-overlay-title="Toggle Screen Recording" { spawn-sh "if pgrep -u \"$UID\" -x wf-recorder >/dev/null 2>&1; then pkill -INT -u \"$UID\" -x wf-recorder && notify-send 'Kakku Screenrecord' 'Recording stopped'; elif command -v wf-recorder >/dev/null 2>&1; then dir=\"${KAKKU_SCREENRECORD_DIR:-${XDG_VIDEOS_DIR:-$HOME/Videos}/Screenrecords}\"; mkdir -p \"$dir\"; file=\"$dir/Screenrecord from $(date +'%Y-%m-%d %H-%M-%S').mp4\"; notify-send 'Kakku Screenrecord' 'Recording started'; wf-recorder -f \"$file\" >/tmp/kakku-screenrecord.log 2>&1 & else notify-send 'Kakku Screenrecord' 'wf-recorder is not installed'; fi"; }
 

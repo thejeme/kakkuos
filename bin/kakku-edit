@@ -80,7 +80,9 @@ backup_file() {
   local timestamp
   timestamp="$(date +%Y%m%d-%H%M%S)"
 
-  cp -a "$file" "$BACKUP_DIR/${basename}.${timestamp}.bak"
+  local backup_path="$BACKUP_DIR/${basename}.${timestamp}.bak"
+  cp -a "$file" "$backup_path"
+  printf '%s\n' "$backup_path"
 }
 
 validate_file() {
@@ -212,14 +214,9 @@ main() {
   local before_hash
   before_hash="$(file_hash "$target_file")"
 
-  # Backup existing file
-  backup_file "$target_file"
   local backup_path=""
   if [[ -f "$target_file" ]]; then
-    local basename timestamp
-    basename="$(basename "$target_file")"
-    timestamp="$(date +%Y%m%d-%H%M%S)"
-    backup_path="$BACKUP_DIR/${basename}.${timestamp}.bak"
+    backup_path="$(backup_file "$target_file")"
   fi
 
   # Apply change
