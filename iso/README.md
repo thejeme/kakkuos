@@ -1,6 +1,6 @@
 # KakkuOS ISO Build
 
-This directory contains the first KakkuOS ISO scaffold.
+This directory contains the KakkuOS ISO scaffold.
 
 KakkuOS should not maintain a separate ArchISO stack. The ISO build should use
 CachyOS' supported live ISO tooling and apply KakkuOS as a profile/overlay on
@@ -83,10 +83,9 @@ That target step copies the ISO's local Kakku package repo into the target,
 adds the target-local pacman repo, and installs `kakku-desktop`, so the
 installed system gets the KakkuOS niri/DMS desktop package and service defaults.
 
-The script keeps backups of CachyOS files it mutates under
-`archiso/.kakku-originals/` and restores them before each staging run. This
-makes repeated `--prepare-only` runs deterministic while still using the
-upstream checkout as the base.
+The upstream CachyOS checkout is treated as a clean cache. Kakku mutations are
+applied to the separate staging tree on every run, so repeated `--prepare-only`
+runs stay deterministic without modifying the cached upstream checkout.
 
 The overlay also rewrites user-facing live ISO branding: live `os-release`,
 hostname, release marker, boot menu labels, ISO publisher/application metadata,
@@ -94,11 +93,30 @@ MOTD, and generated ISO output naming. CachyOS repository names, mirror files,
 kernel package names, and installer package names remain unchanged because they
 are functional package infrastructure rather than user-facing KakkuOS branding.
 
+Each staging run writes `kakku-iso-build-manifest.txt` into the staging tree and
+the live image at `/usr/share/kakku/`. The manifest records the KakkuOS commit,
+worktree dirty state, CachyOS-Live-ISO commit, profile, installer package, and
+embedded local repo package files.
+
 If `packaging/repo` has already been built, use:
 
 ```bash
 iso/build-kakku-iso.sh --prepare-only --use-existing-local-repo
 ```
+
+To use a hosted KakkuOS pacman repo instead of embedding `packaging/repo`, pass
+the repo server URL:
+
+```bash
+iso/build-kakku-iso.sh --prepare-only \
+  --repo-server https://repo.example.invalid/kakkuos/x86_64 \
+  --repo-siglevel "Required DatabaseOptional"
+```
+
+Hosted repo mode writes the same repo stanza into the live and target
+`pacman.conf` files, records `kakku_repo_mode=hosted` in the manifest, and
+skips embedding `/opt/kakkuos/repo`. The hosted repo must already contain
+`kakku-desktop` and `kakku-niri-settings` before a full ISO build.
 
 ## Smoke Check
 
@@ -108,6 +126,7 @@ build:
 ```bash
 bash scripts/check-iso-package-closure.sh
 scripts/iso-smoke-check.sh
+scripts/iso-target-hook-check.sh
 ```
 
 For quick checks where the local package repo was intentionally skipped, use:
@@ -118,7 +137,51 @@ scripts/iso-smoke-check.sh --allow-missing-local-repo
 
 The smoke check verifies the CLI installer entrypoints, KakkuOS package
 injection, GUI installer package removal, live OS identity, boot-to-CLI target,
-installer defaults, and user-facing boot branding.
+installer defaults, and user-facing boot branding. The target hook check runs
+the generated `kakku-target-install` script against a fake mounted target and
+verifies that it copies the local package repo and rewrites target
+`pacman.conf` before the chrooted install step.
+
+`--skip-local-repo` is only for prepare-only inspection. A full ISO build needs
+`kakku-desktop` and `kakku-niri-settings` available to pacman, either by letting
+`iso/build-kakku-iso.sh` build and inject `packaging/repo` or by passing
+`--use-existing-local-repo` after building that repo yourself. A full build can
+also use `--repo-server` when those packages are available from a hosted KakkuOS
+repo.
+
+## Release Audit
+
+For release candidates, use the checklist in `iso/RELEASE-CHECKLIST.md`.
+After a full ISO build, run:
+
+```bash
+scripts/iso-release-check.sh --require-hosted-repo --check-host
+```
+
+For pre-build local checks where no ISO artifact exists yet, use:
+
+```bash
+scripts/iso-release-check.sh --allow-missing-iso
+```
+
+For early embedded-repo test ISOs, omit `--require-hosted-repo` and document
+that the ISO depends on its bundled `/opt/kakkuos/repo` package database.
+
+On machines that cannot run VM tests, add `--allow-missing-vm-tools`. Do not use
+that flag for a real release candidate.
+
+For local development audits from an uncommitted worktree, add
+`--allow-dirty-source`. Do not use that flag for a real release candidate.
+
+For manual VM validation after a build, use:
+
+```bash
+scripts/iso-vm-boot.sh --bios
+scripts/iso-vm-boot.sh --uefi
+```
+
+The helper boots the newest ISO under `iso/out/` by default and creates a
+reusable test disk at `iso/.cache/kakku-vm.qcow2`.
 
 ## Release Gates
 
@@ -155,14 +218,38 @@ The script currently delegates to:
 sudo ./buildiso.sh -p desktop -v -w
 ```
 
-inside the cached CachyOS-Live-ISO checkout.
+inside the Kakku staging tree at `iso/.cache/kakku-live-iso`. The upstream
+checkout at `iso/.cache/cachyos-live-iso` remains a clean source cache.
 
-The ISO output is produced by the CachyOS build system under that checkout's
+Before a full build starts, the Kakku wrapper checks for the external build
+commands it cannot provide itself: `sudo`, `mkarchiso`, `mksquashfs`, and
+`pacstrap`.
+
+The ISO output is produced by the CachyOS build system under the staging tree's
 `out/` directory and copied to `iso/out/` when the build completes.
 
 ## Current Limitations
 
-This is intentionally a scaffold, not the finished release pipeline.
+The ISO path is currently good enough for staged-tree integration work:
+
+- it clones or updates CachyOS-Live-ISO instead of maintaining a separate
+  ArchISO tree;
+- it applies Kakku changes in a separate staging/build tree instead of mutating
+  the upstream cache;
+- it builds/injects the local KakkuOS package repo;
+- it can alternatively point the live and installed systems at a hosted KakkuOS
+  pacman repo;
+- it stages this repository into the live image;
+- it removes the CachyOS GUI installer packages and adds the CachyOS CLI
+  installer;
+- it brands the live identity, boot labels, hostname, MOTD, and output naming;
+- it boots the live image to a CLI target with a `kakku-install` hint;
+- it provides a target post-install hook that copies the local repo into the
+  installed system, adds that repo to target `pacman.conf`, installs
+  `kakku-desktop`, and enables Kakku service defaults;
+- it has a smoke check for the staged tree.
+
+It is not yet a finished release pipeline.
 
 Still needed:
 

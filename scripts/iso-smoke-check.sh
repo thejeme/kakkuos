@@ -3,19 +3,21 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
-CHECKOUT_DIR="$REPO_ROOT/iso/.cache/cachyos-live-iso"
+CHECKOUT_DIR="${KAKKU_STAGING_DIR:-$REPO_ROOT/iso/.cache/kakku-live-iso}"
 PROFILE="${CACHYOS_BUILD_PROFILE:-desktop}"
+REPO_NAME="${KAKKU_REPO_NAME:-kakku-local}"
 ALLOW_MISSING_LOCAL_REPO=0
+MANIFEST_NAME="${KAKKU_ISO_MANIFEST_NAME:-kakku-iso-build-manifest.txt}"
 
 usage() {
   cat <<EOF
 Usage: ${0##*/} [OPTIONS]
 
-Validate a staged CachyOS-Live-ISO checkout after iso/build-kakku-iso.sh --prepare-only.
+Validate the staged KakkuOS/CachyOS-Live-ISO tree after iso/build-kakku-iso.sh --prepare-only.
 
 Options:
-  --dir PATH                   CachyOS-Live-ISO checkout or archiso profile path.
-                               Default: iso/.cache/cachyos-live-iso.
+  --dir PATH                   Kakku staging tree or archiso profile path.
+                               Default: iso/.cache/kakku-live-iso.
   --profile NAME               Profile name used for package list lookup. Default: desktop.
   --allow-missing-local-repo   Do not fail when [kakku-local] is absent.
   -h, --help                   Show this help.
@@ -82,6 +84,20 @@ check_exec() {
     ok "executable: $path"
   else
     miss "executable: $path"
+  fi
+}
+
+check_no_matches() {
+  local path="$1"
+  local pattern="$2"
+  local label="$3"
+
+  if [[ ! -d "$path" ]]; then
+    miss "$label: missing directory $path"
+  elif find "$path" -path "$pattern" -print -quit | grep -q .; then
+    miss "$label"
+  else
+    ok "$label"
   fi
 }
 
@@ -205,6 +221,14 @@ json_field_equals() {
   fi
 }
 
+manifest_value() {
+  local file="$1"
+  local key="$2"
+
+  [[ -f "$file" ]] || return 1
+  awk -F= -v key="$key" '$1 == key { sub(/^[^=]*=/, ""); print; exit }' "$file"
+}
+
 archiso_dir="$(find_archiso_dir || true)"
 if [[ -z "$archiso_dir" ]]; then
   echo "Could not find a staged archiso profile in $CHECKOUT_DIR." >&2
@@ -213,6 +237,10 @@ fi
 
 airootfs="$archiso_dir/airootfs"
 packages_file="$(find_packages_file "$archiso_dir" || true)"
+manifest="$CHECKOUT_DIR/$MANIFEST_NAME"
+repo_mode="$(manifest_value "$manifest" kakku_repo_mode 2>/dev/null || printf 'embedded\n')"
+repo_server="$(manifest_value "$manifest" kakku_repo_server 2>/dev/null || printf 'file:///opt/kakkuos/repo\n')"
+repo_siglevel="$(manifest_value "$manifest" kakku_repo_siglevel 2>/dev/null || printf 'Optional TrustAll\n')"
 
 ok "archiso profile: $archiso_dir"
 
@@ -226,7 +254,7 @@ else
 fi
 
 if (( ALLOW_MISSING_LOCAL_REPO )); then
-  if grep -q '^\[kakku-local\]$' "$archiso_dir/pacman.conf" 2>/dev/null; then
+  if grep -q "^\[$REPO_NAME\]$" "$archiso_dir/pacman.conf" 2>/dev/null; then
     ok "local repo configured in profile pacman.conf"
   else
     warn "local repo missing from profile pacman.conf"
@@ -249,6 +277,9 @@ check_exec "$airootfs/usr/local/bin/kakku-target-install"
 check_contains "$airootfs/usr/local/bin/kakku-target-install" '^\[kakku-local\]$' "target installer adds local repo to target pacman.conf"
 check_contains "$airootfs/usr/local/bin/kakku-target-install" '^Server = file:///opt/kakkuos/repo$' "target installer uses target-local repo path"
 check_file "$airootfs/opt/kakkuos/install.sh"
+check_no_matches "$airootfs/opt/kakkuos" '*/packaging/*/*.pkg.tar.*' "staged source excludes built package archives"
+check_no_matches "$airootfs/opt/kakkuos" '*/packaging/*/pkg' "staged source excludes makepkg pkg directories"
+check_no_matches "$airootfs/opt/kakkuos" '*/packaging/*/src' "staged source excludes makepkg src directories"
 check_file "$airootfs/usr/share/backgrounds/kakku/wallpaper.png"
 check_file "$airootfs/usr/share/backgrounds/kakku/kakku-default.png"
 check_file "$airootfs/usr/share/kakku/branding/logo.png"
@@ -298,7 +329,7 @@ check_contains "$archiso_dir/profiledef.sh" '(^|[[:space:]])iso_application="Kak
 boot_branding_hits=0
 for boot_dir in grub efiboot syslinux; do
   [[ -d "$archiso_dir/$boot_dir" ]] || continue
-  if grep -RInE 'CachyOS|CACHYOS' "$archiso_dir/$boot_dir" >/dev/null 2>&1; then
+  if grep -RInE 'CachyOS' "$archiso_dir/$boot_dir" >/dev/null 2>&1; then
     boot_branding_hits=1
   fi
 done
@@ -307,6 +338,12 @@ if (( boot_branding_hits )); then
   miss "boot menu user-facing CachyOS branding removed"
 else
   ok "boot menu user-facing CachyOS branding removed"
+fi
+
+if grep -RInE 'vmlinuz-linux-kakkuos|initramfs-linux-kakkuos' "$archiso_dir/grub" "$archiso_dir/efiboot" "$archiso_dir/syslinux" >/dev/null 2>&1; then
+  miss "boot configs avoid non-existent KakkuOS kernel paths"
+else
+  ok "boot configs avoid non-existent KakkuOS kernel paths"
 fi
 
 if (( failures )); then

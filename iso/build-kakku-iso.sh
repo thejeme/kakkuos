@@ -7,10 +7,14 @@ KAKKU_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 CACHYOS_LIVE_ISO_REPO="${CACHYOS_LIVE_ISO_REPO:-https://github.com/CachyOS/CachyOS-Live-ISO.git}"
 CACHYOS_LIVE_ISO_REF="${CACHYOS_LIVE_ISO_REF:-master}"
 CACHYOS_LIVE_ISO_DIR="${CACHYOS_LIVE_ISO_DIR:-$SCRIPT_DIR/.cache/cachyos-live-iso}"
+KAKKU_STAGING_DIR="${KAKKU_STAGING_DIR:-$SCRIPT_DIR/.cache/kakku-live-iso}"
 CACHYOS_BUILD_PROFILE="${CACHYOS_BUILD_PROFILE:-desktop}"
 KAKKU_REPO_NAME="${KAKKU_REPO_NAME:-kakku-local}"
+KAKKU_REPO_SERVER="${KAKKU_REPO_SERVER:-}"
+KAKKU_REPO_SIGLEVEL="${KAKKU_REPO_SIGLEVEL:-Optional TrustAll}"
 KAKKU_LOCAL_REPO_DIR="${KAKKU_LOCAL_REPO_DIR:-$KAKKU_ROOT/packaging/repo}"
 KAKKU_ISO_OUT_DIR="${KAKKU_ISO_OUT_DIR:-$SCRIPT_DIR/out}"
+KAKKU_ISO_MANIFEST_NAME="${KAKKU_ISO_MANIFEST_NAME:-kakku-iso-build-manifest.txt}"
 KAKKU_CLI_INSTALLER_PACKAGE="${KAKKU_CLI_INSTALLER_PACKAGE:-cachyos-cli-installer-new}"
 KAKKU_CLI_INSTALLER_BIN="${KAKKU_CLI_INSTALLER_BIN:-cachyos-installer}"
 KAKKU_BUILDISO_ARGS="${KAKKU_BUILDISO_ARGS:--v -w}"
@@ -19,7 +23,6 @@ prepare_only=0
 clean=0
 skip_local_repo=0
 use_existing_local_repo=0
-skip_restore=0
 
 usage() {
   cat <<EOF
@@ -30,21 +33,31 @@ Options:
   --clean              Remove the cached CachyOS-Live-ISO checkout before preparing.
   --repo URL           CachyOS-Live-ISO git URL.
   --ref REF            CachyOS-Live-ISO branch, tag, or commit. Default: master.
-  --dir PATH           CachyOS-Live-ISO checkout path. Default: iso/.cache/cachyos-live-iso.
+  --dir PATH           CachyOS-Live-ISO upstream checkout path. Default: iso/.cache/cachyos-live-iso.
+  --staging-dir PATH   Mutable KakkuOS staging/build tree. Default: iso/.cache/kakku-live-iso.
   --out DIR            Copy produced ISO artifacts here. Default: iso/out.
   --skip-local-repo    Do not build/inject the local KakkuOS package repo.
+                       Intended for prepare-only inspection; full builds need
+                       KakkuOS packages from a configured pacman repo.
   --use-existing-local-repo
                        Inject KAKKU_LOCAL_REPO_DIR without rebuilding it first.
-  --skip-restore       Do not restore CachyOS files from KakkuOS backups before staging.
+  --repo-server URL    Use a hosted KakkuOS pacman repo instead of embedding
+                       the local file repo. Example: https://repo.example/kakku
+  --repo-siglevel VAL  Pacman SigLevel for the Kakku repo stanza.
+                       Default: Optional TrustAll.
   -h, --help           Show this help.
 
 Environment:
   CACHYOS_LIVE_ISO_REPO
   CACHYOS_LIVE_ISO_REF
   CACHYOS_LIVE_ISO_DIR
+  KAKKU_STAGING_DIR
   CACHYOS_BUILD_PROFILE
+  KAKKU_REPO_SERVER
+  KAKKU_REPO_SIGLEVEL
   KAKKU_LOCAL_REPO_DIR
   KAKKU_ISO_OUT_DIR
+  KAKKU_ISO_MANIFEST_NAME
   KAKKU_REPO_NAME
   KAKKU_CLI_INSTALLER_PACKAGE
   KAKKU_CLI_INSTALLER_BIN
@@ -74,6 +87,10 @@ while [[ $# -gt 0 ]]; do
       CACHYOS_LIVE_ISO_DIR="$2"
       shift 2
       ;;
+    --staging-dir)
+      KAKKU_STAGING_DIR="$2"
+      shift 2
+      ;;
     --out)
       KAKKU_ISO_OUT_DIR="$2"
       shift 2
@@ -86,9 +103,13 @@ while [[ $# -gt 0 ]]; do
       use_existing_local_repo=1
       shift
       ;;
-    --skip-restore)
-      skip_restore=1
-      shift
+    --repo-server)
+      KAKKU_REPO_SERVER="$2"
+      shift 2
+      ;;
+    --repo-siglevel)
+      KAKKU_REPO_SIGLEVEL="$2"
+      shift 2
       ;;
     -h|--help)
       usage
@@ -126,50 +147,12 @@ read_package_file() {
   fi
 }
 
-relative_to_archiso() {
-  local archiso_dir="$1"
-  local path="$2"
-
-  printf '%s\n' "${path#"$archiso_dir"/}"
-}
-
-backup_path_for() {
-  local archiso_dir="$1"
-  local path="$2"
-  local rel
-
-  rel="$(relative_to_archiso "$archiso_dir" "$path")"
-  printf '%s/.kakku-originals/%s\n' "$archiso_dir" "$rel"
-}
-
-restore_mutable_file() {
-  local archiso_dir="$1"
-  local path="$2"
-  local backup
-
-  backup="$(backup_path_for "$archiso_dir" "$path")"
-  if [[ -f "$backup" && "$skip_restore" != "1" ]]; then
-    install -Dm644 "$backup" "$path"
-  fi
-}
-
-remember_mutable_file() {
-  local archiso_dir="$1"
-  local path="$2"
-  local backup
-
-  backup="$(backup_path_for "$archiso_dir" "$path")"
-  if [[ -f "$path" && ! -f "$backup" ]]; then
-    install -Dm644 "$path" "$backup"
-  fi
-}
-
 find_archiso_dir() {
   local candidate
   local candidates=(
-    "$CACHYOS_LIVE_ISO_DIR/archiso"
-    "$CACHYOS_LIVE_ISO_DIR/$CACHYOS_BUILD_PROFILE"
-    "$CACHYOS_LIVE_ISO_DIR"
+    "$KAKKU_STAGING_DIR/archiso"
+    "$KAKKU_STAGING_DIR/$CACHYOS_BUILD_PROFILE"
+    "$KAKKU_STAGING_DIR"
   )
 
   for candidate in "${candidates[@]}"; do
@@ -179,7 +162,7 @@ find_archiso_dir() {
     fi
   done
 
-  echo "Could not find a CachyOS archiso profile directory in $CACHYOS_LIVE_ISO_DIR." >&2
+  echo "Could not find a staged CachyOS archiso profile directory in $KAKKU_STAGING_DIR." >&2
   echo "Expected a directory with airootfs/ and pacman.conf." >&2
   exit 1
 }
@@ -217,8 +200,40 @@ read_kakku_repo_packages() {
   fi
 }
 
+validate_repo_config() {
+  if [[ -n "$KAKKU_REPO_SERVER" ]]; then
+    case "$KAKKU_REPO_SERVER" in
+      *[[:space:]]*|*'"'*|*'`'*|*'$'*|*'\'*)
+        echo "Unsupported characters in KAKKU_REPO_SERVER: $KAKKU_REPO_SERVER" >&2
+        echo "Use a plain pacman Server URL without whitespace or shell metacharacters." >&2
+        exit 1
+        ;;
+    esac
+  fi
+
+  case "$KAKKU_REPO_SIGLEVEL" in
+    *$'\n'*|*$'\r'*|*'"'*|*'`'*|*'$'*|*'\'*)
+      echo "Unsupported characters in KAKKU_REPO_SIGLEVEL: $KAKKU_REPO_SIGLEVEL" >&2
+      echo "Use a pacman SigLevel value without shell metacharacters." >&2
+      exit 1
+      ;;
+  esac
+}
+
+kakku_repo_server() {
+  if [[ -n "$KAKKU_REPO_SERVER" ]]; then
+    printf '%s\n' "$KAKKU_REPO_SERVER"
+  else
+    printf '%s\n' "file:///opt/kakkuos/repo"
+  fi
+}
+
+using_hosted_repo() {
+  [[ -n "$KAKKU_REPO_SERVER" ]]
+}
+
 build_local_repo() {
-  if (( skip_local_repo || use_existing_local_repo )); then
+  if (( skip_local_repo || use_existing_local_repo )) || using_hosted_repo; then
     return
   fi
 
@@ -226,6 +241,97 @@ build_local_repo() {
     --output "$KAKKU_LOCAL_REPO_DIR" \
     --repo-name "$KAKKU_REPO_NAME" \
     --include-aur-hard-deps
+}
+
+git_commit_for() {
+  local dir="$1"
+
+  git -C "$dir" rev-parse HEAD 2>/dev/null || printf 'unknown\n'
+}
+
+git_dirty_for() {
+  local dir="$1"
+
+  if ! git -C "$dir" rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+    printf 'unknown\n'
+  elif [[ -n "$(git -C "$dir" status --short)" ]]; then
+    printf 'yes\n'
+  else
+    printf 'no\n'
+  fi
+}
+
+write_iso_manifest() {
+  local archiso_dir="$1"
+  local airootfs="$2"
+  local packages_file="$3"
+  local manifest="$KAKKU_STAGING_DIR/$KAKKU_ISO_MANIFEST_NAME"
+  local live_manifest="$airootfs/usr/share/kakku/$KAKKU_ISO_MANIFEST_NAME"
+  local package
+
+  install -dm755 "$KAKKU_STAGING_DIR"
+  {
+    printf 'generated_at_utc=%s\n' "$(date -u '+%Y-%m-%dT%H:%M:%SZ')"
+    printf 'kakku_root=%s\n' "$KAKKU_ROOT"
+    printf 'kakku_commit=%s\n' "$(git_commit_for "$KAKKU_ROOT")"
+    printf 'kakku_worktree_dirty=%s\n' "$(git_dirty_for "$KAKKU_ROOT")"
+    printf 'cachyos_live_iso_repo=%s\n' "$CACHYOS_LIVE_ISO_REPO"
+    printf 'cachyos_live_iso_ref=%s\n' "$CACHYOS_LIVE_ISO_REF"
+    printf 'cachyos_live_iso_commit=%s\n' "$(git_commit_for "$CACHYOS_LIVE_ISO_DIR")"
+    printf 'cachyos_build_profile=%s\n' "$CACHYOS_BUILD_PROFILE"
+    printf 'kakku_repo_name=%s\n' "$KAKKU_REPO_NAME"
+    if using_hosted_repo; then
+      printf 'kakku_repo_mode=hosted\n'
+    else
+      printf 'kakku_repo_mode=embedded\n'
+    fi
+    printf 'kakku_repo_server=%s\n' "$(kakku_repo_server)"
+    printf 'kakku_repo_siglevel=%s\n' "$KAKKU_REPO_SIGLEVEL"
+    printf 'kakku_cli_installer_package=%s\n' "$KAKKU_CLI_INSTALLER_PACKAGE"
+    printf 'kakku_cli_installer_bin=%s\n' "$KAKKU_CLI_INSTALLER_BIN"
+    printf 'kakku_staging_dir=%s\n' "$KAKKU_STAGING_DIR"
+    printf 'archiso_dir=%s\n' "$archiso_dir"
+    printf 'packages_file=%s\n' "$packages_file"
+    if [[ -d "$KAKKU_LOCAL_REPO_DIR" ]]; then
+      while IFS= read -r package; do
+        printf 'local_repo_package=%s\n' "$(basename "$package")"
+      done < <(find "$KAKKU_LOCAL_REPO_DIR" -maxdepth 1 -type f -name '*.pkg.tar.*' ! -name '*.sig' | sort)
+    fi
+  } > "$manifest"
+
+  install -Dm644 "$manifest" "$live_manifest"
+}
+
+check_full_build_requirements() {
+  local missing=0
+  local command_name
+  local required_commands=(
+    sudo
+    mkarchiso
+    mksquashfs
+    pacstrap
+  )
+
+  if (( skip_local_repo )) && ! using_hosted_repo; then
+    echo "Cannot build a full ISO with --skip-local-repo." >&2
+    echo "The staged package list includes kakku-desktop, so pacman needs a KakkuOS package repo." >&2
+    echo "Use --repo-server, --use-existing-local-repo, or omit --skip-local-repo for full ISO builds." >&2
+    exit 1
+  fi
+
+  for command_name in "${required_commands[@]}"; do
+    if ! command -v "$command_name" >/dev/null 2>&1; then
+      echo "Missing full ISO build command: $command_name" >&2
+      missing=1
+    fi
+  done
+
+  if (( missing )); then
+    echo >&2
+    echo "Install the CachyOS/Arch ISO build requirements, then rerun:" >&2
+    echo "  sudo pacman -S archiso mkinitcpio-archiso git squashfs-tools grub rsync arch-install-scripts --needed" >&2
+    exit 1
+  fi
 }
 
 clone_or_update_cachyos_live_iso() {
@@ -241,6 +347,22 @@ clone_or_update_cachyos_live_iso() {
   fi
 
   git -C "$CACHYOS_LIVE_ISO_DIR" checkout "$CACHYOS_LIVE_ISO_REF"
+  git -C "$CACHYOS_LIVE_ISO_DIR" reset --hard "$CACHYOS_LIVE_ISO_REF"
+  git -C "$CACHYOS_LIVE_ISO_DIR" clean -fdx
+}
+
+prepare_staging_checkout() {
+  case "$KAKKU_STAGING_DIR" in
+    ""|"/"|"$KAKKU_ROOT"|"$KAKKU_ROOT/"|"$CACHYOS_LIVE_ISO_DIR"|"$CACHYOS_LIVE_ISO_DIR/")
+      echo "Refusing unsafe KAKKU_STAGING_DIR: $KAKKU_STAGING_DIR" >&2
+      exit 1
+      ;;
+  esac
+
+  mkdir -p "$KAKKU_STAGING_DIR"
+  rsync -a --delete \
+    --exclude '.git' \
+    "$CACHYOS_LIVE_ISO_DIR/" "$KAKKU_STAGING_DIR/"
 }
 
 append_unique_packages() {
@@ -298,12 +420,20 @@ apply_text_branding() {
     -e 's/CACHYOS/KAKKUOS/g'
 }
 
+apply_boot_menu_branding() {
+  local file="$1"
+
+  [[ -f "$file" ]] || return 0
+  replace_in_file "$file" \
+    -e 's/CachyOS/KakkuOS/g'
+}
+
 write_live_identity() {
   local airootfs="$1"
 
-  install -m644 "$KAKKU_ROOT/system/os-release" "$airootfs/etc/os-release"
-  install -m644 "$KAKKU_ROOT/system/os-release" "$airootfs/usr/lib/os-release"
-  install -m644 "$KAKKU_ROOT/system/os-release" "$airootfs/usr/share/kakku/os-release"
+  install -Dm644 "$KAKKU_ROOT/system/os-release" "$airootfs/etc/os-release"
+  install -Dm644 "$KAKKU_ROOT/system/os-release" "$airootfs/usr/lib/os-release"
+  install -Dm644 "$KAKKU_ROOT/system/os-release" "$airootfs/usr/share/kakku/os-release"
 
   printf 'KakkuOS Live\n' > "$airootfs/etc/kakku-release"
   rm -f "$airootfs/etc/cachyos-release"
@@ -313,19 +443,19 @@ write_live_identity() {
 brand_boot_entries() {
   local archiso_dir="$1"
 
-  apply_text_branding "$archiso_dir/grub/grub.cfg"
-  apply_text_branding "$archiso_dir/grub/loopback.cfg"
-  apply_text_branding "$archiso_dir/efiboot/loader/loader.conf"
-  apply_text_branding "$archiso_dir/efiboot/loader/entries/01-archiso-linux.conf"
-  apply_text_branding "$archiso_dir/efiboot/loader/entries/02-archiso-linux-cachyos.conf"
-  apply_text_branding "$archiso_dir/efiboot/loader/entries/fallback.conf"
-  apply_text_branding "$archiso_dir/syslinux/archiso_head.cfg"
-  apply_text_branding "$archiso_dir/syslinux/archiso_pxe-linux.cfg"
-  apply_text_branding "$archiso_dir/syslinux/archiso_pxe.cfg"
-  apply_text_branding "$archiso_dir/syslinux/archiso_sys-linux.cfg"
-  apply_text_branding "$archiso_dir/syslinux/archiso_sys.cfg"
-  apply_text_branding "$archiso_dir/syslinux/archiso_tail.cfg"
-  apply_text_branding "$archiso_dir/syslinux/syslinux.cfg"
+  apply_boot_menu_branding "$archiso_dir/grub/grub.cfg"
+  apply_boot_menu_branding "$archiso_dir/grub/loopback.cfg"
+  apply_boot_menu_branding "$archiso_dir/efiboot/loader/loader.conf"
+  apply_boot_menu_branding "$archiso_dir/efiboot/loader/entries/01-archiso-linux.conf"
+  apply_boot_menu_branding "$archiso_dir/efiboot/loader/entries/02-archiso-linux-cachyos.conf"
+  apply_boot_menu_branding "$archiso_dir/efiboot/loader/entries/fallback.conf"
+  apply_boot_menu_branding "$archiso_dir/syslinux/archiso_head.cfg"
+  apply_boot_menu_branding "$archiso_dir/syslinux/archiso_pxe-linux.cfg"
+  apply_boot_menu_branding "$archiso_dir/syslinux/archiso_pxe.cfg"
+  apply_boot_menu_branding "$archiso_dir/syslinux/archiso_sys-linux.cfg"
+  apply_boot_menu_branding "$archiso_dir/syslinux/archiso_sys.cfg"
+  apply_boot_menu_branding "$archiso_dir/syslinux/archiso_tail.cfg"
+  apply_boot_menu_branding "$archiso_dir/syslinux/syslinux.cfg"
 }
 
 brand_profile_definition() {
@@ -394,68 +524,6 @@ gen_iso_fn() {
 EOF
 }
 
-remember_branding_files() {
-  local archiso_dir="$1"
-  local airootfs="$2"
-  local file
-  local files=(
-    "$airootfs/etc/os-release"
-    "$airootfs/usr/lib/os-release"
-    "$airootfs/etc/cachyos-release"
-    "$airootfs/etc/hostname"
-    "$airootfs/etc/motd"
-    "$archiso_dir/grub/grub.cfg"
-    "$archiso_dir/grub/loopback.cfg"
-    "$archiso_dir/efiboot/loader/loader.conf"
-    "$archiso_dir/efiboot/loader/entries/01-archiso-linux.conf"
-    "$archiso_dir/efiboot/loader/entries/02-archiso-linux-cachyos.conf"
-    "$archiso_dir/efiboot/loader/entries/fallback.conf"
-    "$archiso_dir/syslinux/archiso_head.cfg"
-    "$archiso_dir/syslinux/archiso_pxe-linux.cfg"
-    "$archiso_dir/syslinux/archiso_pxe.cfg"
-    "$archiso_dir/syslinux/archiso_sys-linux.cfg"
-    "$archiso_dir/syslinux/archiso_sys.cfg"
-    "$archiso_dir/syslinux/archiso_tail.cfg"
-    "$archiso_dir/syslinux/syslinux.cfg"
-    "$archiso_dir/profiledef.sh"
-  )
-
-  for file in "${files[@]}"; do
-    remember_mutable_file "$archiso_dir" "$file"
-  done
-}
-
-restore_branding_files() {
-  local archiso_dir="$1"
-  local airootfs="$2"
-  local file
-  local files=(
-    "$airootfs/etc/os-release"
-    "$airootfs/usr/lib/os-release"
-    "$airootfs/etc/cachyos-release"
-    "$airootfs/etc/hostname"
-    "$airootfs/etc/motd"
-    "$archiso_dir/grub/grub.cfg"
-    "$archiso_dir/grub/loopback.cfg"
-    "$archiso_dir/efiboot/loader/loader.conf"
-    "$archiso_dir/efiboot/loader/entries/01-archiso-linux.conf"
-    "$archiso_dir/efiboot/loader/entries/02-archiso-linux-cachyos.conf"
-    "$archiso_dir/efiboot/loader/entries/fallback.conf"
-    "$archiso_dir/syslinux/archiso_head.cfg"
-    "$archiso_dir/syslinux/archiso_pxe-linux.cfg"
-    "$archiso_dir/syslinux/archiso_pxe.cfg"
-    "$archiso_dir/syslinux/archiso_sys-linux.cfg"
-    "$archiso_dir/syslinux/archiso_sys.cfg"
-    "$archiso_dir/syslinux/archiso_tail.cfg"
-    "$archiso_dir/syslinux/syslinux.cfg"
-    "$archiso_dir/profiledef.sh"
-  )
-
-  for file in "${files[@]}"; do
-    restore_mutable_file "$archiso_dir" "$file"
-  done
-}
-
 apply_iso_branding() {
   local archiso_dir="$1"
   local airootfs="$2"
@@ -463,7 +531,7 @@ apply_iso_branding() {
   write_live_identity "$airootfs"
   brand_boot_entries "$archiso_dir"
   brand_profile_definition "$archiso_dir/profiledef.sh"
-  patch_cachyos_build_helpers "$CACHYOS_LIVE_ISO_DIR"
+  patch_cachyos_build_helpers "$KAKKU_STAGING_DIR"
 }
 
 install_cli_installer_entrypoint() {
@@ -537,6 +605,14 @@ EOF
 
 install_cli_installer_config() {
   local airootfs="$1"
+  local repo_server
+  local repo_embedded
+
+  repo_server="$(kakku_repo_server)"
+  repo_embedded=1
+  if using_hosted_repo; then
+    repo_embedded=0
+  fi
 
   install -dm755 "$airootfs/usr/share/kakku/installer"
   install -m644 /dev/stdin "$airootfs/usr/share/kakku/installer/settings.json" <<'EOF'
@@ -562,7 +638,9 @@ EOF
 set -euo pipefail
 
 target="\${KAKKU_TARGET_MOUNT:-/mnt}"
-repo_source="/opt/kakkuos/repo"
+repo_source="\${KAKKU_REPO_SOURCE:-/opt/kakkuos/repo}"
+repo_server="\${KAKKU_REPO_SERVER:-$repo_server}"
+repo_embedded="\${KAKKU_REPO_EMBEDDED:-$repo_embedded}"
 repo_target="\$target/opt/kakkuos/repo"
 target_pacman_conf="\$target/etc/pacman.conf"
 
@@ -606,16 +684,21 @@ inject_local_repo() {
   local live_pacman_conf="$airootfs/etc/pacman.conf"
   local local_repo_abs
 
-  if (( skip_local_repo )); then
+  repo_server="$(kakku_repo_server)"
+
+  if (( skip_local_repo )) && ! using_hosted_repo; then
     echo "Skipping local KakkuOS package repo injection."
     return
   fi
 
-  if [[ ! -d "$KAKKU_LOCAL_REPO_DIR" ]]; then
-    echo "Missing local KakkuOS package repo: $KAKKU_LOCAL_REPO_DIR" >&2
-    echo "Run packaging/build-local-repo.sh first, or rerun without --skip-local-repo." >&2
-    exit 1
-  fi
+  if using_hosted_repo; then
+    rm -rf "$repo_target"
+  else
+    if [[ ! -d "$KAKKU_LOCAL_REPO_DIR" ]]; then
+      echo "Missing local KakkuOS package repo: $KAKKU_LOCAL_REPO_DIR" >&2
+      echo "Run packaging/build-local-repo.sh first, or rerun without --skip-local-repo." >&2
+      exit 1
+    fi
 
   local_repo_abs="$(cd "$KAKKU_LOCAL_REPO_DIR" && pwd)"
 
@@ -650,23 +733,15 @@ stage_kakkuos() {
   packages_file="$(find_packages_file "$archiso_dir")"
   local staged_source="$airootfs/opt/kakkuos"
 
-  remember_mutable_file "$archiso_dir" "$packages_file"
-  remember_mutable_file "$archiso_dir" "$archiso_dir/pacman.conf"
-  remember_mutable_file "$archiso_dir" "$airootfs/etc/pacman.conf"
-  remember_mutable_file "$archiso_dir" "$CACHYOS_LIVE_ISO_DIR/util-iso.sh"
-  remember_branding_files "$archiso_dir" "$airootfs"
-  restore_mutable_file "$archiso_dir" "$packages_file"
-  restore_mutable_file "$archiso_dir" "$archiso_dir/pacman.conf"
-  restore_mutable_file "$archiso_dir" "$airootfs/etc/pacman.conf"
-  restore_mutable_file "$archiso_dir" "$CACHYOS_LIVE_ISO_DIR/util-iso.sh"
-  restore_branding_files "$archiso_dir" "$airootfs"
-
   mkdir -p "$staged_source"
   rsync -a --delete \
     --exclude '.git' \
     --exclude '.agents' \
     --exclude '.codex' \
     --exclude 'packaging/repo' \
+    --exclude 'packaging/*/*.pkg.tar.*' \
+    --exclude 'packaging/*/pkg' \
+    --exclude 'packaging/*/src' \
     --exclude 'iso/.cache' \
     --exclude 'iso/out' \
     "$KAKKU_ROOT/" "$staged_source/"
@@ -688,8 +763,12 @@ stage_kakkuos() {
   configure_cli_live_environment "$airootfs"
   install_cli_installer_config "$airootfs"
   install_cli_installer_entrypoint "$airootfs"
+  write_iso_manifest "$archiso_dir" "$airootfs" "$packages_file"
 
-  echo "Prepared CachyOS-Live-ISO checkout:"
+  echo "Prepared KakkuOS staging tree:"
+  echo "  $KAKKU_STAGING_DIR"
+  echo
+  echo "Upstream CachyOS-Live-ISO cache:"
   echo "  $CACHYOS_LIVE_ISO_DIR"
   echo
   echo "Staged KakkuOS source:"
@@ -700,7 +779,14 @@ stage_kakkuos() {
   echo
   echo "CLI installer entrypoint:"
   echo "  $airootfs/usr/local/bin/kakku-install"
-  if (( ! skip_local_repo )); then
+  echo
+  echo "Build manifest:"
+  echo "  $KAKKU_STAGING_DIR/$KAKKU_ISO_MANIFEST_NAME"
+  if using_hosted_repo; then
+    echo
+    echo "Configured hosted KakkuOS package repo:"
+    echo "  $(kakku_repo_server)"
+  elif (( ! skip_local_repo )); then
     echo
     echo "Injected local KakkuOS package repo:"
     echo "  $airootfs/opt/kakkuos/repo"
@@ -708,21 +794,24 @@ stage_kakkuos() {
 }
 
 build_iso() {
-  cd "$CACHYOS_LIVE_ISO_DIR"
+  cd "$KAKKU_STAGING_DIR"
   # shellcheck disable=SC2086
   sudo ./buildiso.sh -p "$CACHYOS_BUILD_PROFILE" $KAKKU_BUILDISO_ARGS
 }
 
 copy_iso_outputs() {
-  local source_out="$CACHYOS_LIVE_ISO_DIR/out"
+  local source_out="$KAKKU_STAGING_DIR/out"
 
   if [[ ! -d "$source_out" ]]; then
-    echo "No CachyOS build output directory found at $source_out."
+    echo "No KakkuOS staging build output directory found at $source_out."
     return
   fi
 
   mkdir -p "$KAKKU_ISO_OUT_DIR"
   find "$source_out" -maxdepth 1 -type f \( -name '*.iso' -o -name '*.sha256' -o -name '*.sig' \) -exec cp -f {} "$KAKKU_ISO_OUT_DIR/" \;
+  if [[ -f "$KAKKU_STAGING_DIR/$KAKKU_ISO_MANIFEST_NAME" ]]; then
+    cp -f "$KAKKU_STAGING_DIR/$KAKKU_ISO_MANIFEST_NAME" "$KAKKU_ISO_OUT_DIR/"
+  fi
 
   echo
   echo "Copied ISO artifacts to:"
@@ -734,8 +823,15 @@ require_command rsync
 require_command sed
 require_command awk
 
+validate_repo_config
+
+if (( ! prepare_only )); then
+  check_full_build_requirements
+fi
+
 build_local_repo
 clone_or_update_cachyos_live_iso
+prepare_staging_checkout
 stage_kakkuos
 
 if (( prepare_only )); then
