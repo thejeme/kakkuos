@@ -30,6 +30,14 @@ Run `./install.sh` as the target desktop user, not through `sudo`; the script as
 
 The installer installs package profiles, copies Kakku-owned dotfiles, sets fish as the login shell, applies branding, sets default apps, configures greetd with the DMS greeter, removes Plymouth, applies Limine timeout defaults, and enables common services. It assumes CachyOS repositories and required AUR packages are available on the system.
 
+## ISO Work
+
+KakkuOS also has an experimental CachyOS-Live-ISO overlay in `iso/`. It stages a CLI-first live image with `kakku-install`, delegates base installation to the CachyOS CLI installer, then applies the KakkuOS desktop package and defaults to
+the installed target.
+
+See `iso/README.md` for build requirements, smoke checks, release gates, and the
+current limitations before treating an ISO as user-ready.
+
 ## Repository Layout
 
 ```text

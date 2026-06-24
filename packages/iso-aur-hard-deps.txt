@@ -1,0 +1,8 @@
+# AUR packages that must be bundled into the ISO local pacman repo because
+# Kakku packages use them as hard dependencies, directly or transitively.
+#
+# Keep dependency order when one AUR package needs another.
+greetd-dms-greeter-git
+dsearch-bin
+python-terminaltexteffects
+niri-screensaver

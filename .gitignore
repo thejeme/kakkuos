@@ -7,3 +7,4 @@ tmp/
 iso/.cache/
 iso/out/
 packaging/repo/
+packaging/.aur-build/

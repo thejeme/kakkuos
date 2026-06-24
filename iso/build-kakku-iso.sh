@@ -115,7 +115,14 @@ read_package_file() {
   local file="$1"
 
   if [[ -f "$file" ]]; then
-    sed -E '/^[[:space:]]*#/d;/^[[:space:]]*$/d;s/[[:space:]]+$//g' "$file"
+    awk '
+      {
+        sub(/[[:space:]]*#.*/, "")
+        for (i = 1; i <= NF; i++) {
+          print $i
+        }
+      }
+    ' "$file"
   fi
 }
 
@@ -217,7 +224,8 @@ build_local_repo() {
 
   "$KAKKU_ROOT/packaging/build-local-repo.sh" \
     --output "$KAKKU_LOCAL_REPO_DIR" \
-    --repo-name "$KAKKU_REPO_NAME"
+    --repo-name "$KAKKU_REPO_NAME" \
+    --include-aur-hard-deps
 }
 
 clone_or_update_cachyos_live_iso() {
@@ -324,10 +332,26 @@ brand_profile_definition() {
   local profiledef="$1"
 
   [[ -f "$profiledef" ]] || return 0
-  replace_in_file "$profiledef" \
-    -e 's/^iso_label=.*/iso_label="KAKKU_$(date --date="@${SOURCE_DATE_EPOCH:-$(date +%s)}" +%Y%m)"/' \
-    -e 's/^iso_publisher=.*/iso_publisher="KakkuOS <https:\/\/kakkuos.jeme.app\/>"/' \
-    -e 's/^iso_application=.*/iso_application="KakkuOS Live\/Rescue ISO"/'
+
+  set_profiledef_assignment() {
+    local name="$1"
+    local value="$2"
+    local escaped_value
+
+    escaped_value="${value//\\/\\\\}"
+    escaped_value="${escaped_value//&/\\&}"
+    escaped_value="${escaped_value//#/\\#}"
+
+    if grep -Eq "(^|[[:space:]])${name}=" "$profiledef"; then
+      sed -i -E "s#(^|[[:space:]])${name}=\"[^\"]*\"#\\1${name}=\"${escaped_value}\"#" "$profiledef"
+    else
+      printf '%s="%s"\n' "$name" "$value" >> "$profiledef"
+    fi
+  }
+
+  set_profiledef_assignment "iso_label" 'KAKKU_$(date --date="@${SOURCE_DATE_EPOCH:-$(date +%s)}" +%Y%m)'
+  set_profiledef_assignment "iso_publisher" 'KakkuOS <https://kakkuos.jeme.app/>'
+  set_profiledef_assignment "iso_application" 'KakkuOS Live/Rescue ISO'
 }
 
 patch_cachyos_build_helpers() {
@@ -450,18 +474,50 @@ install_cli_installer_entrypoint() {
 #!/usr/bin/env bash
 set -euo pipefail
 
-if ! command -v "$KAKKU_CLI_INSTALLER_BIN" >/dev/null 2>&1; then
-  echo "Missing CLI installer binary: $KAKKU_CLI_INSTALLER_BIN" >&2
-  exit 1
+installer_bin="$KAKKU_CLI_INSTALLER_BIN"
+if ! command -v "\$installer_bin" >/dev/null 2>&1; then
+  if command -v install_cachyos >/dev/null 2>&1; then
+    installer_bin="install_cachyos"
+  else
+    echo "Missing CLI installer binary: $KAKKU_CLI_INSTALLER_BIN" >&2
+    exit 1
+  fi
 fi
 
 cd /usr/share/kakku/installer
 
-if (( EUID == 0 )); then
-  exec $KAKKU_CLI_INSTALLER_BIN "\$@"
-fi
+run_installer() {
+  if (( EUID == 0 )); then
+    "\$installer_bin" "\$@"
+    return
+  fi
 
-exec sudo $KAKKU_CLI_INSTALLER_BIN "\$@"
+  sudo "\$installer_bin" "\$@"
+}
+
+run_target_install() {
+  local target="\${KAKKU_TARGET_MOUNT:-/mnt}"
+
+  if [[ ! -x /usr/local/bin/kakku-target-install ]]; then
+    echo "Missing KakkuOS target installer: /usr/local/bin/kakku-target-install" >&2
+    return 1
+  fi
+
+  if [[ ! -d "\$target/etc" ]]; then
+    echo "KakkuOS target install skipped: \$target does not look mounted."
+    return 0
+  fi
+
+  if (( EUID == 0 )); then
+    KAKKU_TARGET_MOUNT="\$target" /usr/local/bin/kakku-target-install
+    return
+  fi
+
+  sudo env KAKKU_TARGET_MOUNT="\$target" /usr/local/bin/kakku-target-install
+}
+
+run_installer "\$@"
+run_target_install
 EOF
 
   install -dm755 "$airootfs/etc/profile.d"
@@ -508,6 +564,7 @@ set -euo pipefail
 target="\${KAKKU_TARGET_MOUNT:-/mnt}"
 repo_source="/opt/kakkuos/repo"
 repo_target="\$target/opt/kakkuos/repo"
+target_pacman_conf="\$target/etc/pacman.conf"
 
 if [[ ! -d "\$target/etc" ]]; then
   echo "KakkuOS target install skipped: \$target does not look mounted." >&2
@@ -517,6 +574,15 @@ fi
 if [[ -d "\$repo_source" ]]; then
   mkdir -p "\$repo_target"
   rsync -a --delete "\$repo_source/" "\$repo_target/"
+
+  if ! grep -q '^\[$KAKKU_REPO_NAME\]$' "\$target_pacman_conf"; then
+    cat <<'REPO' >> "\$target_pacman_conf"
+
+[$KAKKU_REPO_NAME]
+SigLevel = Optional TrustAll
+Server = file:///opt/kakkuos/repo
+REPO
+  fi
 fi
 
 arch-chroot "\$target" pacman -Syu --needed --noconfirm kakku-desktop
@@ -538,6 +604,7 @@ inject_local_repo() {
   local repo_target="$airootfs/opt/kakkuos/repo"
   local pacman_conf="$archiso_dir/pacman.conf"
   local live_pacman_conf="$airootfs/etc/pacman.conf"
+  local local_repo_abs
 
   if (( skip_local_repo )); then
     echo "Skipping local KakkuOS package repo injection."
@@ -550,25 +617,28 @@ inject_local_repo() {
     exit 1
   fi
 
+  local_repo_abs="$(cd "$KAKKU_LOCAL_REPO_DIR" && pwd)"
+
   mkdir -p "$repo_target"
   rsync -a --delete "$KAKKU_LOCAL_REPO_DIR/" "$repo_target/"
 
   append_repo_stanza() {
     local target_conf="$1"
+    local server="$2"
 
     if ! grep -q "^\[$KAKKU_REPO_NAME\]$" "$target_conf"; then
       cat <<EOF >> "$target_conf"
 
 [$KAKKU_REPO_NAME]
 SigLevel = Optional TrustAll
-Server = file:///opt/kakkuos/repo
+Server = $server
 EOF
     fi
   }
 
-  append_repo_stanza "$pacman_conf"
+  append_repo_stanza "$pacman_conf" "file://$local_repo_abs"
   if [[ -f "$live_pacman_conf" ]]; then
-    append_repo_stanza "$live_pacman_conf"
+    append_repo_stanza "$live_pacman_conf" "file:///opt/kakkuos/repo"
   fi
 }
 

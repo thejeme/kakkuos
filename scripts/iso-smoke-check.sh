@@ -113,6 +113,49 @@ check_not_contains() {
   fi
 }
 
+read_package_file() {
+  local file="$1"
+
+  if [[ -f "$file" ]]; then
+    awk '
+      {
+        sub(/[[:space:]]*#.*/, "")
+        for (i = 1; i <= NF; i++) {
+          print $i
+        }
+      }
+    ' "$file"
+  fi
+}
+
+check_package() {
+  local path="$1"
+  local package="$2"
+  local label="$3"
+
+  if [[ ! -f "$path" ]]; then
+    miss "$label: missing file $path"
+  elif read_package_file "$path" | grep -Fxq "$package"; then
+    ok "$label"
+  else
+    miss "$label"
+  fi
+}
+
+check_no_package_matching() {
+  local path="$1"
+  local pattern="$2"
+  local label="$3"
+
+  if [[ ! -f "$path" ]]; then
+    miss "$label: missing file $path"
+  elif read_package_file "$path" | grep -Eq "$pattern"; then
+    miss "$label"
+  else
+    ok "$label"
+  fi
+}
+
 find_archiso_dir() {
   local candidate
   local candidates=(
@@ -177,9 +220,9 @@ if [[ -z "$packages_file" ]]; then
   miss "package list for profile: $PROFILE"
 else
   ok "package list: $packages_file"
-  check_contains "$packages_file" '^kakku-desktop$' "kakku-desktop is in package list"
-  check_contains "$packages_file" '^cachyos-cli-installer-new$' "CLI installer package is in package list"
-  check_not_contains "$packages_file" '^(calamares|cachyos-calamares.*|cachyos-hello|cachyos-welcome)$' "GUI installer packages removed"
+  check_package "$packages_file" "kakku-desktop" "kakku-desktop is in package list"
+  check_package "$packages_file" "cachyos-cli-installer-new" "CLI installer package is in package list"
+  check_no_package_matching "$packages_file" '^(calamares|cachyos-calamares.*|cachyos-hello|cachyos-welcome)$' "GUI installer packages removed"
 fi
 
 if (( ALLOW_MISSING_LOCAL_REPO )); then
@@ -190,12 +233,21 @@ if (( ALLOW_MISSING_LOCAL_REPO )); then
   fi
 else
   check_contains "$archiso_dir/pacman.conf" '^\[kakku-local\]$' "local repo configured in profile pacman.conf"
+  check_contains "$archiso_dir/pacman.conf" '^Server = file://.+' "profile pacman.conf uses a file repo path"
+  check_not_contains "$archiso_dir/pacman.conf" '^Server = file:///opt/kakkuos/repo$' "profile pacman.conf does not use live-only repo path"
   check_contains "$airootfs/etc/pacman.conf" '^\[kakku-local\]$' "local repo configured in live pacman.conf"
+  check_contains "$airootfs/etc/pacman.conf" '^Server = file:///opt/kakkuos/repo$' "live pacman.conf uses live repo path"
   check_file "$airootfs/opt/kakkuos/repo/kakku-local.db"
 fi
 
 check_exec "$airootfs/usr/local/bin/kakku-install"
+check_contains "$airootfs/usr/local/bin/kakku-install" 'installer_bin="cachyos-installer"' "installer wrapper prefers cachyos-installer"
+check_contains "$airootfs/usr/local/bin/kakku-install" 'installer_bin="install_cachyos"' "installer wrapper has legacy installer fallback"
+check_contains "$airootfs/usr/local/bin/kakku-install" '^run_target_install\(\)' "installer wrapper has Kakku target fallback"
+check_contains "$airootfs/usr/local/bin/kakku-install" '^run_target_install$' "installer wrapper runs Kakku target fallback"
 check_exec "$airootfs/usr/local/bin/kakku-target-install"
+check_contains "$airootfs/usr/local/bin/kakku-target-install" '^\[kakku-local\]$' "target installer adds local repo to target pacman.conf"
+check_contains "$airootfs/usr/local/bin/kakku-target-install" '^Server = file:///opt/kakkuos/repo$' "target installer uses target-local repo path"
 check_file "$airootfs/opt/kakkuos/install.sh"
 check_file "$airootfs/usr/share/backgrounds/kakku/wallpaper.png"
 check_file "$airootfs/usr/share/backgrounds/kakku/kakku-default.png"
@@ -239,9 +291,9 @@ else
   miss "live ISO boots to CLI target"
 fi
 
-check_contains "$archiso_dir/profiledef.sh" '^iso_label="KAKKU_' "profile label is KakkuOS"
-check_contains "$archiso_dir/profiledef.sh" '^iso_publisher="KakkuOS ' "profile publisher is KakkuOS"
-check_contains "$archiso_dir/profiledef.sh" '^iso_application="KakkuOS ' "profile application is KakkuOS"
+check_contains "$archiso_dir/profiledef.sh" '(^|[[:space:]])iso_label="KAKKU_' "profile label is KakkuOS"
+check_contains "$archiso_dir/profiledef.sh" '(^|[[:space:]])iso_publisher="KakkuOS ' "profile publisher is KakkuOS"
+check_contains "$archiso_dir/profiledef.sh" '(^|[[:space:]])iso_application="KakkuOS ' "profile application is KakkuOS"
 
 boot_branding_hits=0
 for boot_dir in grub efiboot syslinux; do
