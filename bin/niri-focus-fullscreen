@@ -40,7 +40,7 @@ target_id="$(
 )"
 
 if [[ -z "$target_id" ]]; then
-  notify-send "Niri" "No fullscreen-like window found" 2>/dev/null || true
+  notify-send "Niri" "No fullscreen window found" 2>/dev/null || true
   exit 1
 fi
 
