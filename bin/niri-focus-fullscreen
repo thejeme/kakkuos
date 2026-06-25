@@ -19,12 +19,12 @@ target_id="$(
       and any(output_logicals; ((($size[0] - .w) | abs) <= 2) and ((($size[1] - .h) | abs) <= 2));
     def is_full_output:
       matches_output_size(.layout.window_size) or matches_output_size(.layout.tile_size);
-    def is_likely_game:
+    def is_likely_fullscreen_candidate:
       (.app_id == null and (.title // "") != "")
       or ((.app_id // "") | test("^(steam_app_.*|gamescope|net\\.lutris\\.|com\\.heroicgameslauncher\\.hgl)$"; "i"));
     def score:
       if is_full_output then 300
-      elif is_likely_game then 200
+      elif is_likely_fullscreen_candidate then 200
       else 0
       end;
 
@@ -40,7 +40,7 @@ target_id="$(
 )"
 
 if [[ -z "$target_id" ]]; then
-  notify-send "Niri" "No fullscreen or game-like window found" 2>/dev/null || true
+  notify-send "Niri" "No fullscreen-like window found" 2>/dev/null || true
   exit 1
 fi
 

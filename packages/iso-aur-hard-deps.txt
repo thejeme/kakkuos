@@ -2,6 +2,7 @@
 # Kakku packages use them as hard dependencies, directly or transitively.
 #
 # Keep dependency order when one AUR package needs another.
+onlyoffice-bin
 greetd-dms-greeter-git
 dsearch-bin
 python-terminaltexteffects

@@ -201,6 +201,14 @@ read_kakku_repo_packages() {
 }
 
 validate_repo_config() {
+  case "$KAKKU_REPO_NAME" in
+    ""|*[!A-Za-z0-9._-]*)
+      echo "Unsupported KAKKU_REPO_NAME: $KAKKU_REPO_NAME" >&2
+      echo "Use only letters, numbers, dots, underscores, and hyphens." >&2
+      exit 1
+      ;;
+  esac
+
   if [[ -n "$KAKKU_REPO_SERVER" ]]; then
     case "$KAKKU_REPO_SERVER" in
       *[[:space:]]*|*'"'*|*'`'*|*'$'*|*'\'*)
@@ -329,7 +337,7 @@ check_full_build_requirements() {
   if (( missing )); then
     echo >&2
     echo "Install the CachyOS/Arch ISO build requirements, then rerun:" >&2
-    echo "  sudo pacman -S archiso mkinitcpio-archiso git squashfs-tools grub rsync arch-install-scripts --needed" >&2
+    echo "  sudo pacman -S archiso base-devel mkinitcpio-archiso git pacman-contrib squashfs-tools grub rsync arch-install-scripts --needed" >&2
     exit 1
   fi
 }
@@ -638,9 +646,11 @@ EOF
 set -euo pipefail
 
 target="\${KAKKU_TARGET_MOUNT:-/mnt}"
+repo_name="\${KAKKU_REPO_NAME:-$KAKKU_REPO_NAME}"
 repo_source="\${KAKKU_REPO_SOURCE:-/opt/kakkuos/repo}"
 repo_server="\${KAKKU_REPO_SERVER:-$repo_server}"
 repo_embedded="\${KAKKU_REPO_EMBEDDED:-$repo_embedded}"
+repo_siglevel="\${KAKKU_REPO_SIGLEVEL:-$KAKKU_REPO_SIGLEVEL}"
 repo_target="\$target/opt/kakkuos/repo"
 target_pacman_conf="\$target/etc/pacman.conf"
 
@@ -649,18 +659,44 @@ if [[ ! -d "\$target/etc" ]]; then
   exit 1
 fi
 
-if [[ -d "\$repo_source" ]]; then
+write_repo_stanza() {
+  local tmp
+
+  tmp="\$(mktemp)"
+  if [[ -f "\$target_pacman_conf" ]]; then
+    awk -v repo="\$repo_name" '
+      \$0 == "[" repo "]" { skip = 1; next }
+      skip && \$0 ~ /^\\[/ { skip = 0 }
+      !skip { print }
+    ' "\$target_pacman_conf" > "\$tmp"
+  fi
+
+  cat >> "\$tmp" <<REPO
+
+[\$repo_name]
+SigLevel = \$repo_siglevel
+Server = \$repo_server
+REPO
+
+  install -Dm644 "\$tmp" "\$target_pacman_conf"
+  rm -f "\$tmp"
+}
+
+if [[ "\$repo_embedded" == "1" ]]; then
+  if [[ ! -d "\$repo_source" ]]; then
+    echo "Missing embedded KakkuOS package repo: \$repo_source" >&2
+    exit 1
+  fi
+
   mkdir -p "\$repo_target"
   rsync -a --delete "\$repo_source/" "\$repo_target/"
+fi
 
-  if ! grep -q '^\[$KAKKU_REPO_NAME\]$' "\$target_pacman_conf"; then
-    cat <<'REPO' >> "\$target_pacman_conf"
+write_repo_stanza
 
-[$KAKKU_REPO_NAME]
-SigLevel = Optional TrustAll
-Server = file:///opt/kakkuos/repo
-REPO
-  fi
+if [[ "\${KAKKU_SKIP_TARGET_CHROOT:-0}" == "1" ]]; then
+  echo "KakkuOS target chroot install skipped."
+  exit 0
 fi
 
 arch-chroot "\$target" pacman -Syu --needed --noconfirm kakku-desktop
@@ -683,6 +719,7 @@ inject_local_repo() {
   local pacman_conf="$archiso_dir/pacman.conf"
   local live_pacman_conf="$airootfs/etc/pacman.conf"
   local local_repo_abs
+  local repo_server
 
   repo_server="$(kakku_repo_server)"
 
@@ -700,28 +737,47 @@ inject_local_repo() {
       exit 1
     fi
 
-  local_repo_abs="$(cd "$KAKKU_LOCAL_REPO_DIR" && pwd)"
+    local_repo_abs="$(cd "$KAKKU_LOCAL_REPO_DIR" && pwd)"
 
-  mkdir -p "$repo_target"
-  rsync -a --delete "$KAKKU_LOCAL_REPO_DIR/" "$repo_target/"
+    mkdir -p "$repo_target"
+    rsync -a --delete "$KAKKU_LOCAL_REPO_DIR/" "$repo_target/"
+  fi
 
-  append_repo_stanza() {
+  set_repo_stanza() {
     local target_conf="$1"
     local server="$2"
+    local tmp
 
-    if ! grep -q "^\[$KAKKU_REPO_NAME\]$" "$target_conf"; then
-      cat <<EOF >> "$target_conf"
+    tmp="$(mktemp)"
+    if [[ -f "$target_conf" ]]; then
+      awk -v repo="$KAKKU_REPO_NAME" '
+        $0 == "[" repo "]" { skip = 1; next }
+        skip && $0 ~ /^\[/ { skip = 0 }
+        !skip { print }
+      ' "$target_conf" > "$tmp"
+    fi
+
+    cat <<EOF >> "$tmp"
 
 [$KAKKU_REPO_NAME]
-SigLevel = Optional TrustAll
+SigLevel = $KAKKU_REPO_SIGLEVEL
 Server = $server
 EOF
-    fi
+
+    install -Dm644 "$tmp" "$target_conf"
+    rm -f "$tmp"
   }
 
-  append_repo_stanza "$pacman_conf" "file://$local_repo_abs"
-  if [[ -f "$live_pacman_conf" ]]; then
-    append_repo_stanza "$live_pacman_conf" "file:///opt/kakkuos/repo"
+  if using_hosted_repo; then
+    set_repo_stanza "$pacman_conf" "$repo_server"
+    if [[ -f "$live_pacman_conf" ]]; then
+      set_repo_stanza "$live_pacman_conf" "$repo_server"
+    fi
+  else
+    set_repo_stanza "$pacman_conf" "file://$local_repo_abs"
+    if [[ -f "$live_pacman_conf" ]]; then
+      set_repo_stanza "$live_pacman_conf" "file:///opt/kakkuos/repo"
+    fi
   fi
 }
 

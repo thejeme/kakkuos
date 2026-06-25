@@ -68,6 +68,16 @@ require_command() {
   fi
 }
 
+validate_repo_name() {
+  case "$REPO_NAME" in
+    ""|*[!A-Za-z0-9._-]*)
+      echo "Unsupported repository name: $REPO_NAME" >&2
+      echo "Use only letters, numbers, dots, underscores, and hyphens." >&2
+      exit 1
+      ;;
+  esac
+}
+
 read_package_file() {
   local file="$1"
 
@@ -122,6 +132,7 @@ build_aur_package() {
 require_command makepkg
 require_command repo-add
 require_command git
+validate_repo_name
 
 mkdir -p "$OUTPUT_DIR"
 rm -f "$OUTPUT_DIR"/*.pkg.tar.* "$OUTPUT_DIR/$REPO_NAME".db* "$OUTPUT_DIR/$REPO_NAME".files*

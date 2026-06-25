@@ -393,8 +393,8 @@ if [[ -d "$REPO_DIR/bin" ]]; then
     [[ -f "$script" ]] || continue
     sudo install -Dm755 "$script" "/usr/bin/$(basename "$script")"
   done
-  if [[ -f "$REPO_DIR/bin/niri-focus-game" ]]; then
-    sudo install -Dm755 "$REPO_DIR/bin/niri-focus-game" /usr/bin/niri-focus-game
+  if [[ -f "$REPO_DIR/bin/niri-focus-fullscreen" ]]; then
+    sudo install -Dm755 "$REPO_DIR/bin/niri-focus-fullscreen" /usr/bin/niri-focus-fullscreen
   fi
 fi
 

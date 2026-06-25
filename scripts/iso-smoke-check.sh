@@ -8,6 +8,7 @@ PROFILE="${CACHYOS_BUILD_PROFILE:-desktop}"
 REPO_NAME="${KAKKU_REPO_NAME:-kakku-local}"
 ALLOW_MISSING_LOCAL_REPO=0
 MANIFEST_NAME="${KAKKU_ISO_MANIFEST_NAME:-kakku-iso-build-manifest.txt}"
+ISO_AUR_HARD_DEPS_FILE="$REPO_ROOT/packages/iso-aur-hard-deps.txt"
 
 usage() {
   cat <<EOF
@@ -19,7 +20,7 @@ Options:
   --dir PATH                   Kakku staging tree or archiso profile path.
                                Default: iso/.cache/kakku-live-iso.
   --profile NAME               Profile name used for package list lookup. Default: desktop.
-  --allow-missing-local-repo   Do not fail when [kakku-local] is absent.
+  --allow-missing-local-repo   Do not fail when the Kakku repo stanza is absent.
   -h, --help                   Show this help.
 EOF
 }
@@ -77,6 +78,20 @@ check_file() {
   fi
 }
 
+check_repo_package_archive() {
+  local repo_dir="$1"
+  local package_name="$2"
+  local label="$3"
+
+  if [[ ! -d "$repo_dir" ]]; then
+    miss "$label: missing repo directory $repo_dir"
+  elif find "$repo_dir" -maxdepth 1 -type f -name "$package_name-*.pkg.tar.*" ! -name '*.sig' -print -quit | grep -q .; then
+    ok "$label"
+  else
+    miss "$label"
+  fi
+}
+
 check_exec() {
   local path="$1"
 
@@ -109,6 +124,20 @@ check_contains() {
   if [[ ! -f "$path" ]]; then
     miss "$label: missing file $path"
   elif grep -Eq "$pattern" "$path"; then
+    ok "$label"
+  else
+    miss "$label"
+  fi
+}
+
+check_line() {
+  local path="$1"
+  local line="$2"
+  local label="$3"
+
+  if [[ ! -f "$path" ]]; then
+    miss "$label: missing file $path"
+  elif grep -Fxq "$line" "$path"; then
     ok "$label"
   else
     miss "$label"
@@ -155,6 +184,19 @@ check_package() {
     ok "$label"
   else
     miss "$label"
+  fi
+}
+
+check_nonempty_package_file() {
+  local path="$1"
+  local label="$2"
+
+  if [[ ! -f "$path" ]]; then
+    miss "$label: missing file $path"
+  elif [[ -z "$(read_package_file "$path")" ]]; then
+    miss "$label: empty file $path"
+  else
+    ok "$label"
   fi
 }
 
@@ -238,6 +280,7 @@ fi
 airootfs="$archiso_dir/airootfs"
 packages_file="$(find_packages_file "$archiso_dir" || true)"
 manifest="$CHECKOUT_DIR/$MANIFEST_NAME"
+REPO_NAME="$(manifest_value "$manifest" kakku_repo_name 2>/dev/null || printf '%s\n' "$REPO_NAME")"
 repo_mode="$(manifest_value "$manifest" kakku_repo_mode 2>/dev/null || printf 'embedded\n')"
 repo_server="$(manifest_value "$manifest" kakku_repo_server 2>/dev/null || printf 'file:///opt/kakkuos/repo\n')"
 repo_siglevel="$(manifest_value "$manifest" kakku_repo_siglevel 2>/dev/null || printf 'Optional TrustAll\n')"
@@ -260,12 +303,31 @@ if (( ALLOW_MISSING_LOCAL_REPO )); then
     warn "local repo missing from profile pacman.conf"
   fi
 else
-  check_contains "$archiso_dir/pacman.conf" '^\[kakku-local\]$' "local repo configured in profile pacman.conf"
-  check_contains "$archiso_dir/pacman.conf" '^Server = file://.+' "profile pacman.conf uses a file repo path"
-  check_not_contains "$archiso_dir/pacman.conf" '^Server = file:///opt/kakkuos/repo$' "profile pacman.conf does not use live-only repo path"
-  check_contains "$airootfs/etc/pacman.conf" '^\[kakku-local\]$' "local repo configured in live pacman.conf"
-  check_contains "$airootfs/etc/pacman.conf" '^Server = file:///opt/kakkuos/repo$' "live pacman.conf uses live repo path"
-  check_file "$airootfs/opt/kakkuos/repo/kakku-local.db"
+  check_contains "$archiso_dir/pacman.conf" "^\\[$REPO_NAME\\]$" "Kakku repo configured in profile pacman.conf"
+  check_line "$archiso_dir/pacman.conf" "SigLevel = $repo_siglevel" "profile pacman.conf uses manifest repo SigLevel"
+  check_contains "$airootfs/etc/pacman.conf" "^\\[$REPO_NAME\\]$" "Kakku repo configured in live pacman.conf"
+  check_line "$airootfs/etc/pacman.conf" "SigLevel = $repo_siglevel" "live pacman.conf uses manifest repo SigLevel"
+  check_line "$airootfs/etc/pacman.conf" "Server = $repo_server" "live pacman.conf uses manifest repo server"
+
+  if [[ "$repo_mode" == "hosted" ]]; then
+    check_line "$archiso_dir/pacman.conf" "Server = $repo_server" "profile pacman.conf uses hosted repo server"
+    if [[ -d "$airootfs/opt/kakkuos/repo" ]]; then
+      miss "hosted repo mode does not embed /opt/kakkuos/repo"
+    else
+      ok "hosted repo mode does not embed /opt/kakkuos/repo"
+    fi
+  else
+    check_contains "$archiso_dir/pacman.conf" '^Server = file://.+' "profile pacman.conf uses build-host file repo path"
+    check_not_contains "$archiso_dir/pacman.conf" '^Server = file:///opt/kakkuos/repo$' "profile pacman.conf does not use live-only repo path"
+    check_file "$airootfs/opt/kakkuos/repo/$REPO_NAME.db"
+    check_repo_package_archive "$airootfs/opt/kakkuos/repo" "kakku-desktop" "embedded repo contains kakku-desktop package"
+    check_repo_package_archive "$airootfs/opt/kakkuos/repo" "kakku-niri-settings" "embedded repo contains kakku-niri-settings package"
+    check_nonempty_package_file "$ISO_AUR_HARD_DEPS_FILE" "ISO bundled AUR hard-dependency manifest"
+
+    while IFS= read -r package_name; do
+      check_repo_package_archive "$airootfs/opt/kakkuos/repo" "$package_name" "embedded repo contains bundled AUR package: $package_name"
+    done < <(read_package_file "$ISO_AUR_HARD_DEPS_FILE")
+  fi
 fi
 
 check_exec "$airootfs/usr/local/bin/kakku-install"
@@ -274,8 +336,9 @@ check_contains "$airootfs/usr/local/bin/kakku-install" 'installer_bin="install_c
 check_contains "$airootfs/usr/local/bin/kakku-install" '^run_target_install\(\)' "installer wrapper has Kakku target fallback"
 check_contains "$airootfs/usr/local/bin/kakku-install" '^run_target_install$' "installer wrapper runs Kakku target fallback"
 check_exec "$airootfs/usr/local/bin/kakku-target-install"
-check_contains "$airootfs/usr/local/bin/kakku-target-install" '^\[kakku-local\]$' "target installer adds local repo to target pacman.conf"
-check_contains "$airootfs/usr/local/bin/kakku-target-install" '^Server = file:///opt/kakkuos/repo$' "target installer uses target-local repo path"
+check_line "$airootfs/usr/local/bin/kakku-target-install" "repo_name=\"\${KAKKU_REPO_NAME:-$REPO_NAME}\"" "target installer defaults to manifest repo name"
+check_line "$airootfs/usr/local/bin/kakku-target-install" "repo_server=\"\${KAKKU_REPO_SERVER:-$repo_server}\"" "target installer defaults to manifest repo server"
+check_line "$airootfs/usr/local/bin/kakku-target-install" "repo_siglevel=\"\${KAKKU_REPO_SIGLEVEL:-$repo_siglevel}\"" "target installer defaults to manifest repo SigLevel"
 check_file "$airootfs/opt/kakkuos/install.sh"
 check_no_matches "$airootfs/opt/kakkuos" '*/packaging/*/*.pkg.tar.*' "staged source excludes built package archives"
 check_no_matches "$airootfs/opt/kakkuos" '*/packaging/*/pkg' "staged source excludes makepkg pkg directories"

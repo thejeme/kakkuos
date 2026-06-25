@@ -17,7 +17,7 @@ Build on a CachyOS or Arch-based system with the CachyOS repositories available.
 Install the build tools:
 
 ```bash
-sudo pacman -S archiso base-devel mkinitcpio-archiso git pacman-contrib squashfs-tools grub rsync --needed
+sudo pacman -S archiso base-devel mkinitcpio-archiso git pacman-contrib squashfs-tools grub rsync arch-install-scripts --needed
 ```
 
 ISO builds use loop mounts, SquashFS, pacstrap, and mkarchiso. They are not a

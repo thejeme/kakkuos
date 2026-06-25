@@ -82,15 +82,10 @@ Available commands:
 |---|---|
 | `kakku info` | Show OS, kernel, compositor, and shell info. |
 | `kakku doctor` | Check expected commands, configs, assets, defaults, and services. |
-| `kakku doctor --fix` | Reapply safe local defaults and enable expected services. |
+| `kakku doctor --fix` | Restore missing Kakku user configs and enable expected services. |
 | `kakku context` | Print safe system context for AI chats or support requests. |
-| `kakku services` | Show service active/enabled state. |
-| `kakku keybinds` | Print default keybindings. |
-| `kakku paths` | Show important Kakku paths. |
 | `kakku packages` | Show package profile information. |
 | `kakku update` | Update repo and AUR packages. |
-| `kakku defaults` | Reapply default applications. |
-| `kakku vscode-theme` | Install and select the DMS dynamic VS Code theme. |
 
 ## Desktop Defaults
 
@@ -103,7 +98,7 @@ Notable defaults:
 - `Mod+T`: Ghostty
 - `Mod+E`: Dolphin
 - `Mod+B`: Zen Browser
-- `Mod+Shift+B`: Chrome
+- `Mod+Shift+B`: Toggle top bar
 - `Mod+D`: Vesktop
 - `Mod+S`: Steam
 - `Mod+C`: SpeedCrunch
@@ -112,7 +107,8 @@ Notable defaults:
 - `Print`: Screenshot
 - `Mod+Shift+P`: Color picker
 
-Run `kakku keybinds` for the full list.
+Use `Mod+section` to open the niri hotkey overlay. The editable source of truth
+is `~/.config/niri/config.kdl`.
 
 ## DMS
 
@@ -126,21 +122,11 @@ Kakku ships default DMS settings at:
 
 Those settings provide the KakkuOS theme, bar layout, power-menu hold duration, and shell behavior. User-edited settings remain authoritative after first boot.
 
-For VS Code theming, KakkuOS uses DMS' bundled dynamic theme extension. Run:
-
-```bash
-kakku vscode-theme
-```
-
-This installs the local DMS VS Code theme VSIX and selects `Dynamic Base16 DankShell`, allowing DMS matugen to detect and update VS Code colors.
+For VS Code theming, KakkuOS uses DMS' bundled dynamic theme extension. The
+installer and `kakku doctor --fix` apply the local DMS VS Code theme setup when
+the required tools are available.
 
 ## Defaults
-
-Run:
-
-```bash
-kakku defaults
-```
 
 Default apps:
 
@@ -150,7 +136,7 @@ Default apps:
 - Video/audio quick playback: mpv
 - Images: imv, with Loupe available
 - PDFs: Zathura
-- Office documents: LibreOffice
+- Office documents: OnlyOffice
 
 Zen Browser policy defaults install uBlock Origin, Dark Reader, and SponsorBlock.
 

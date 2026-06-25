@@ -31,9 +31,6 @@ kakku context --json   # Machine-readable full state (configs included)
 kakku doctor           # Health check
 kakku doctor --fix     # Auto-repair common issues
 kakku edit <file> --stdin  # Safe edit with backup, validation, rollback
-kakku services         # Service status
-kakku keybinds         # All keybindings
-kakku defaults         # Reapply default apps
 niri validate -c ~/.config/niri/config.kdl  # Validate niri config
 niri msg action load-config-file            # Hot-reload niri config
 dms restart            # Restart shell panel

@@ -144,6 +144,14 @@ check_target_hook() {
   fi
 }
 
+check_package_closure() {
+  if bash "$REPO_ROOT/scripts/check-iso-package-closure.sh"; then
+    ok "ISO package closure"
+  else
+    miss "ISO package closure"
+  fi
+}
+
 check_iso_artifacts() {
   local iso
   local iso_count=0
@@ -302,6 +310,7 @@ fi
 
 check_staging_smoke
 check_target_hook
+check_package_closure
 check_upstream_cache_clean
 check_iso_artifacts
 check_manifests

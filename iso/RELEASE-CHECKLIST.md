@@ -9,7 +9,7 @@ staged tree is not enough for release.
 - [ ] Required tools installed:
 
 ```bash
-sudo pacman -S archiso mkinitcpio-archiso git squashfs-tools grub rsync arch-install-scripts --needed
+sudo pacman -S archiso base-devel mkinitcpio-archiso git pacman-contrib squashfs-tools grub rsync arch-install-scripts --needed
 ```
 
 - [ ] Optional VM test tools installed:
@@ -31,6 +31,13 @@ scripts/iso-host-preflight.sh --require-vm-tools --require-uefi
 
 ```bash
 scripts/check-package-sync.sh
+```
+
+- [ ] ISO hard dependencies resolve from pacman repos or the bundled ISO AUR
+      manifest:
+
+```bash
+bash scripts/check-iso-package-closure.sh
 ```
 
 - [ ] Prepare the staging tree:

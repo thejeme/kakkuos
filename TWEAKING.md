@@ -122,21 +122,12 @@ KakkuOS uses Zen Browser as the default browser and Chrome as a secondary browse
 Useful commands:
 
 ```bash
-kakku defaults
-kakku browser-theme
-kakku vscode-theme
 kakku doctor
 ```
 
 ### Default Apps
 
-Reapply default apps with:
-
-```bash
-kakku defaults
-```
-
-Defaults include Zen Browser for web links, Dolphin for folders, mpv for media, imv for images, Zathura for PDFs, LibreOffice for office files, and SpeedCrunch as the calculator launched from niri keybindings.
+Defaults include Zen Browser for web links, Dolphin for folders, mpv for media, imv for images, Zathura for PDFs, OnlyOffice for office files, and SpeedCrunch as the calculator launched from niri keybindings.
 
 KakkuOS also ships `~/.config/menus/applications.menu` so KDE apps such as Dolphin can build their application/service cache correctly under niri.
 
@@ -145,7 +136,8 @@ KakkuOS also ships `~/.config/menus/applications.menu` so KDE apps such as Dolph
 Check Kakku service status with:
 
 ```bash
-kakku services
+systemctl status NetworkManager bluetooth greetd
+systemctl --user status dms.service dsearch.service
 ```
 
 Run a general health check with:

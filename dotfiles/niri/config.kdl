@@ -279,7 +279,7 @@ binds {
     // === System & Overview ===
     Mod+Tab repeat=false { toggle-overview; }
     Mod+section { show-hotkey-overlay; }
-    Mod+Shift+Escape hotkey-overlay-title="Start Kakku Screensaver" { spawn "kakku-screensaver"; }
+    // Mod+Shift+Escape hotkey-overlay-title="Start Kakku Screensaver" { spawn "kakku-screensaver"; }
 
     // === Application Launchers ===
     Mod+T hotkey-overlay-title="Open Terminal" { spawn "ghostty"; }
@@ -290,7 +290,7 @@ binds {
     Mod+H hotkey-overlay-title="Open btop" { spawn "ghostty" "-e" "btop"; }
     Mod+A hotkey-overlay-title="Open ChatGPT" { spawn "google-chrome-stable" "--app=https://chatgpt.com" "--ozone-platform-hint=auto"; }
     Mod+S hotkey-overlay-title="Open Steam" { spawn "steam"; }
-    Mod+G hotkey-overlay-title="Focus Game" { spawn "niri-focus-game"; }
+    Mod+G hotkey-overlay-title="Focus Fullscreen Window" { spawn "niri-focus-fullscreen"; }
     Mod+N hotkey-overlay-title="Notepad" { spawn "dms" "ipc" "call" "notepad" "toggle"; }
     Mod+Space hotkey-overlay-title="Application Launcher" { spawn "dms" "ipc" "call" "spotlight" "toggle"; }
     Mod+V hotkey-overlay-title="Clipboard Manager" { spawn "dms" "ipc" "call" "clipboard" "toggle"; }

@@ -14,8 +14,8 @@ This system runs KakkuOS, a CachyOS/Arch-based Linux desktop with niri (Wayland 
 
 - `kakku context --json` provides full machine-readable system state including configs
 - `kakku doctor` checks system health
-- `kakku keybinds` shows all keybindings
-- `kakku services` shows service status
+- `~/.config/niri/config.kdl` is the keybinding source of truth
+- Use `systemctl` and `systemctl --user` for service status
 - Change log at `~/.local/share/kakku/changelog.jsonl`
 
 ## Conventions

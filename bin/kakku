@@ -12,14 +12,8 @@ Usage:
   kakku info
   kakku doctor [--fix]
   kakku context
-  kakku services
-  kakku keybinds
-  kakku paths
   kakku packages
   kakku update
-  kakku defaults
-  kakku browser-theme
-  kakku vscode-theme
   kakku version
 EOF
 }
@@ -168,8 +162,8 @@ check_xdg_default() {
     fi
   done
 
-  echo "miss xdg default: $mime_type -> ${current:-unset}"
-  return 1
+  echo "warn xdg default: $mime_type -> ${current:-unset}"
+  return 0
 }
 
 check_browser_policies() {
@@ -244,14 +238,6 @@ fix_missing_user_configs() {
   copy_missing_path /etc/skel/.config/DankMaterialShell "$CONFIG_HOME/DankMaterialShell"
   copy_missing_path /etc/skel/.zshrc "$HOME/.zshrc"
   copy_missing_path /etc/skel/.bashrc "$HOME/.bashrc"
-}
-
-fix_defaults() {
-  if has_command kakku-defaults; then
-    run_kakku_helper kakku-defaults
-  else
-    echo "warn kakku-defaults is missing"
-  fi
 }
 
 fix_browser_policies() {
@@ -381,109 +367,6 @@ show_services() {
   for service in NetworkManager bluetooth docker tailscaled ananicy-cpp power-profiles-daemon ufw; do
     show_service_status "$service"
   done
-}
-
-show_keybinds() {
-  cat <<'EOF'
-KakkuOS keybindings:
-  Help and overview
-    Super+§                       Show keybindings help
-    Super+Tab                     Toggle workspace overview
-    Mod+Shift+Escape              Start screensaver
-    Super+Escape                  Open power menu
-
-  Shell and applications
-    Super+T                       Open Ghostty terminal
-    Super+E                       Open Dolphin files
-    Super+B                       Open Zen browser
-    Super+Ctrl+B                  Open private browser window
-    Super+A                       Open ChatGPT
-    Super+D                       Open Discord/Vesktop
-    Super+H                       Open btop
-    Super+P                       Open Pinta
-    Super+S                       Open Steam
-    Super+G                       Focus fullscreen/game window
-    Super+C / Calculator key      Open calculator
-    Super+Space                   Open app launcher
-    Super+V                       Open clipboard
-    Super+M / Ctrl+Alt+Delete     Open task manager
-    Super+Comma                   Open DMS settings
-    Super+Y                       Open wallpaper browser
-    Super+N                       Open notepad
-    Super+Alt+L                   Lock screen
-    Super+Shift+P                 Pick screen color to clipboard
-    Super+Shift+B                 Toggle Top Bar
-    Ctrl+Alt+End                  Exit niri
-
-  Windows and columns
-    Super+Q                       Close active window
-    Super+F                       Maximize column
-    Super+Shift+F                 Fullscreen window
-    Super+Shift+T                 Toggle floating
-    Super+Shift+V                 Switch floating/tiling focus
-    Super+W                       Toggle tabbed column
-    Super+Alt+Left/Right          Consume or expel window
-    Super+.                       Expel window from column
-    Super+Home / Super+End        Focus first/last column
-    Super+Ctrl+Home/End           Move column to first/last
-
-  Focus and movement
-    Super+Left/Right or H/L       Focus column or monitor
-    Super+Up/Down or J/K          Focus window or workspace
-    Super+Z/X                     Focus column or monitor left/right
-    Super+Shift+Z/X               Focus window or workspace up/down
-    Super+Shift+Left/Right or H/L Move column or monitor
-    Super+Shift+Up/Down or J/K    Move window
-    Super+Ctrl+Left/Right or H/L  Focus monitor
-    Super+Ctrl+J/K                Focus monitor down/up
-    Super+Shift+Ctrl+Arrows       Move column to monitor
-    Super+Shift+Ctrl+H/J/K/L      Move column to monitor
-
-  Workspaces
-    Super+PageUp/PageDown         Focus workspace up/down
-    Super+U/I                     Focus workspace down/up
-    Super+Ctrl+Up/Down or U/I     Move column to workspace
-    Super+1..9                    Switch workspace by position
-    Super+Shift+1..9              Move column to workspace position
-
-  Mouse wheel
-    Super+WheelUp/Down            Focus workspace up/down
-    Super+Ctrl+WheelUp/Down       Move column to workspace
-    Super+WheelLeft/Right         Focus column
-    Super+Ctrl+WheelLeft/Right    Move column
-    Super+Shift+WheelUp/Down      Focus column
-    Super+Ctrl+Shift+WheelUp/Down Move column
-
-  Layout and config
-    Super+R                       Switch preset column width
-    Super+Shift+R                 Switch preset window height
-    Super+Ctrl+R                  Reset window height
-    Super+Alt+R                   Reload niri config
-    Super+Ctrl+F                  Expand column to available width
-    Super+Shift+C                 Center visible columns
-    Super+- / Super+= / Super++   Adjust column width
-    Super+numpad-                 Decrease column width
-    Super+Shift+- / Super+Ctrl+=  Adjust window height
-    Super+numpad+                 Increase column width
-    Super+Ctrl+numpad-            Decrease window height
-    Super+Ctrl+numpad+            Increase window height
-
-  Screenshots
-    Print / XF86Launch1           Pick area, copied and saved without cursor
-    Ctrl+Print / Ctrl+XF86Launch1 Screenshot screen without cursor
-    Alt+Print / Alt+XF86Launch1   Screenshot window without cursor
-    Super+Shift+O                 OCR selected area to clipboard
-    Super+Ctrl+Shift+S / Shift+Print
-                                  Toggle screen recording
-
-  Media and hardware
-    Volume keys                   Adjust/mute audio
-    Mic mute key                  Toggle microphone mute
-    Media keys                    Play/pause/previous/next
-    Ctrl+Volume keys              Seek media
-    Brightness keys               Adjust display brightness
-    Alt+Tab / Alt+Shift+Tab       Cycle windows on output
-EOF
 }
 
 show_info() {
@@ -709,16 +592,6 @@ ENDJSON
   fi
 }
 
-show_paths() {
-  cat <<EOF
-Kakku paths:
-  Config home:        $CONFIG_HOME
-  DMS config:         $CONFIG_HOME/DankMaterialShell
-  Shared files:       $KAKKU_SHARE
-  Backgrounds:        /usr/share/backgrounds/kakku
-EOF
-}
-
 show_packages() {
   local repo_packages="/usr/share/kakku/packages"
 
@@ -739,7 +612,6 @@ run_doctor_fix() {
 
   run_fix_step "create user directories" fix_user_dirs
   run_fix_step "restore missing user configs from /etc/skel" fix_missing_user_configs
-  run_fix_step "configure default applications" fix_defaults
   run_fix_step "install browser policies" fix_browser_policies
   run_fix_step "configure browser theme hooks" fix_browser_theme
   run_fix_step "configure VS Code theme" fix_vscode_theme
@@ -755,7 +627,7 @@ run_doctor_fix() {
 run_doctor_checks() {
   local failed=0
 
-  for command_name in niri dms dsearch xwayland-satellite ghostty swayidle wf-recorder niri-screensaver niri-screensaver-ctl niri-focus-game kakku kakku-defaults kakku-browser-policies kakku-vscode-theme kakku-edit speedcrunch yazi btop fish zathura nvim codex; do
+  for command_name in niri dms dsearch xwayland-satellite ghostty swayidle wf-recorder niri-screensaver niri-screensaver-ctl niri-focus-fullscreen kakku kakku-defaults kakku-browser-policies kakku-vscode-theme kakku-edit speedcrunch yazi btop fish zathura nvim codex; do
     check_command "$command_name" || failed=1
   done
 
@@ -772,11 +644,11 @@ run_doctor_checks() {
   check_path "$CONFIG_HOME/nvim/init.lua" || failed=1
   check_optional_path "$HOME/.zshrc"
 
-  check_xdg_default application/pdf org.pwmt.zathura.desktop zathura.desktop || failed=1
-  check_xdg_default image/png imv.desktop || failed=1
-  check_xdg_default text/html zen-browser.desktop zen.desktop zen-browser-bin.desktop firefox.desktop || failed=1
-  check_xdg_default x-scheme-handler/http zen-browser.desktop zen.desktop zen-browser-bin.desktop firefox.desktop || failed=1
-  check_xdg_default x-scheme-handler/https zen-browser.desktop zen.desktop zen-browser-bin.desktop firefox.desktop || failed=1
+  check_xdg_default application/pdf org.pwmt.zathura.desktop zathura.desktop || true
+  check_xdg_default image/png imv.desktop || true
+  check_xdg_default text/html zen-browser.desktop zen.desktop zen-browser-bin.desktop firefox.desktop || true
+  check_xdg_default x-scheme-handler/http zen-browser.desktop zen.desktop zen-browser-bin.desktop firefox.desktop || true
+  check_xdg_default x-scheme-handler/https zen-browser.desktop zen.desktop zen-browser-bin.desktop firefox.desktop || true
 
   check_browser_policies || failed=1
   check_command kakku-browser-theme || failed=1
@@ -879,33 +751,12 @@ case "${1:-help}" in
     shift
     run_doctor "$@"
     ;;
-  services)
-    show_services
-    ;;
-  keybinds)
-    show_keybinds
-    ;;
-  paths)
-    show_paths
-    ;;
   packages)
     show_packages
     ;;
   update)
     shift
     run_update
-    ;;
-  defaults)
-    shift
-    run_kakku_helper kakku-defaults "$@"
-    ;;
-  browser-theme)
-    shift
-    run_kakku_helper kakku-browser-theme "$@"
-    ;;
-  vscode-theme)
-    shift
-    run_kakku_helper kakku-vscode-theme "$@"
     ;;
   version)
     echo "KakkuOS 0.2.0"

@@ -197,8 +197,8 @@ check_required_command git git
 check_required_command rsync rsync
 check_required_command sed sed
 check_required_command awk gawk
-check_required_command makepkg pacman
-check_required_command repo-add pacman
+check_required_command makepkg base-devel
+check_required_command repo-add pacman-contrib
 check_required_command mkarchiso archiso
 check_required_command mksquashfs squashfs-tools
 check_required_command pacstrap arch-install-scripts

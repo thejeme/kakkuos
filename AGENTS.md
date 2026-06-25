@@ -28,17 +28,17 @@ Common support areas:
 - DMS bar, launcher, lock screen, notifications, power menu, wallpaper, OSDs, and theme behavior.
 - niri keybindings, startup commands, workspaces, screenshots, window rules, and monitor behavior.
 - idle behavior through `swayidle`, `niri-screensaver-ctl`, and DMS lock commands.
-- default apps through `kakku defaults`.
-- browser policies and theme hooks through `kakku browser-theme` and `kakku-browser-policies`.
-- health checks through `kakku doctor`, `kakku doctor --fix`, and `kakku services`.
+- default apps through installed desktop defaults and XDG settings.
+- browser policies and theme hooks through install/repair helpers such as `kakku-browser-policies`.
+- health checks through `kakku doctor`, `kakku doctor --fix`, `systemctl`, and `systemctl --user`.
 
 Prefer these safe commands when helping users inspect or apply changes:
 
 ```bash
 kakku doctor
 kakku context
-kakku services
-kakku keybinds
+systemctl status NetworkManager bluetooth greetd
+systemctl --user status dms.service dsearch.service
 niri validate -c ~/.config/niri/config.kdl
 niri msg action load-config-file
 niri msg outputs
@@ -104,7 +104,7 @@ Important conventions:
 - `Mod+T` opens Ghostty.
 - `Mod+E` opens Dolphin.
 - `Mod+B` opens Zen Browser.
-- `Mod+Shift+B` opens Chrome.
+- `Mod+Shift+B` toggles the DMS top bar.
 - `Mod+Shift+L` locks through DMS.
 - `Print` and related bindings use niri screenshots.
 - Media and brightness keys call DMS IPC helpers.
@@ -171,4 +171,4 @@ Run only the checks that apply to the change and are available in the environmen
 - Prefer idempotent install and repair behavior.
 - Avoid adding new runtime dependencies unless they belong in a package profile and packaging metadata.
 - Keep generated DMS/niri files marked as generated if DMS owns them.
-- When changing keybindings, update both `dotfiles/niri/config.kdl` and the `kakku keybinds` output in `bin/kakku`.
+- When changing keybindings, update `dotfiles/niri/config.kdl`; avoid separate static keybinding lists that can drift.

@@ -1,6 +1,6 @@
 # KakkuOS ISO Status
 
-Last updated: 2026-06-24
+Last updated: 2026-06-25
 
 ## Current State
 
@@ -20,17 +20,35 @@ The current local workflow can:
   Kakku service defaults;
 - write a build manifest with Kakku/CachyOS commits, repo mode, repo server,
   and dirty-worktree state;
+- check that ISO hard dependencies are either pacman-resolvable or listed in
+  the bundled ISO AUR manifest;
 - run staged-tree smoke checks, target-hook dry-run checks, host preflight
   checks, and release audits.
 
-## Validated Locally
+## Current Workspace Validation
 
-These checks passed in this workspace:
+After the 2026-06-25 local changes, these checks passed in this workspace:
 
 ```bash
-bash -n iso/build-kakku-iso.sh scripts/iso-smoke-check.sh scripts/iso-target-hook-check.sh scripts/iso-release-check.sh scripts/iso-vm-boot.sh scripts/iso-host-preflight.sh packaging/build-local-repo.sh
+bash -n iso/build-kakku-iso.sh scripts/iso-smoke-check.sh scripts/iso-target-hook-check.sh scripts/iso-release-check.sh scripts/iso-vm-boot.sh scripts/iso-host-preflight.sh packaging/build-local-repo.sh scripts/check-iso-package-closure.sh
 scripts/check-package-sync.sh
+```
+
+The ISO package closure check also passed its local manifest checks in this
+workspace, but skipped pacman repository resolution because pacman is not
+installed here:
+
+```bash
+bash scripts/check-iso-package-closure.sh
+```
+
+The prepare-only, smoke, target-hook, and release-audit commands below were
+validated before the latest local changes and must be rerun on a CachyOS/Arch
+host or Linux environment after these edits:
+
+```bash
 iso/build-kakku-iso.sh --prepare-only
+bash scripts/check-iso-package-closure.sh
 scripts/iso-smoke-check.sh
 scripts/iso-target-hook-check.sh
 scripts/iso-release-check.sh --allow-missing-iso --allow-missing-vm-tools --allow-dirty-source
@@ -67,6 +85,7 @@ The ISO workflow is not complete for release yet because these gates have not
 been proven:
 
 - full ISO build on a CachyOS/Arch host with root-capable ISO tooling;
+- package closure check on a CachyOS/Arch host with pacman sync databases;
 - produced ISO, checksum, and signature artifacts under `iso/out`;
 - BIOS and UEFI VM live boot;
 - CLI installer flow through `kakku-install`;
