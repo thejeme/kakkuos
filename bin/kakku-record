@@ -1,0 +1,81 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+record_dir="${KAKKU_SCREENRECORD_DIR:-${XDG_VIDEOS_DIR:-$HOME/Videos}/Screenrecords}"
+state_dir="${XDG_STATE_HOME:-$HOME/.local/state}/kakku"
+log_file="$state_dir/screenrecord.log"
+
+notify() {
+  notify-send "Kakku Screen Recording" "$1" 2>/dev/null || true
+}
+
+require_command() {
+  local command_name="$1"
+
+  if ! command -v "$command_name" >/dev/null 2>&1; then
+    notify "$command_name is not installed"
+    exit 1
+  fi
+}
+
+is_recording() {
+  pgrep -u "$UID" -x wf-recorder >/dev/null 2>&1
+}
+
+start_recording() {
+  local file
+
+  require_command wf-recorder
+  mkdir -p "$record_dir" "$state_dir"
+  file="$record_dir/Screenrecord from $(date +'%Y-%m-%d %H-%M-%S').mp4"
+
+  wf-recorder -f "$file" >"$log_file" 2>&1 &
+  notify "Recording started"
+}
+
+stop_recording() {
+  if is_recording; then
+    pkill -INT -u "$UID" -x wf-recorder
+    notify "Recording stopped"
+  else
+    notify "No active recording"
+    return 1
+  fi
+}
+
+case "${1:-toggle}" in
+  toggle)
+    if is_recording; then
+      stop_recording
+    else
+      start_recording
+    fi
+    ;;
+  start)
+    if is_recording; then
+      notify "Recording already running"
+    else
+      start_recording
+    fi
+    ;;
+  stop)
+    stop_recording
+    ;;
+  status)
+    if is_recording; then
+      echo "recording"
+    else
+      echo "idle"
+    fi
+    ;;
+  -h|--help)
+    cat <<'EOF'
+Usage:
+  kakku-record [toggle|start|stop|status]
+EOF
+    ;;
+  *)
+    echo "Unknown kakku-record command: $1" >&2
+    exit 1
+    ;;
+esac

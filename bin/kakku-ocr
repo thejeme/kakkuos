@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+notify() {
+  notify-send "Kakku OCR" "$1" 2>/dev/null || true
+}
+
+require_command() {
+  local command_name="$1"
+
+  if ! command -v "$command_name" >/dev/null 2>&1; then
+    notify "$command_name is not installed"
+    exit 1
+  fi
+}
+
+require_command grim
+require_command slurp
+require_command tesseract
+require_command wl-copy
+
+geometry="$(slurp 2>/dev/null || true)"
+if [[ -z "$geometry" ]]; then
+  notify "Selection cancelled"
+  exit 1
+fi
+
+text="$(
+  grim -g "$geometry" - |
+    tesseract stdin stdout -l "${KAKKU_OCR_LANG:-eng+fin}" 2>/dev/null |
+    sed 's/[[:space:]]*$//'
+)"
+
+if [[ -z "$text" ]]; then
+  notify "No text detected"
+  exit 1
+fi
+
+printf '%s' "$text" | wl-copy
+notify "Text copied"

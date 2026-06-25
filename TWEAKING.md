@@ -57,6 +57,8 @@ Mod+B          Zen Browser
 Mod+C          SpeedCrunch calculator
 Mod+Shift+L    Lock screen
 Print          Screenshot picker
+Mod+Shift+O    OCR selected area to clipboard
+Shift+Print    Toggle screen recording
 ```
 
 After editing keybindings:
@@ -65,6 +67,14 @@ After editing keybindings:
 niri validate -c ~/.config/niri/config.kdl
 niri msg action load-config-file
 ```
+
+### Screenshots, OCR, And Recording
+
+Screenshots use niri's built-in screenshot action and save under
+`~/Pictures/Screenshots`. OCR runs through `kakku-ocr`; set `KAKKU_OCR_LANG`
+to change the Tesseract language list. Screen recording runs through
+`kakku-record` and saves under `~/Videos/Screenrecords` unless
+`KAKKU_SCREENRECORD_DIR` is set.
 
 ### Idle, Lock, And Screensaver
 

@@ -105,10 +105,16 @@ Notable defaults:
 - `Mod+Y`: Background browser
 - `Mod+section`: Keybinding help
 - `Print`: Screenshot
+- `Shift+Print`: Toggle screen recording
+- `Mod+Shift+O`: OCR selected area to clipboard
 - `Mod+Shift+P`: Color picker
 
 Use `Mod+section` to open the niri hotkey overlay. The editable source of truth
 is `~/.config/niri/config.kdl`.
+
+OCR is handled by `kakku-ocr`; set `KAKKU_OCR_LANG` to change the Tesseract
+language list. Screen recordings are handled by `kakku-record` and saved under
+`~/Videos/Screenrecords` unless `KAKKU_SCREENRECORD_DIR` is set.
 
 ## DMS
 

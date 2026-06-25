@@ -627,7 +627,7 @@ run_doctor_fix() {
 run_doctor_checks() {
   local failed=0
 
-  for command_name in niri dms dsearch xwayland-satellite ghostty swayidle wf-recorder niri-screensaver niri-screensaver-ctl niri-focus-fullscreen kakku kakku-defaults kakku-browser-policies kakku-vscode-theme kakku-edit speedcrunch yazi btop fish zathura nvim codex; do
+  for command_name in niri dms dsearch xwayland-satellite ghostty swayidle wf-recorder niri-screensaver niri-screensaver-ctl niri-focus-fullscreen kakku kakku-defaults kakku-browser-policies kakku-vscode-theme kakku-edit kakku-ocr kakku-record speedcrunch yazi btop fish zathura nvim codex; do
     check_command "$command_name" || failed=1
   done
 
