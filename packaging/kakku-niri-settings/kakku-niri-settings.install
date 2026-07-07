@@ -36,7 +36,7 @@ _apply_missing_configs() {
     id "$username" &>/dev/null || continue
 
     # Seed missing files inside .config directories without replacing user edits.
-    for dir in DankMaterialShell fastfetch git lazygit menus mpv starship yazi zathura fish niri niri-screensaver ghostty nvim kakku github-copilot claude; do
+    for dir in DankMaterialShell fastfetch git lazygit menus mpv starship yazi zathura fish niri niri-screensaver ghostty nvim kakku; do
       if [ -d "$skel/.config/$dir" ]; then
         _copy_missing_tree_files "$skel/.config/$dir" "$user_home/.config/$dir" "$username"
       fi

@@ -55,7 +55,7 @@ Backgrounds install to `/usr/share/backgrounds/kakku/`. Branding assets install 
 
 ## AI Tooling Context
 
-Repository context for AI tools lives in `AGENTS.md`. Practical context for helping normal users customize and troubleshoot KakkuOS lives in `TWEAKING.md`. Lightweight tool-specific pointers are also provided in `CLAUDE.md`, `.github/copilot-instructions.md`, and `llms.txt`.
+Repository context for AI tools lives in `AGENTS.md`. Practical context for helping normal users customize and troubleshoot KakkuOS lives in `TWEAKING.md`.
 
 ## Package Profiles
 
