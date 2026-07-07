@@ -36,3 +36,4 @@ tty-clock
 httpie
 glow
 trippy
+net-tools
